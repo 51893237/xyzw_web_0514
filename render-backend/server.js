@@ -1,11 +1,13 @@
+import process from "node:process";
+import { createClient } from "@supabase/supabase-js";
+import cors from "cors";
 /**
  * XYZW 游戏自动化后端 - Express + Supabase + Render
  */
 import dotenv from "dotenv";
 import express from "express";
-import cors from "cors";
 import cron from "node-cron";
-import { createClient } from "@supabase/supabase-js";
+import { createApiKeyMiddleware } from "./lib/apiKeyAuth.js";
 import { GameClient } from "./lib/gameClient.js";
 
 dotenv.config();
@@ -265,27 +267,22 @@ app.get("/health", (req, res) => {
  res.json({ status: "ok", time: new Date().toISOString(), activeCrons: cronJobs.size, logsInMemory: logs.length });
 });
 
-function requireApiKey(req, res, next) {
- const provided = req.header("x-api-key") || req.header("authorization")?.replace(/^Bearer\s+/i, "");
- if (!process.env.API_KEY || provided !== process.env.API_KEY) {
- return res.status(401).json({ error: "Unauthorized" });
- }
- next();
-}
+// Every API route uses the same credentials; /health remains public.
+app.use("/api", createApiKeyMiddleware());
 
-app.get("/api/tokens", requireApiKey, async (req, res) => {
+app.get("/api/tokens", async (req, res) => {
  const { data, error } = await supabase.from("tokens").select("*").order("created_at");
  if (error) return res.status(500).json({ error: error.message });
  res.json(data);
 });
 
-app.post("/api/tokens", requireApiKey, async (req, res) => {
+app.post("/api/tokens", async (req, res) => {
  const { data, error } = await supabase.from("tokens").insert(req.body).select();
  if (error) return res.status(400).json({ error: error.message });
  res.json(data);
 });
 
-app.delete("/api/tokens/:id", requireApiKey, async (req, res) => {
+app.delete("/api/tokens/:id", async (req, res) => {
  const { error } = await supabase.from("tokens").delete().eq("id", req.params.id);
  if (error) return res.status(400).json({ error: error.message });
  res.json({ ok: true });
@@ -326,12 +323,12 @@ app.post("/api/tasks/:id/run", async (req, res) => {
 });
 
 app.get("/api/logs", (req, res) => {
- const limit = Math.min(parseInt(req.query.limit) || 100, LOG_MAX);
+ const limit = Math.min(Number.parseInt(req.query.limit) || 100, LOG_MAX);
  res.json(logs.slice(0, limit));
 });
 
 app.get("/api/logs/db", async (req, res) => {
- const limit = Math.min(parseInt(req.query.limit) || 100, 500);
+ const limit = Math.min(Number.parseInt(req.query.limit) || 100, 500);
  const { data, error } = await supabase.from("task_logs").select("*").order("created_at", { ascending: false }).limit(limit);
  if (error) return res.status(500).json({ error: error.message });
  res.json(data);

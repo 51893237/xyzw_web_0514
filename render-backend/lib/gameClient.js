@@ -1,5 +1,5 @@
-import { bon, g_utils, getEnc, parse, encode } from './bonProtocol.js';
 import WebSocket from 'ws';
+import { bon, encode, getEnc, parse } from './bonProtocol.js';
 
 /**
  * XYZW 游戏客户端 - Node.js 简化版
@@ -152,7 +152,7 @@ class GameClient {
 
  connect(timeoutMs = 15000) {
  return new Promise((resolve, reject) => {
- this.log("连接中:", this._wsUrl.replace(/roleToken=[^&]+/, "roleToken=***"));
+ this.log("连接中:", this._wsUrl.split("?")[0]);
 
  let timer;
  if (timeoutMs) {
@@ -183,10 +183,13 @@ class GameClient {
  this.ws.on("message", (data) => { this._handleMessage(data); });
 
  this.ws.on("close", (code, reason) => {
+ clearTimeout(timer);
+ if (!this.connected) reject(new Error("连接在建立前已关闭"));
  this.connected = false;
  this._stopHeartbeat();
  this.log("连接关闭:", code, reason.toString());
  for (const id in this.promises) {
+ clearTimeout(this.promises[id].timer);
  this.promises[id].reject(new Error("连接已关闭"));
  delete this.promises[id];
  }

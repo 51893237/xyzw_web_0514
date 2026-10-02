@@ -1,9 +1,10 @@
+import { g_utils } from './bonProtocol.js'
 /**
  * XYZW WebSocket 客户端
  * 基于 readable-xyzw-ws.js 重构，适配本项目架构
  */
- import { bonProtocol, g_utils } from './bonProtocol.js'
- import { wsLogger, gameLogger } from './logger.js'
+ import { sleep } from "./helperTaskRunner.js";
+ import { gameLogger, wsLogger } from './logger.js'
  
  /** 为日志生成安全的 body 预览，避免控制台再次解析原始对象 */
  const formatBodyForLog = (body) => {
@@ -18,7 +19,7 @@
    }
  
    if (typeof body === 'object') {
-     const isNumericObject = Object.keys(body).every((key) => !Number.isNaN(parseInt(key)))
+     const isNumericObject = Object.keys(body).every((key) => !Number.isNaN(Number.parseInt(key)))
      if (isNumericObject) {
        return `[BON:Object:${Object.keys(body).length}]`
      }
@@ -319,7 +320,7 @@
      if (typeof body === 'object' && body.constructor === Object) {
        // 检查是否是数字键的对象（例如 {"0": 8, "1": 2, ...}）
        const keys = Object.keys(body)
-       return keys.length > 0 && keys.every(key => !isNaN(parseInt(key)))
+       return keys.length > 0 && keys.every(key => !Number.isNaN(+(Number.parseInt(key))))
      }
  
      return false
@@ -339,13 +340,13 @@
  
      // 对象格式的数字数组转换为Uint8Array
      if (typeof body === 'object' && body.constructor === Object) {
-       const keys = Object.keys(body).map(k => parseInt(k)).sort((a, b) => a - b)
+       const keys = Object.keys(body).map(k => Number.parseInt(k)).sort((a, b) => a - b)
        if (keys.length > 0) {
          const maxIndex = Math.max(...keys)
-         const arr = new Array(maxIndex + 1).fill(0)
+         const arr = Array.from({ length: maxIndex + 1 }, () => 0)
          for (const [key, value] of Object.entries(body)) {
-           const index = parseInt(key)
-           if (!isNaN(index) && typeof value === 'number') {
+           const index = Number.parseInt(key)
+           if (!Number.isNaN(+(index)) && typeof value === 'number') {
              arr[index] = value
            }
          }
@@ -451,7 +452,13 @@
      return task
    }
  
-   /** Promise 版发送 */
+   /**
+   * Queue a command and wait for its sequence or legacy command response.
+   * @param {string} cmd Registered protocol command.
+   * @param {object} params Command body.
+   * @param {number} timeoutMs Timeout measured from queue admission, in milliseconds.
+   * @returns {Promise<unknown>} Response body; rejects on a server error or timeout.
+   */
    sendWithPromise(cmd, params = {}, timeoutMs = 5000) {
      return new Promise((resolve, reject) => {
        if (!this.connected && !this.socket) {
@@ -468,6 +475,7 @@
          delete this.promises[requestSeq]
          reject(new Error(`请求超时: ${cmd} (${timeoutMs}ms)`))
        }, timeoutMs)
+      this.promises[requestSeq].timer = timer;
  
        // 发送消息，直接传递seq
        this.send(cmd, params, {
@@ -580,7 +588,8 @@
      // 优先使用resp字段进行响应匹配（新的正确方式）
      if (packet.resp !== undefined && this.promises[packet.resp]) {
        const promiseData = this.promises[packet.resp]
-       delete this.promises[packet.resp]
+       clearTimeout(promiseData.timer);
+      delete this.promises[packet.resp]
  
        // 获取响应数据，优先使用 rawData（ProtoMsg 自动解码），然后 decodedBody（手动解码），最后 body
        const responseBody = packet.rawData !== undefined ? packet.rawData :
@@ -651,7 +660,6 @@
        'legion_getinforresp': 'legion_getinfo',
        'role_gettargetteamresp': 'role_gettargetteam',
        'activity_warorderclaimresp': 'activity_recyclewarorderrewardclaim',
-       'arena_getarearankresp': 'arena_getarearank',
        'bosstower_gethelprankresp': 'bosstower_gethelprank',
        // 特殊响应映射 - 有些命令有独立响应，有些用同步响应
        'task_claimdailyrewardresp': 'task_claimdailyreward',
@@ -676,7 +684,8 @@
      for (const [requestId, promiseData] of Object.entries(this.promises)) {
        // 检查 Promise 是否匹配当前响应的任一原始命令
        if (originalCmds.includes(promiseData.originalCmd)) {
-         delete this.promises[requestId]
+         clearTimeout(promiseData.timer);
+        delete this.promises[requestId]
  
          // 获取响应数据，优先使用 rawData（ProtoMsg 自动解码），然后 decodedBody（手动解码），最后 body
          const responseBody = packet.rawData !== undefined ? packet.rawData :
@@ -695,6 +704,11 @@
  
    /** 清理定时器 */
    _clearTimers() {
+    for (const [id, request] of Object.entries(this.promises)) {
+      clearTimeout(request.timer);
+      delete this.promises[id];
+      request.reject(new Error("WebSocket 连接已关闭"));
+    }
      if (this.heartbeatTimer) {
        clearInterval(this.heartbeatTimer)
        this.heartbeatTimer = null

@@ -249,25 +249,25 @@
                 :y-gap="8"
                 :cols="batchSettings.tokenListColumns"
               >
-                <n-grid-item v-for="token in sortedTokens" :key="token.id">
+                <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
                   <div class="token-row">
                     <n-checkbox
-                      :value="token.id"
-                      :label="token.name"
+                      :value="gameToken.id"
+                      :label="gameToken.name"
                       style="flex: 1"
                     >
                       <div class="token-item">
-                        <span>{{ token.name }}</span>
+                        <span>{{ gameToken.name }}</span>
                         <n-tag
                           size="small"
-                          :type="getStatusType(token.id)"
+                          :type="getStatusType(gameToken.id)"
                           style="margin-left: 8px"
                         >
-                          {{ getStatusText(token.id) }}
+                          {{ getStatusText(gameToken.id) }}
                         </n-tag>
                         <!-- 显示token所属的分组 -->
                         <div
-                          v-if="tokenStore.getTokenGroups(token.id).length > 0"
+                          v-if="tokenStore.getTokenGroups(gameToken.id).length > 0"
                           style="
                             margin-left: 8px;
                             display: inline-flex;
@@ -276,7 +276,7 @@
                           "
                         >
                           <n-tag
-                            v-for="group in tokenStore.getTokenGroups(token.id)"
+                            v-for="group in tokenStore.getTokenGroups(gameToken.id)"
                             :key="group.id"
                             size="small"
                             :color="{ color: group.color, textColor: 'white' }"
@@ -290,7 +290,7 @@
                     <n-button
                       size="tiny"
                       circle
-                      @click.stop="openSettings(token)"
+                      @click.stop="openSettings(gameToken)"
                     >
                       <template #icon>
                         <n-icon>
@@ -744,13 +744,13 @@
           <n-progress
             type="line"
             :percentage="currentProgress"
-            :indicator-placement="'inside'"
+            indicator-placement="inside"
             processing
           />
           <div class="log-container" ref="logContainer">
             <div
-              v-for="(log, index) in filteredLogs"
-              :key="index"
+              v-for="(log, logIndex) in filteredLogs"
+              :key="logIndex"
               class="log-item"
               :class="log.type"
             >
@@ -1010,8 +1010,8 @@
               style="margin-top: 8px"
             >
               <n-grid :cols="2" :x-gap="12" :y-gap="8">
-                <n-grid-item v-for="token in sortedTokens" :key="token.id">
-                  <n-checkbox :value="token.id">{{ token.name }}</n-checkbox>
+                <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
+                  <n-checkbox :value="gameToken.id">{{ gameToken.name }}</n-checkbox>
                 </n-grid-item>
               </n-grid>
             </n-checkbox-group>
@@ -1641,12 +1641,12 @@
               {{ merchant.name }}
             </div>
             <n-grid :cols="3" :x-gap="12" :y-gap="8">
-              <n-grid-item v-for="(item, index) in merchant.items" :key="index">
+              <n-grid-item v-for="(item, itemIndex) in merchant.items" :key="itemIndex">
                 <n-checkbox
-                  :value="`${id}-${index}`"
-                  :checked="dreamBuyList.includes(`${id}-${index}`)"
+                  :value="`${id}-${itemIndex}`"
+                  :checked="dreamBuyList.includes(`${id}-${itemIndex}`)"
                   @update:checked="
-                    (checked) => toggleDreamItem(`${id}-${index}`, checked)
+                    (checked) => toggleDreamItem(`${id}-${itemIndex}`, checked)
                   "
                 >
                   {{ item }}
@@ -1695,8 +1695,8 @@
         </n-alert>
 
         <div
-          v-for="(item, index) in blackMarketPurchaseList"
-          :key="`${index}-${item.itemId ?? 'new'}`"
+          v-for="(item, itemIndex) in blackMarketPurchaseList"
+          :key="`${itemIndex}-${item.itemId ?? 'new'}`"
           style="
             display: grid;
             grid-template-columns: 220px 120px 120px 1fr 96px;
@@ -1711,7 +1711,7 @@
             placeholder="选择常用物品"
             clearable
             filterable
-            @update:value="(value) => applyBlackMarketCatalogItem(index, value)"
+            @update:value="(value) => applyBlackMarketCatalogItem(itemIndex, value)"
           />
           <n-input-number
             v-model:value="item.itemId"
@@ -1726,7 +1726,7 @@
             :max="10"
           />
           <n-input v-model:value="item.note" placeholder="备注（可选）" />
-          <n-button type="error" secondary @click="removeBlackMarketPurchaseItem(index)">
+          <n-button type="error" secondary @click="removeBlackMarketPurchaseItem(itemIndex)">
             删除
           </n-button>
         </div>
@@ -1895,7 +1895,7 @@
               >
                 <h4>未来5次执行时间：</h4>
                 <ul>
-                  <li v-for="(run, index) in cronNextRuns" :key="index">
+                  <li v-for="(run, runIndex) in cronNextRuns" :key="runIndex">
                     {{ run }}
                   </li>
                 </ul>
@@ -1996,8 +1996,8 @@
 
             <n-checkbox-group v-model:value="taskForm.selectedTokens">
               <n-grid :cols="2" :x-gap="12" :y-gap="8">
-                <n-grid-item v-for="token in sortedTokens" :key="token.id">
-                  <n-checkbox :value="token.id">{{ token.name }}</n-checkbox>
+                <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
+                  <n-checkbox :value="gameToken.id">{{ gameToken.name }}</n-checkbox>
                 </n-grid-item>
               </n-grid>
             </n-checkbox-group>
@@ -2048,15 +2048,15 @@
 
                 <n-tab-pane
                   v-if="
-                    groupedAvailableTasks['other'] &&
-                    groupedAvailableTasks['other'].length > 0
+                    groupedAvailableTasks.other &&
+                    groupedAvailableTasks.other.length > 0
                   "
                   name="other"
                   tab="其他"
                 >
                   <n-grid :cols="2" :x-gap="12" :y-gap="8">
                     <n-grid-item
-                      v-for="task in groupedAvailableTasks['other']"
+                      v-for="task in groupedAvailableTasks.other"
                       :key="task.value"
                     >
                       <n-checkbox :value="task.value">{{
@@ -2742,21 +2742,21 @@
               <span style="font-size: 12px">选择颜色:</span>
               <div style="display: flex; gap: 6px">
                 <div
-                  v-for="color in groupColors"
-                  :key="color"
+                  v-for="slotColor in groupColors"
+                  :key="slotColor"
                   :style="{
                     width: '24px',
                     height: '24px',
-                    backgroundColor: color,
+                    backgroundColor: slotColor,
                     borderRadius: '4px',
                     border:
-                      newGroupColor === color
+                      newGroupColor === slotColor
                         ? '3px solid #000'
                         : '2px solid #ddd',
                     cursor: 'pointer',
                     transition: 'transform 0.2s',
                   }"
-                  @click="newGroupColor = color"
+                  @click="newGroupColor = slotColor"
                   @mouseover="$event.target.style.transform = 'scale(1.1)'"
                   @mouseleave="$event.target.style.transform = 'scale(1)'"
                 />
@@ -2796,8 +2796,8 @@
             <div style="max-height: 150px; overflow-y: auto">
               <n-checkbox-group v-model:value="newGroupSelectedTokens">
                 <n-grid :cols="3" :x-gap="12" :y-gap="8">
-                  <n-grid-item v-for="token in sortedTokens" :key="token.id">
-                    <n-checkbox :value="token.id">{{ token.name }}</n-checkbox>
+                  <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
+                    <n-checkbox :value="gameToken.id">{{ gameToken.name }}</n-checkbox>
                   </n-grid-item>
                 </n-grid>
               </n-checkbox-group>
@@ -2851,20 +2851,20 @@
                   />
                   <div style="display: flex; gap: 6px; align-items: center">
                     <div
-                      v-for="color in groupColors"
-                      :key="color"
+                      v-for="slotColor in groupColors"
+                      :key="slotColor"
                       :style="{
                         width: '20px',
                         height: '20px',
-                        backgroundColor: color,
+                        backgroundColor: slotColor,
                         borderRadius: '4px',
                         border:
-                          editingGroupColor === color
+                          editingGroupColor === slotColor
                             ? '3px solid #000'
                             : '2px solid #ddd',
                         cursor: 'pointer',
                       }"
-                      @click="editingGroupColor = color"
+                      @click="editingGroupColor = slotColor"
                     />
                   </div>
                   <n-button
@@ -3004,72 +3004,53 @@
 </template>
 
 <script setup>
+import { Settings } from "@vicons/ionicons5";
+
+import { useMessage } from "naive-ui";
 // Import required dependencies
 import {
-  ref,
   computed,
-  nextTick,
-  reactive,
-  watch,
-  onMounted,
-  onBeforeUnmount,
   h,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
 } from "vue";
-import { useTokenStore, gameTokens, tokenGroups } from "@/stores/tokenStore";
 import { $emit } from "@/stores/events/index.ts";
-import { DailyTaskRunner } from "@/utils/dailyTaskRunner";
-import { preloadQuestions } from "@/utils/studyQuestionsFromJSON.js";
-import { useMessage } from "naive-ui";
-import { Settings } from "@vicons/ionicons5";
-import { DEFAULT_WEIRD_TOWER_MAX_CLIMB } from "@/utils/towerClimbLimit.js";
-
+import { gameTokens, tokenGroups, useTokenStore } from "@/stores/tokenStore";
 // Import batch task modules
 import {
+  addTaskSaveLog,
+  availableTasks,
+  bossTimesOptions,
   // Constants
   boxTypeOptions,
-  fishTypeOptions,
-  formationOptions,
-  bossTimesOptions,
-  availableTasks,
-  FISH_TARGET,
-  ARENA_TARGET,
-  taskColumns,
-  defaultSettings,
-  defaultBatchSettings,
-  defaultTemplate,
-  defaultTaskForm,
-  defaultHelperSettings,
-  // Cron utilities
-  validateCronField,
-  validateCronExpression,
-  parseCronField,
-  calculateNextRuns,
-  calculateNextExecutionTime,
-  formatTimeDifference,
-  matchesCronExpression,
-  // Connection manager
-  createConnectionManager,
-  getActivityStatus,
-  getTodayStartSec,
-  isTodayAvailable,
   calculateMonthProgress,
-  pickArenaTargetId,
-  // Log utilities
-  createLogManager,
-  addTaskSaveLog,
+  calculateNextExecutionTime,
+  calculateNextRuns,
+  createTasksApex,
+  createTasksArena,
+  createTasksBottle,
+  createTasksCampChallenge,
+  createTasksDungeon,
+  createTasksFootball,
   // Task factories
   createTasksHangUp,
-  createTasksBottle,
-  createTasksTower,
   createTasksItem,
-  createTasksDungeon,
-  createTasksArena,
-  createTasksStore,
   createTasksLegacy,
-  createTasksFootball,
-  createTasksApex,
-  createTasksCampChallenge,
+  createTasksStore,
+  createTasksTower,
   createTasksXuanwuBlessing,
+  fishTypeOptions,
+  formationOptions,
+  formatTimeDifference,
+  getTodayStartSec,
+  isTodayAvailable,
+  matchesCronExpression,
+  pickArenaTargetId,
+  validateCronExpression,
 } from "@/utils/batch";
 import {
   blackMarketItemCatalog,
@@ -3077,8 +3058,12 @@ import {
   defaultBlackMarketPurchaseList,
   normalizeBlackMarketPurchaseList,
 } from "@/utils/batch/blackMarketConfig";
+import { DailyTaskRunner } from "@/utils/dailyTaskRunner";
+import { goldItemsConfig, merchantConfig } from "@/utils/dreamConstants";
 
-import { merchantConfig, goldItemsConfig } from "@/utils/dreamConstants";
+import { isSameGameValue } from "@/utils/gameValue.js";
+
+import { DEFAULT_WEIRD_TOWER_MAX_CLIMB } from "@/utils/towerClimbLimit.js";
 
 // Initialize token store, message service, and task runner
 const tokenStore = useTokenStore();
@@ -3097,22 +3082,13 @@ const sortConfig = ref(
 );
 
 // 计算属性 - 从gameData中获取塔相关信息
-const evoTowerInfo = computed(() => {
-  const data = tokenStore.gameData?.evoTowerInfo || null;
-  return data;
-});
 
-const weirdTowerData = computed(() => {
-  return evoTowerInfo.value?.evoTower || null;
-});
 
-const currentTowerId = computed(() => {
-  return weirdTowerData.value?.towerId || 0;
-});
 
-const towerEnergy = computed(() => {
-  return weirdTowerData.value?.energy || 0;
-});
+
+
+
+
 
 // 排序后的游戏角色Token列表
 const sortedTokens = computed(() => {
@@ -3182,7 +3158,7 @@ const ismengjingActivityOpen = computed(() => {
 });
 const isbaokuActivityOpen = computed(() => {
   const day = new Date().getDay();
-  return day != 1 && day != 2;
+  return !isSameGameValue(day, 1) && !isSameGameValue(day, 2);
 });
 const isarenaActivityOpen = computed(() => {
   const hour = new Date().getHours();
@@ -3288,7 +3264,7 @@ const shouldStop = ref(false);
 // Token分组管理状态
 // =====================
 const showGroupManageModal = ref(false);
-const showGroupSelectModal = ref(false);
+
 const selectedGroups = ref([]); // 选中的分组ID列表
 const newGroupName = ref("");
 const newGroupColor = ref("#1677ff");
@@ -3316,15 +3292,15 @@ const warGuessList = ref([]);
 const warGuessLoading = ref(false);
 const warGuessCoin = ref(20);
 const selectedWarGuessLegionId = ref(null);
-const currentGuessCount = ref(0);
+
 
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return (power / 100000000).toFixed(2) + "亿";
+    return `${(power / 100000000).toFixed(2)  }亿`;
   }
   if (power >= 10000) {
-    return (power / 10000).toFixed(2) + "万";
+    return `${(power / 10000).toFixed(2)  }万`;
   }
   return power.toString();
 };
@@ -3438,7 +3414,7 @@ const fetchWarGuessRank = async () => {
     }
   } catch (error) {
     console.error("Fetch rank error:", error);
-    message.error("获取月赛助威数据失败: " + error.message);
+    message.error(`获取月赛助威数据失败: ${  error.message}`);
     addLog({
       time: new Date().toLocaleTimeString(),
       message: `获取月赛助威数据失败: ${error.message}`,
@@ -3841,7 +3817,7 @@ const groupedAvailableTasks = computed(() => {
     (task) => !groupedTaskValues.includes(task.value),
   );
   if (otherTasks.length > 0) {
-    groups["other"] = otherTasks;
+    groups.other = otherTasks;
   }
 
   return groups;
@@ -3909,7 +3885,7 @@ const saveScheduledTasks = () => {
 
     localStorage.setItem("scheduledTasks", dataToSave);
     // Verify save was successful
-    const saved = localStorage.getItem("scheduledTasks");
+    localStorage.getItem("scheduledTasks");
   } catch (error) {
     console.error("Failed to save scheduled tasks:", error);
   }
@@ -4054,7 +4030,7 @@ const saveTask = () => {
   }
 
   const taskData = {
-    id: editingTask.value?.id || "task_" + Date.now(),
+    id: editingTask.value?.id || `task_${  Date.now()}`,
     name: taskForm.name,
     runType: taskForm.runType,
     runTime: formattedRunTime,
@@ -4065,7 +4041,7 @@ const saveTask = () => {
     enabled: taskForm.enabled,
   };
 
-  let isNew = !editingTask.value;
+  const isNew = !editingTask.value;
 
   if (editingTask.value) {
     // Update existing task
@@ -4220,7 +4196,7 @@ const exportConfig = () => {
         maxActive: batchSettings.maxActive,
         tokenListColumns: batchSettings.tokenListColumns,
       },
-      tokenSettings: tokenSettings,
+      tokenSettings,
     };
 
     const blob = new Blob([JSON.stringify(exportData, null, 2)], {
@@ -4240,7 +4216,7 @@ const exportConfig = () => {
     );
   } catch (error) {
     console.error("Export failed:", error);
-    message.error("导出失败: " + error.message);
+    message.error(`导出失败: ${  error.message}`);
   }
 };
 
@@ -4277,7 +4253,7 @@ const importConfig = async ({ file }) => {
               gameTokens.value.push({
                 id:
                   token.id ||
-                  "token_" + Date.now() + Math.random().toString(36).slice(2),
+                  `token_${  Date.now()  }${Math.random().toString(36).slice(2)}`,
                 name: token.name || "",
                 token: token.token,
                 server: token.server || "",
@@ -4344,7 +4320,7 @@ const importConfig = async ({ file }) => {
     reader.readAsText(file.file);
   } catch (error) {
     console.error("Import failed:", error);
-    message.error("导入失败: " + error.message);
+    message.error(`导入失败: ${  error.message}`);
   }
 };
 
@@ -4438,7 +4414,7 @@ loadScheduledTasks();
 // Watch for changes to scheduledTasks for debugging
 watch(
   scheduledTasks,
-  (newVal) => {
+  () => {
     // Reset countdowns when tasks change
     nextExecutionTimes.value = {};
     taskCountdowns.value = {};
@@ -4536,7 +4512,7 @@ const startScheduler = () => {
 
       tasksToRun.forEach((task) => {
         let shouldRun = false;
-        let reason = "";
+        
 
         if (task.runType === "daily") {
           // Check if current time matches the scheduled time
@@ -4547,7 +4523,7 @@ const startScheduler = () => {
             minute: "2-digit",
           });
           shouldRun = nowTime === taskTime;
-          reason = `currentTime=${nowTime}, taskTime=${taskTime}, match=${shouldRun}`;
+          
         } else if (task.runType === "cron") {
           // Improved cron expression parsing using shared utility
           try {
@@ -4673,6 +4649,55 @@ const scheduleTaskExecution = () => {
   healthCheck();
 };
 
+/** Resolve a configured task without evaluating user-controlled source code.
+ * @param {string} taskName Stored task identifier.
+ * @returns {Function|undefined} The registered task, or undefined for unknown names.
+ */
+function getScheduledTask(taskName) {
+  const tasks = {
+    startBatch,
+    claimHangUpRewards,
+    batchAddHangUpTime,
+    resetBottles,
+    batchlingguanzi,
+    climbTower,
+    climbWeirdTower,
+    batchStudy,
+    batchOpenBox,
+    batchOpenBoxByPoints,
+    batchClaimBoxPointReward,
+    batchFish,
+    batchRecruit,
+    batchRedeemCodes,
+    batchbaoku13,
+    batchbaoku45,
+    batchmengjing,
+    batchclubsign,
+    batchCampChallenge,
+    batchCampChallengePet,
+    batchCampClaimTasks,
+    batchApplyLegion,
+    batcharenafight,
+    batchTopUpFish,
+    batchTopUpArena,
+    batchClaimFreeEnergy,
+    skinChallenge,
+    legion_storebuygoods,
+    store_syncpurchaseconfig,
+    store_purchase,
+    collection_claimfreereward,
+    batchLegacyClaim,
+    batchLegacyGiftSendEnhanced,
+    batchUseItems,
+    batchMergeItems,
+    batchClaimPeachTasks,
+    batchGenieSweep,
+    batchBuyDreamItems,
+    batchXuanwuBlessing,
+  };
+  return Object.hasOwn(tasks, taskName) ? tasks[taskName] : undefined;
+}
+
 // Verify task dependencies - 只验证基础依赖，WebSocket连接由具体任务函数处理
 const verifyTaskDependencies = async (task) => {
   addLog({
@@ -4711,7 +4736,7 @@ const verifyTaskDependencies = async (task) => {
 
   // Verify task functions exist
   for (const taskName of task.selectedTasks) {
-    const taskFunction = eval(taskName);
+    const taskFunction = getScheduledTask(taskName);
     if (typeof taskFunction !== "function") {
       addLog({
         time: new Date().toLocaleTimeString(),
@@ -4878,7 +4903,7 @@ const executeScheduledTask = async (task) => {
       });
 
       // Call the task function dynamically
-      const taskFunction = eval(taskName);
+      const taskFunction = getScheduledTask(taskName);
       if (typeof taskFunction === "function") {
         // For batch operations, pass isScheduledTask = true
         // 具体的batch任务函数内部会使用ensureConnection管理并行连接
@@ -4939,16 +4964,7 @@ const clearRecipientError = () => {
   recipientIdError.value = "";
 };
 
-const validateRecipientId = (value) => {
-  if (!value || value === "") {
-    return true; // 允许为空，由按钮禁用控制
-  }
-  if (!Number.isInteger(Number(value)) || Number(value) <= 0) {
-    recipientIdError.value = "请输入有效的数字ID";
-    return false;
-  }
-  return true;
-};
+
 
 // 头像处理方法
 const handleAvatarLoad = () => {
@@ -5359,26 +5375,7 @@ const saveSettings = () => {
 };
 
 // Task Template Functions
-const openTaskTemplateModal = () => {
-  // 加载模板列表
-  loadTaskTemplates();
-  // 重置当前模板
-  Object.assign(currentTemplate, {
-    arenaFormation: 1,
-    towerFormation: 1,
-    bossFormation: 1,
-    bossTimes: 2,
-    claimBottle: true,
-    payRecruit: true,
-    openBox: true,
-    arenaEnable: true,
-    claimHangUp: true,
-    claimEmail: true,
-    blackMarketPurchase: true,
-  });
-  currentTemplateName.value = "";
-  showTaskTemplateModal.value = true;
-};
+
 
 const loadTaskTemplates = () => {
   const templates = localStorage.getItem("task-templates");
@@ -5493,6 +5490,7 @@ const updateTaskTemplate = () => {
 
 const deleteTaskTemplate = (templateId) => {
   // 确认删除
+  // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
   if (confirm("确定要删除这个模板吗？")) {
     // 找到并删除模板
     const templates = loadTaskTemplates();
@@ -5548,7 +5546,7 @@ const loadAccountTemplateReferences = () => {
         references.push({
           tokenId: token.id,
           tokenName: token.name,
-          templateId: templateId,
+          templateId,
           templateName: template ? template.name : "未引用模板",
         });
       } catch (e) {
@@ -5724,6 +5722,7 @@ const deselectAllNewGroup = () => {
  * 删除分组
  */
 const deleteGroup = (groupId) => {
+  // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
   if (confirm("确定要删除这个分组吗？分组中的token不会被删除。")) {
     tokenStore.deleteTokenGroup(groupId);
     message.success("分组已删除");
@@ -5843,10 +5842,7 @@ const getValidGroupTokenIds = (groupId) => {
 /**
  * 获取分组中的token列表
  */
-const getGroupTokenList = (groupId) => {
-  const tokenIds = tokenStore.getValidGroupTokenIds(groupId);
-  return tokens.value.filter((t) => tokenIds.includes(t.id));
-};
+
 
 // 注: pickArenaTargetId, FISH_TARGET, ARENA_TARGET, getTodayStartSec, isTodayAvailable, calculateMonthProgress 已从 @/utils/batch 导入
 
@@ -5911,7 +5907,7 @@ const copyLogs = () => {
       message.success("日志已复制到剪贴板");
     })
     .catch((err) => {
-      message.error("复制日志失败: " + err.message);
+      message.error(`复制日志失败: ${  err.message}`);
     });
 };
 
@@ -5955,7 +5951,7 @@ const ensureConnection = async (tokenId, maxRetries = 2) => {
     throw new Error(`Token not found: ${tokenId}`);
   }
 
-  let status = tokenStore.getWebSocketStatus(tokenId);
+  const status = tokenStore.getWebSocketStatus(tokenId);
   let connected = status === "connected";
 
   if (!connected) {
@@ -6248,7 +6244,7 @@ const startBatch = async () => {
         // Run tasks
         await runner.run(tokenId, {
           onLog: (log) => addLog(log),
-          onProgress: (p) => {
+          onProgress: () => {
             // 每个token维护自己的进度
           },
         });
