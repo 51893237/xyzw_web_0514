@@ -35,8 +35,8 @@ export const validateCronField = (field, min, max, fieldName) => {
       return { valid: false, message: `${fieldName}字段步长格式错误` };
     }
     const [range, stepStr] = parts;
-    const step = parseInt(stepStr);
-    if (isNaN(step) || step <= 0) {
+    const step = Number.parseInt(stepStr);
+    if (Number.isNaN(+(step)) || step <= 0) {
       return { valid: false, message: `${fieldName}字段步长必须是正整数` };
     }
 
@@ -55,8 +55,8 @@ export const validateCronField = (field, min, max, fieldName) => {
       }
       const [start, end] = rangeParts.map(Number);
       if (
-        isNaN(start) ||
-        isNaN(end) ||
+        Number.isNaN(+(start)) ||
+        Number.isNaN(+(end)) ||
         start < min ||
         end > max ||
         start > end
@@ -69,8 +69,8 @@ export const validateCronField = (field, min, max, fieldName) => {
       return { valid: true };
     } else {
       // 单个数字作为起始值
-      const num = parseInt(range);
-      if (isNaN(num) || num < min || num > max) {
+      const num = Number.parseInt(range);
+      if (Number.isNaN(+(num)) || num < min || num > max) {
         return {
           valid: false,
           message: `${fieldName}字段起始值必须在${min}-${max}之间`,
@@ -93,8 +93,8 @@ export const validateCronField = (field, min, max, fieldName) => {
     }
     const [start, end] = rangeParts.map(Number);
     if (
-      isNaN(start) ||
-      isNaN(end) ||
+      Number.isNaN(+(start)) ||
+      Number.isNaN(+(end)) ||
       start < min ||
       end > max ||
       start > end
@@ -117,8 +117,8 @@ export const validateCronField = (field, min, max, fieldName) => {
   // 7. 处理工作日 'W'
   if (field.endsWith("W")) {
     const dayStr = field.slice(0, -1);
-    const day = parseInt(dayStr);
-    if (isNaN(day) || day < min || day > max) {
+    const day = Number.parseInt(dayStr);
+    if (Number.isNaN(+(day)) || day < min || day > max) {
       return {
         valid: false,
         message: `${fieldName}字段工作日格式错误`,
@@ -135,10 +135,10 @@ export const validateCronField = (field, min, max, fieldName) => {
     }
     const [dayOfWeek, nth] = parts.map(Number);
     if (
-      isNaN(dayOfWeek) ||
+      Number.isNaN(+(dayOfWeek)) ||
       dayOfWeek < 0 ||
       dayOfWeek > 7 ||
-      isNaN(nth) ||
+      Number.isNaN(+(nth)) ||
       nth < 1 ||
       nth > 5
     ) {
@@ -150,8 +150,8 @@ export const validateCronField = (field, min, max, fieldName) => {
   // 9. 处理周字段的 'L' (例如 6L 表示最后一个周六)
   if (field.endsWith("L") && fieldName === "星期") {
     const dayStr = field.slice(0, -1);
-    const day = parseInt(dayStr);
-    if (isNaN(day) || day < 0 || day > 7) {
+    const day = Number.parseInt(dayStr);
+    if (Number.isNaN(+(day)) || day < 0 || day > 7) {
       return {
         valid: false,
         message: `${fieldName}字段格式错误`,
@@ -160,8 +160,8 @@ export const validateCronField = (field, min, max, fieldName) => {
     return { valid: true };
   }
 
-  const num = parseInt(field);
-  if (isNaN(num) || num < min || num > max) {
+  const num = Number.parseInt(field);
+  if (Number.isNaN(+(num)) || num < min || num > max) {
     return {
       valid: false,
       message: `${fieldName}字段必须在${min}-${max}之间`,
@@ -254,7 +254,7 @@ export const parseCronField = (field, min, max) => {
   // 处理步长，如 */5 或 0/1 或 1-10/2
   if (field.includes("/")) {
     const [range, step] = field.split("/");
-    const stepNum = parseInt(step);
+    const stepNum = Number.parseInt(step);
 
     let start = min;
     let end = max;
@@ -266,7 +266,7 @@ export const parseCronField = (field, min, max) => {
         start = rangeStart;
         end = rangeEnd;
       } else {
-        start = parseInt(range);
+        start = Number.parseInt(range);
         end = max;
       }
     }
@@ -308,8 +308,8 @@ export const parseCronField = (field, min, max) => {
   }
 
   // 处理单个数字
-  const num = parseInt(field);
-  if (!isNaN(num)) {
+  const num = Number.parseInt(field);
+  if (!Number.isNaN(+(num))) {
     values.add(num);
   }
   return Array.from(values);
@@ -324,7 +324,7 @@ export const parseCronField = (field, min, max) => {
  */
 const getNearestWeekday = (year, month, targetDay) => {
   const lastDayOfMonth = new Date(year, month, 0).getDate();
-  let day = Math.min(targetDay, lastDayOfMonth);
+  const day = Math.min(targetDay, lastDayOfMonth);
   
   const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
@@ -350,12 +350,12 @@ const getNearestWeekday = (year, month, targetDay) => {
  * 检查日期是否匹配 'W' (最近工作日)
  * @param {Date} date - 当前日期
  * @param {string} field - 字段值 (e.g. "15W")
- * @returns {boolean}
+ * @returns {boolean} Whether the date satisfies this calendar constraint.
  */
 const matchesWeekday = (date, field) => {
   if (!field.endsWith("W")) return false;
-  const targetDay = parseInt(field.slice(0, -1));
-  if (isNaN(targetDay)) return false;
+  const targetDay = Number.parseInt(field.slice(0, -1));
+  if (Number.isNaN(+(targetDay))) return false;
 
   const nearestWeekday = getNearestWeekday(date.getFullYear(), date.getMonth() + 1, targetDay);
   return date.getDate() === nearestWeekday;
@@ -365,7 +365,7 @@ const matchesWeekday = (date, field) => {
  * 检查日期是否匹配 '#' (第几个周几)
  * @param {Date} date - 当前日期
  * @param {string} field - 字段值 (e.g. "2#3" - 第3个周一)
- * @returns {boolean}
+ * @returns {boolean} Whether the date satisfies this calendar constraint.
  */
 const matchesNthWeekday = (date, field) => {
   if (!field.includes("#")) return false;
@@ -390,11 +390,11 @@ const matchesNthWeekday = (date, field) => {
  * 检查日期是否匹配周字段的 'L' (最后一个周几)
  * @param {Date} date - 当前日期
  * @param {string} field - 字段值 (e.g. "6L" - 最后一个周六)
- * @returns {boolean}
+ * @returns {boolean} Whether the date satisfies this calendar constraint.
  */
 const matchesLastWeekday = (date, field) => {
   if (!field.endsWith("L")) return false;
-  const targetDayOfWeek = parseInt(field.slice(0, -1));
+  const targetDayOfWeek = Number.parseInt(field.slice(0, -1));
   
   // 检查是否是目标周几
   const currentDayOfWeek = date.getDay();
@@ -431,7 +431,7 @@ export const calculateNextRuns = (
 ) => {
   const now = new Date();
   const nextRuns = [];
-  let current = new Date(now);
+  const current = new Date(now);
   current.setMilliseconds(0);
   current.setSeconds(0);
   current.setMinutes(current.getMinutes() + 1); // Start from next minute
@@ -440,7 +440,7 @@ export const calculateNextRuns = (
   const maxDate = new Date(now);
   maxDate.setFullYear(maxDate.getFullYear() + 1);
 
-  while (nextRuns.length < count && current <= maxDate) {
+  while (nextRuns.length < count && current.getTime() <= maxDate.getTime()) {
     // Parse each field
     const possibleMinutes = parseCronField(minuteField, 0, 59);
     const possibleHours = parseCronField(hourField, 0, 23);
@@ -583,7 +583,7 @@ export const calculateNextExecutionTime = (task) => {
     const possibleDaysOfWeek = parseCronField(dayOfWeekField, 0, 7);
 
     // 从当前时间开始，寻找下一个匹配的时间
-    let nextRun = new Date(now);
+    const nextRun = new Date(now);
     nextRun.setSeconds(0, 0);
     nextRun.setMinutes(nextRun.getMinutes() + 1); // 从下一分钟开始检查
 
@@ -591,7 +591,7 @@ export const calculateNextExecutionTime = (task) => {
     const maxCheckTime = new Date(now);
     maxCheckTime.setFullYear(maxCheckTime.getFullYear() + 1);
 
-    while (nextRun <= maxCheckTime) {
+    while (nextRun.getTime() <= maxCheckTime.getTime()) {
       const minutes = nextRun.getMinutes();
       const hours = nextRun.getHours();
       const dayOfMonth = nextRun.getDate();

@@ -1,7 +1,7 @@
 
-import { gameLogger } from '@/utils/logger';
-import { XyzwWebSocketClient } from '@/utils/xyzwWebSocket';
+import type { XyzwWebSocketClient } from '@/utils/xyzwWebSocket';
 import { EventEmitter } from 'event-emitter3';
+import { gameLogger } from '@/utils/logger';
 
 import { AckPlugin } from './ack.ts';
 import { ChatPlugin } from './chat.ts';

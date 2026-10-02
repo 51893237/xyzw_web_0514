@@ -54,27 +54,27 @@
 
       <div v-if="filteredTokens.length" class="token-grid">
         <div
-          v-for="token in filteredTokens"
-          :key="token.id"
+          v-for="gameToken in filteredTokens"
+          :key="gameToken.id"
           class="token-cell"
-          :class="{ selected: selectedTokenIds.includes(token.id) }"
+          :class="{ selected: selectedTokenIds.includes(gameToken.id) }"
         >
           <n-checkbox
-            :checked="selectedTokenIds.includes(token.id)"
-            @update:checked="(checked) => toggleToken(token.id, checked)"
+            :checked="selectedTokenIds.includes(gameToken.id)"
+            @update:checked="(checked) => toggleToken(gameToken.id, checked)"
             @click.stop
           />
-          <span class="token-server" :title="token.server || '未知区服'">
-            {{ token.server || "未知区服" }}
+          <span class="token-server" :title="gameToken.server || '未知区服'">
+            {{ gameToken.server || "未知区服" }}
           </span>
           <span class="token-sep">-</span>
-          <span class="token-name" :title="token.name || token.id">
-            {{ token.name || token.id }}
+          <span class="token-name" :title="gameToken.name || gameToken.id">
+            {{ gameToken.name || gameToken.id }}
           </span>
           <span
             class="status-dot"
-            :class="getStatusClass(token.id)"
-            :title="getStatusTitle(token.id)"
+            :class="getStatusClass(gameToken.id)"
+            :title="getStatusTitle(gameToken.id)"
           ></span>
         </div>
       </div>
@@ -233,8 +233,8 @@
       </div>
       <div ref="logsContainer" class="log-container">
         <div
-          v-for="(log, index) in visibleLogs"
-          :key="index"
+          v-for="(log, logIndex) in visibleLogs"
+          :key="logIndex"
           class="log-item"
           :class="log.type"
         >
@@ -249,8 +249,8 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import { useMessage } from "naive-ui";
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import { BOSS_NAMES } from "./boss_names.js";
 
@@ -565,7 +565,7 @@ function clearLogs() {
 function sanitizeError(error) {
   return String(error?.message || error || "")
     .replace(/请求超时: \w+(\s*\(\d+ms\))?/g, "请求超时")
-    .replace(/\b\w+_\w+\b(\s*\(\d+ms\))?/g, "")
+    .replace(/\b\w[\dA-Za-z]*_\w+\b(\s*\(\d+ms\))?/g, "")
     .trim();
 }
 

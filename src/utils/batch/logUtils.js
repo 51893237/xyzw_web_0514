@@ -76,7 +76,7 @@ export function createLogManager({ logs, logContainer, autoScrollLog, batchSetti
         message.success("日志已复制到剪贴板");
       })
       .catch((err) => {
-        message.error("复制日志失败: " + err.message);
+        message.error(`复制日志失败: ${  err.message}`);
       });
   };
 

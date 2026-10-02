@@ -1,4 +1,4 @@
-import { isDungeonOpen, merchantConfig, goldItemsConfig } from "@/utils/dreamConstants";
+import { isDungeonOpen, merchantConfig } from "@/utils/dreamConstants";
 
 /**
  * 宝库、梦境类任务
@@ -7,8 +7,8 @@ import { isDungeonOpen, merchantConfig, goldItemsConfig } from "@/utils/dreamCon
 
 /**
  * 创建宝库、梦境类任务执行器
- * @param {Object} deps - 依赖项
- * @returns {Object} 任务函数集合
+ * @param {object} deps - 依赖项
+ * @returns {object} 任务函数集合
  */
 export function createTasksDungeon(deps) {
   const {
@@ -320,7 +320,7 @@ export function createTasksDungeon(deps) {
                 operations.push({
                   merchantId: targetMerchantId,
                   index: targetItemIndex,
-                  pos: pos
+                  pos
                 });
               }
             }

@@ -107,8 +107,7 @@
         />
         <span class="climb-limit-unit">次</span>
         <button
-          :class="[
-            'climb-button',
+          class="climb-button" :class="[
             {
               active: canClimb,
               disabled: !canClimb,
@@ -145,7 +144,17 @@
 </template>
 
 <script setup>
+import { useMessage } from "naive-ui";
+
 // 停止批量爬塔操作
+import { computed, onMounted, ref, watch } from "vue";
+import { useTokenStore } from "@/stores/tokenStore";
+import { isSameGameValue } from "@/utils/gameValue.js";
+import {
+  DEFAULT_WEIRD_TOWER_MAX_CLIMB,
+  normalizeWeirdTowerMaxClimb,
+} from "@/utils/towerClimbLimit.js";
+
 let stopFlag = false;
 let stopItemFlag = false;
 let stopMergeFlag = false;
@@ -170,14 +179,6 @@ const stopUsingItems = () => {
   message.info("已手动停止使用道具");
 };
 
-import { computed, onMounted, ref, watch } from "vue";
-import { useTokenStore } from "@/stores/tokenStore";
-import { useMessage } from "naive-ui";
-import {
-  DEFAULT_WEIRD_TOWER_MAX_CLIMB,
-  normalizeWeirdTowerMaxClimb,
-} from "@/utils/towerClimbLimit.js";
-
 const tokenStore = useTokenStore();
 const message = useMessage();
 
@@ -192,7 +193,7 @@ const maxClimbInput = ref(DEFAULT_WEIRD_TOWER_MAX_CLIMB);
 const climbTimeout = ref(null); // 用于超时重置状态
 const itemTimeout = ref(null); // 用于道具使用超时
 const mergeTimeout = ref(null); // 用于合成超时
-const lastClimbResult = ref(null); // 最后一次爬塔结果
+ // 最后一次爬塔结果
 
 // 计算属性 - 从gameData中获取塔相关信息
 const evoTowerInfo = computed(() => {
@@ -222,9 +223,7 @@ const pendingChapterRewards = computed(() => {
   return Math.max(0, Math.floor(towerId / 10) - rewardTowerId.value);
 })
 
-const lotteryLeftCnt = computed(() => {
-  return weirdTowerData.value?.lotteryLeftCnt || 0
-})
+
 
 const displayFloor = computed(() => {
   const towerId = currentTowerId.value;
@@ -425,6 +424,7 @@ const startUseItems = async () => {
     message.success(`开始使用道具，剩余：${lotteryLeftCnt}，已用：${costTotalCnt}`);
     let processedCount = 0;
 
+    // eslint-disable-next-line no-unmodified-loop-condition -- The Stop button changes this flag while awaited requests yield.
     while (lotteryLeftCnt > 0 && !stopItemFlag) {
       let pos = {};
       if (costTotalCnt < 2) {
@@ -441,7 +441,7 @@ const startUseItems = async () => {
         "mergebox_openbox",
         {
           actType: 1,
-          pos: pos
+          pos
         },
         5000
       );
@@ -466,7 +466,7 @@ const startUseItems = async () => {
     await getTowerInfo();
 
   } catch (error) {
-    message.error("使用道具失败: " + (error.message || "未知错误"));
+    message.error(`使用道具失败: ${  error.message || "未知错误"}`);
   } finally {
     if (itemTimeout.value) {
       clearTimeout(itemTimeout.value);
@@ -505,6 +505,7 @@ const autoMergeItems = async () => {
     let loopCount = 0;
     const MAX_LOOPS = 20;
 
+    // eslint-disable-next-line no-unmodified-loop-condition -- The Stop button changes this flag while awaited requests yield.
     while (loopCount < MAX_LOOPS && !stopMergeFlag) {
       loopCount++;
 
@@ -531,7 +532,7 @@ const autoMergeItems = async () => {
              await tokenStore.sendMessageWithPromise(
                tokenId,
                "mergebox_claimmergeprogress",
-               { actType: 1, taskId: parseInt(taskId) },
+               { actType: 1, taskId: Number.parseInt(taskId) },
                2000
              ).catch(() => {});
              await new Promise((res) => setTimeout(res, 500));
@@ -547,10 +548,10 @@ const autoMergeItems = async () => {
       for (const xStr in gridMap) {
         for (const yStr in gridMap[xStr]) {
           const item = gridMap[xStr][yStr];
-          if (item.gridConfId == 0 && item.gridItemId > 0 && !item.isLock) {
+          if (isSameGameValue(item.gridConfId, 0) && item.gridItemId > 0 && !item.isLock) {
             items.push({
-              x: parseInt(xStr),
-              y: parseInt(yStr),
+              x: Number.parseInt(xStr),
+              y: Number.parseInt(yStr),
               id: item.gridItemId
             });
           }
@@ -628,7 +629,7 @@ const autoMergeItems = async () => {
     await getTowerInfo();
 
   } catch (error) {
-    message.error("一键合成失败: " + (error.message || "未知错误"));
+    message.error(`一键合成失败: ${  error.message || "未知错误"}`);
   } finally {
     if (mergeTimeout.value) {
       clearTimeout(mergeTimeout.value);
@@ -728,7 +729,7 @@ const startTowerClimb = async () => {
              await tokenStore.sendMessageWithPromise(
                tokenId,
                "evotower_claimtask",
-               { taskId: taskId },
+               { taskId },
                2000
              ).then(() => {
                 message.success(`领取每日任务奖励 ${taskId} 成功`);
@@ -772,7 +773,7 @@ const startTowerClimb = async () => {
     await new Promise((res) => setTimeout(res, 500));
     message.success(`已自动爬塔${climbCount}次，体力已耗尽或达到上限。`);
   } catch (error) {
-    message.error("批量爬塔失败: " + (error.message || "未知错误"));
+    message.error(`批量爬塔失败: ${  error.message || "未知错误"}`);
   }
 
   // 清除超时并重置状态
@@ -886,7 +887,7 @@ watch(
 onMounted(() => {
   // 检查WebSocket客户端
   if (tokenStore.selectedToken) {
-    const client = tokenStore.getWebSocketClient(tokenStore.selectedToken.id);
+    tokenStore.getWebSocketClient(tokenStore.selectedToken.id);
   }
 
   // 组件挂载时获取塔信息

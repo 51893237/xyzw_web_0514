@@ -17,7 +17,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
-const gameSrc = import.meta.env.BASE_URL + 'game/index.html'
+const gameSrc = `${import.meta.env.BASE_URL  }game/index.html`
 
 function goBack() {
   router.push('/admin/dashboard')

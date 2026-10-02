@@ -1,4 +1,3 @@
-import { useTokenStore } from "@/stores/tokenStore";
 
 // 辅助函数
 const pickArenaTargetId = (targets) => {

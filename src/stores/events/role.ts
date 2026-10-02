@@ -32,7 +32,7 @@ export const RolePlugin = ({
       if (server && server !== token.server) {
         // 更新token信息
         tokenStore.updateToken(tokenId, {
-          server: server,
+          server,
         });
 
         gameLogger.verbose(`已更新Token ${tokenId} 的服务器信息`, { server });

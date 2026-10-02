@@ -1,23 +1,23 @@
 <template>
   <!-- 手动输入表单 -->
-  <n-form :model="importForm" :label-placement="'top'" :size="'large'" :show-label="true">
+  <NForm :model="importForm" label-placement="top" size="large" :show-label="true">
 
 
-    <n-form-item :label="'bin文件'" :show-label="true">
+    <NFormItem label="bin文件" :show-label="true">
       <a-upload multiple accept="*.bin,*.dmp" @before-upload="uploadBin" draggable dropzone placeholder="粘贴Token字符串..."
         clearable>
         <!-- <div class="dropzone-content">
           请点击上传或将bind文件拖拽到此处
         </div> -->
       </a-upload>
-    </n-form-item>
+    </NFormItem>
 
-    <n-form-item label="角色命名格式" :show-label="true">
-      <n-input v-model:value="importForm.nameTemplate" placeholder="{name}-{index}-{id}" />
+    <NFormItem label="角色命名格式" :show-label="true">
+      <NInput v-model:value="importForm.nameTemplate" placeholder="{name}-{index}-{id}" />
       <template #feedback>
         支持变量: {name}角色名, {id}角色ID, {index}角色序号, {server}区服
       </template>
-    </n-form-item>
+    </NFormItem>
 
     <ServerRoleList
       :data="serverListData"
@@ -27,7 +27,7 @@
     />
 
     <a-list>
-      <a-list-item v-for="(role, index) in roleList" :key="index">
+      <a-list-item v-for="(role, roleIndex) in roleList" :key="roleIndex">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
           <div>
             <strong>角色名称:</strong> {{ role.name || "未命名角色" }}<br />
@@ -36,55 +36,53 @@
             <strong>服务器:</strong> {{ role.server || "未指定" }}<br />
             <strong>角色序号:</strong> {{ role.roleIndex }}
           </div>
-          <n-button type="error" size="small" @click="removeRole(index)">
+          <NButton type="error" size="small" @click="removeRole(roleIndex)">
             删除
-          </n-button>
+          </NButton>
         </div>
       </a-list-item>
     </a-list>
 
     <div class="form-actions">
-      <n-button type="primary" size="large" block :loading="isImporting" @click="handleImport">
+      <NButton type="primary" size="large" block :loading="isImporting" @click="handleImport">
         <template #icon>
-          <n-icon>
+          <NIcon>
             <CloudUpload />
-          </n-icon>
+          </NIcon>
         </template>
         添加Token
-      </n-button>
+      </NButton>
 
-      <n-button v-if="tokenStore.hasTokens" size="large" block @click="cancel">
+      <NButton v-if="tokenStore.hasTokens" size="large" block @click="cancel">
         取消
-      </n-button>
+      </NButton>
     </div>
-  </n-form>
+  </NForm>
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive } from "vue";
-import { useTokenStore } from "@/stores/tokenStore";
 import { CloudUpload } from "@vicons/ionicons5";
-
 import {
+  NButton,
   NForm,
   NFormItem,
-  NInput,
-  NButton,
   NIcon,
-  NCollapse,
-  NCollapseItem,
+  NInput,
   useMessage,
 } from "naive-ui";
-
 import PQueue from "p-queue";
+
+import { reactive, ref } from "vue";
+
 import useIndexedDB from "@/hooks/useIndexedDB";
-import { getTokenId, transformToken, getServerList } from "@/utils/token";
-import { g_utils } from "@/utils/bonProtocol";
+import { useTokenStore } from "@/stores/tokenStore";
 import {
   buildRoleBin,
   downloadBinFile,
   getRoleBinFileName,
 } from "@/utils/binFile";
+import { g_utils } from "@/utils/bonProtocol";
+import { getServerList, getTokenId, transformToken } from "@/utils/token";
 
 const $emit = defineEmits(["cancel", "ok"]);
 
@@ -128,27 +126,7 @@ const originalBinData = ref<any>(null);
 
 const tQueue = new PQueue({ concurrency: 1, interval: 1000 });
 
-const initName = (fileName: string) => {
-  if (!fileName) return;
-  fileName = fileName.trim();
-  let binRes = fileName.match(/^bin-(.*?)服-([0-2])-([0-9]{6,12})-(.*)\.bin$/);
-  console.log(binRes);
-  if (binRes) {
-    importForm.name = `${binRes[1]}_${binRes[2]}_${binRes[4]}`;
-    return {
-      server: binRes[1],
-      roleIndex: binRes[2],
-      roleId: binRes[3],
-      roleName: binRes[4],
-    };
-  }
-  return {
-    server: "",
-    roleIndex: "",
-    roleId: "",
-    roleName: importForm.name || "",
-  };
-};
+
 
 const handleDownload = (roleInfo: any) => {
   if (!originalBinData.value) {
@@ -162,7 +140,7 @@ const handleDownload = (roleInfo: any) => {
     message.success(`已开始下载: ${fileName}`);
   } catch (e: any) {
     console.error("下载失败", e);
-    message.error("下载失败: " + e.message);
+    message.error(`下载失败: ${  e.message}`);
   }
 };
 
@@ -197,10 +175,10 @@ const addSelectedRole = async (roleInfo: any) => {
 
     const template = importForm.nameTemplate || "{name}-{index}-{id}";
     const finalName = template
-      .replace(/{name}/g, () => roleName)
-      .replace(/{index}/g, () => String(roleIndex))
-      .replace(/{id}/g, () => String(roleInfo.roleId))
-      .replace(/{server}/g, () => String(serverNum) + "服");
+      .replace(/\{name\}/g, () => roleName)
+      .replace(/\{index\}/g, () => String(roleIndex))
+      .replace(/\{id\}/g, () => String(roleInfo.roleId))
+      .replace(/\{server\}/g, () => `${String(serverNum)  }服`);
 
     // 检查是否已存在相同配置 (根据角色名称和roleId)
     const exists = roleList.value.some(
@@ -217,8 +195,8 @@ const addSelectedRole = async (roleInfo: any) => {
       roleId: roleInfo.roleId,
       token: roleToken,
       name: finalName,
-      server: String(serverNum) + "服",
-      roleIndex: roleIndex,
+      server: `${String(serverNum)  }服`,
+      roleIndex,
       wsUrl: importForm.wsUrl || "",
       importMethod: "bin",
     });
@@ -227,7 +205,7 @@ const addSelectedRole = async (roleInfo: any) => {
 
   } catch (e: any) {
     console.error("添加角色失败", e);
-    message.error("添加角色失败: " + e.message);
+    message.error(`添加角色失败: ${  e.message}`);
   }
 };
 
@@ -271,7 +249,7 @@ const uploadBin = (binFile: File) => {
         originalBinData.value = binData;
       } catch (err: any) {
         console.error("Bin文件解析失败", err);
-        binDecodedResult.value = "Bin文件解析失败: " + (err.message || err);
+        binDecodedResult.value = `Bin文件解析失败: ${  err.message || err}`;
       }
     };
     reader.onerror = () => {
@@ -339,3 +317,10 @@ const handleImport = async () => {
   font-size: 12px;
 }
 </style>
+
+<route lang="json">
+{
+  "name": "/TokenImport/bin",
+  "path": "/TokenImport/bin"
+}
+</route>

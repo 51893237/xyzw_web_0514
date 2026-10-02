@@ -3,33 +3,33 @@
     <!-- 顶部工具栏 -->
     <div class="toolbar">
       <div class="left">
-        <n-tag type="warning" round size="small">逐鹿盐山</n-tag>
-        <n-tag v-if="season > 0" type="info" size="small" round> {{ formatSeason(season) }} </n-tag>
-        <n-select
+        <NTag type="warning" round size="small">逐鹿盐山</NTag>
+        <NTag v-if="season > 0" type="info" size="small" round> {{ formatSeason(season) }} </NTag>
+        <NSelect
           v-if="availableRounds.length"
           v-model:value="selectedRound"
           :options="roundOptions"
           size="small"
           style="width: 176px"
         />
-        <n-tag v-if="selectedRoundEnded" size="small" round type="default">
+        <NTag v-if="selectedRoundEnded" size="small" round type="default">
           历史期 · 已结束
-        </n-tag>
-        <n-tag v-else-if="selectedRound" size="small" round type="error">当前期</n-tag>
-        <n-tag v-if="activeStageName && !selectedRoundEnded" size="small" round type="success">
+        </NTag>
+        <NTag v-else-if="selectedRound" size="small" round type="error">当前期</NTag>
+        <NTag v-if="activeStageName && !selectedRoundEnded" size="small" round type="success">
           {{ activeStageName }}
-        </n-tag>
+        </NTag>
       </div>
       <div class="right">
-        <n-button size="small" :loading="loading" :disabled="!isConnected" @click="fetchAllData">
-          <template #icon><n-icon><RefreshOutline /></n-icon></template>
+        <NButton size="small" :loading="loading" :disabled="!isConnected" @click="fetchAllData">
+          <template #icon><NIcon><RefreshOutline /></NIcon></template>
           刷新数据
-        </n-button>
+        </NButton>
       </div>
     </div>
 
     <!-- 选择 / 进行 提醒条 -->
-    <n-alert
+    <NAlert
       v-if="selectedRound"
       :type="selectedRoundEnded ? 'default' : 'info'"
       style="margin-bottom: 12px"
@@ -61,31 +61,31 @@
           · 同期进行中还有第 {{ otherCurrentRounds.join("、") }} 期
         </template>
       </template>
-    </n-alert>
+    </NAlert>
 
     <!-- 连接状态提示 -->
-    <n-alert v-if="!isConnected" type="warning" style="margin-bottom: 12px">
+    <NAlert v-if="!isConnected" type="warning" style="margin-bottom: 12px">
       <template #header>WebSocket 未连接</template>
       请先在 Token 管理中导入并连接游戏服务器。连接成功后会自动加载数据，也可手动点击"刷新数据"。
-    </n-alert>
+    </NAlert>
 
     <!-- 赛季更新提示：配置快照未覆盖当前赛季 -->
-    <n-alert v-if="confStale" type="error" style="margin-bottom: 12px">
+    <NAlert v-if="confStale" type="error" style="margin-bottom: 12px">
       <template #header>配置与当前赛季不匹配</template>
       服务端赛季为第 {{ roleSeason }} 赛季，但本地配置快照未覆盖当前时间（不处于任何赛季窗口）。
       请以服务端最新配置重新生成 <code>src/utils/apexStageMap.js</code>：
       先拉取 <code>data/version.json</code> 取得版本号，再下载
       <code>data/&lt;版本号&gt;/config.json</code> 存为 <code>/tmp/xyzw_config.json</code>，
       然后重跑随附的生成脚本刷新快照。
-    </n-alert>
+    </NAlert>
 
     <!-- 空状态 -->
-    <n-empty
+    <NEmpty
       v-if="!loading && !roleInfo.apexRoleInfo"
       description="暂无逐鹿盐山数据，请点击刷新数据加载"
       style="padding: 60px 0"
     />
-    <n-empty
+    <NEmpty
       v-else-if="!loading && season <= 0"
       description="当前不在逐鹿盐山赛季内"
       style="padding: 60px 0"
@@ -93,18 +93,18 @@
 
     <!-- 子标签 -->
     <div v-if="roleInfo.apexRoleInfo && season > 0" class="main-content">
-      <n-tabs
+      <NTabs
         v-model:value="activeSubTab"
         type="segment"
         animated
         size="small"
         style="margin-bottom: 12px"
       >
-        <n-tab-pane name="overview" tab="🏆 总览" />
-        <n-tab-pane name="schedule" tab="🗓 赛程" />
-        <n-tab-pane name="bet" tab="🎯 竞猜" />
-        <n-tab-pane name="vote" tab="📣 助威" />
-      </n-tabs>
+        <NTabPane name="overview" tab="🏆 总览" />
+        <NTabPane name="schedule" tab="🗓 赛程" />
+        <NTabPane name="bet" tab="🎯 竞猜" />
+        <NTabPane name="vote" tab="📣 助威" />
+      </NTabs>
 
       <!-- ==================== 总览 ==================== -->
       <div v-show="activeSubTab === 'overview'" class="tab-content">
@@ -113,7 +113,7 @@
             <div class="banner-title">🐉 逐鹿盐山</div>
             <div class="banner-sub">
               {{ formatSeason(season) }} · 第 {{ selectedRound || "-" }} 期
-              <n-tag v-if="selectedRoundEnded" size="tiny" round type="default">历史期 · 只读</n-tag>
+              <NTag v-if="selectedRoundEnded" size="tiny" round type="default">历史期 · 只读</NTag>
               <template v-if="seasonConf">（{{ seasonConf.startDate }} ~ {{ seasonConf.endDate }}）</template>
             </div>
           </div>
@@ -133,7 +133,7 @@
           </div>
         </div>
 
-        <n-card :title="`⏱ 第${selectedRound || '-'}期阶段进度`" size="small" style="margin-top: 12px">
+        <NCard :title="`⏱ 第${selectedRound || '-'}期阶段进度`" size="small" style="margin-top: 12px">
           <div class="stage-timeline">
             <div
               v-for="st in stageTimeline"
@@ -145,17 +145,17 @@
               <div class="stage-body">
                 <div class="stage-name">
                   {{ st.label }}
-                  <n-tag v-if="st.isActive" size="tiny" type="error" round>进行中</n-tag>
-                  <n-tag v-else-if="st.isEnded" size="tiny" type="success" round>已结束</n-tag>
+                  <NTag v-if="st.isActive" size="tiny" type="error" round>进行中</NTag>
+                  <NTag v-else-if="st.isEnded" size="tiny" type="success" round>已结束</NTag>
                 </div>
                 <div class="stage-date">{{ st.dateText }}</div>
               </div>
             </div>
           </div>
-        </n-card>
+        </NCard>
 
-        <n-grid :cols="4" :x-gap="12" :y-gap="12" style="margin-top: 12px">
-          <n-grid-item v-for="rs in resetCards" :key="rs.label">
+        <NGrid :cols="4" :x-gap="12" :y-gap="12" style="margin-top: 12px">
+          <NGridItem v-for="rs in resetCards" :key="rs.label">
             <div class="stat-card" :class="rs.color">
               <div class="stat-icon">{{ rs.icon }}</div>
               <div class="stat-info">
@@ -163,14 +163,14 @@
                 <div class="stat-value2">{{ rs.value }}</div>
               </div>
             </div>
-          </n-grid-item>
-        </n-grid>
+          </NGridItem>
+        </NGrid>
       </div>
 
       <!-- ==================== 赛程（当前 + 历史） ==================== -->
       <div v-show="activeSubTab === 'schedule'" class="tab-content">
-        <n-card :title="`🗓 第${selectedRound || '-'}期赛程`" size="small" style="margin-bottom: 12px">
-          <n-empty v-if="currentSchedule.length === 0" description="当前暂无进行中的赛程" style="padding: 30px 0" />
+        <NCard :title="`🗓 第${selectedRound || '-'}期赛程`" size="small" style="margin-bottom: 12px">
+          <NEmpty v-if="currentSchedule.length === 0" description="当前暂无进行中的赛程" style="padding: 30px 0" />
           <div v-else class="stage-timeline">
             <div
               v-for="(st, si) in currentSchedule"
@@ -182,37 +182,37 @@
               <div class="stage-body">
                 <div class="stage-name">
                   {{ st.stageName }}
-                  <n-tag v-if="st.isToday" size="tiny" type="error" round>今日</n-tag>
-                  <n-tag v-if="st.isPast" size="tiny" type="success" round>已过</n-tag>
+                  <NTag v-if="st.isToday" size="tiny" type="error" round>今日</NTag>
+                  <NTag v-if="st.isPast" size="tiny" type="success" round>已过</NTag>
                 </div>
                 <div class="stage-date">{{ st.dateText }}</div>
                 <div class="stage-sids">赛程ID: {{ st.sids.join(", ") }}</div>
               </div>
             </div>
           </div>
-        </n-card>
+        </NCard>
 
-        <n-card title="📚 历史赛程">
-          <n-empty
+        <NCard title="📚 历史赛程">
+          <NEmpty
             v-if="scheduleGroups.length === 0 && !fetchingSchedule"
             description="暂无赛程数据"
             style="padding: 40px 0"
           />
-          <n-spin :show="fetchingSchedule">
-            <n-collapse v-if="scheduleGroups.length > 0">
-              <n-collapse-item
+          <NSpin :show="fetchingSchedule">
+            <NCollapse v-if="scheduleGroups.length > 0">
+              <NCollapseItem
                 v-for="grp in scheduleGroups"
                 :key="`r${grp.round}`"
                 :title="`第${grp.round}期 — ${grp.total} 场对阵`"
               >
-                <n-collapse v-if="grp.stages.length" default-expanded>
-                  <n-collapse-item
+                <NCollapse v-if="grp.stages.length" default-expanded>
+                  <NCollapseItem
                     v-for="stg in grp.stages"
                     :key="`s${grp.round}-${stg.stage}`"
                     :title="`${stg.stageName} (${stg.matches.length} 场)`"
                   >
-                    <n-space vertical size="small">
-                      <n-card
+                    <NSpace vertical size="small">
+                      <NCard
                         v-for="(m, mi) in stg.matches"
                         :key="`m${grp.round}-${stg.stage}-${mi}`"
                         size="small"
@@ -222,7 +222,7 @@
                           <div class="team-block" :class="{ win: m.team1Win }">
                             <div class="team-name">
                               {{ m.team1Name }}
-                              <n-tag v-if="m.team1Win" round size="tiny" type="success">胜</n-tag>
+                              <NTag v-if="m.team1Win" round size="tiny" type="success">胜</NTag>
                             </div>
                             <div class="team-meta">战力 {{ (m.team1Power / POWER_UNIT).toFixed(1) }}亿</div>
                           </div>
@@ -230,35 +230,35 @@
                           <div class="team-block right" :class="{ win: m.team2Win }">
                             <div class="team-name">
                               {{ m.team2Name }}
-                              <n-tag v-if="m.team2Win" round size="tiny" type="success">胜</n-tag>
+                              <NTag v-if="m.team2Win" round size="tiny" type="success">胜</NTag>
                             </div>
                             <div class="team-meta">战力 {{ (m.team2Power / POWER_UNIT).toFixed(1) }}亿</div>
                           </div>
                         </div>
-                      </n-card>
-                    </n-space>
-                  </n-collapse-item>
-                </n-collapse>
-                <n-empty v-else description="该期暂无对阵记录" style="padding: 20px 0" />
-              </n-collapse-item>
-            </n-collapse>
-          </n-spin>
-        </n-card>
+                      </NCard>
+                    </NSpace>
+                  </NCollapseItem>
+                </NCollapse>
+                <NEmpty v-else description="该期暂无对阵记录" style="padding: 20px 0" />
+              </NCollapseItem>
+            </NCollapse>
+          </NSpin>
+        </NCard>
       </div>
 
       <!-- ==================== 竞猜（当前 + 历史） ==================== -->
       <div v-show="activeSubTab === 'bet'" class="tab-content">
-        <n-alert v-if="actionCooldown.guess > 0" size="small" style="margin-bottom: 12px" type="warning">
+        <NAlert v-if="actionCooldown.guess > 0" size="small" style="margin-bottom: 12px" type="warning">
           竞猜被服务器限流（200400），请 {{ actionCooldown.guess }} 秒后再试；间隔由自适应限流学习得到，连续成功后会自动缩短。
-        </n-alert>
-        <n-card :title="`🎯 ${currentBetTitle}`" size="small" style="margin-bottom: 12px">
-          <n-empty
+        </NAlert>
+        <NCard :title="`🎯 ${currentBetTitle}`" size="small" style="margin-bottom: 12px">
+          <NEmpty
             v-if="currentBets.length === 0"
             description="当前期暂无淘汰赛竞猜阶段"
             style="padding: 30px 0"
           />
-          <n-space v-else vertical size="small">
-            <n-card
+          <NSpace v-else vertical size="small">
+            <NCard
               v-for="grp in currentBets"
               :key="`cbg${grp.scheduleId}`"
               size="small"
@@ -266,20 +266,20 @@
             >
               <template #header>
                 <span class="stage-group-title">🏅 {{ grp.stageName }}</span>
-                <n-tag :type="guessStatusTag(grp.state)" size="tiny" round style="margin-left: 8px">
+                <NTag :type="guessStatusTag(grp.state)" size="tiny" round style="margin-left: 8px">
                   {{ guessStatusText(grp.state) }}
-                </n-tag>
-                <n-tag v-if="grp.advanceNum > 0" size="tiny" round style="margin-left: 6px">
+                </NTag>
+                <NTag v-if="grp.advanceNum > 0" size="tiny" round style="margin-left: 6px">
                   已押 {{ grp.myBets.length }}/{{ grp.advanceNum }}
-                </n-tag>
+                </NTag>
               </template>
 
-              <n-empty
+              <NEmpty
                 v-if="grp.state === ApexScheduleStatus.None"
                 :description="grp.openTip"
                 style="padding: 16px 0"
               />
-              <n-space v-else vertical size="small">
+              <NSpace v-else vertical size="small">
                 <div
                   v-for="(b, bi) in visibleBets(grp)"
                   :key="`cb${grp.scheduleId}-${betPage(grp)}-${bi}`"
@@ -289,12 +289,12 @@
                     <div class="team-block">
                       <div class="team-name">
                         {{ b.team1Name }}
-                        <n-tag v-if="grp.myBets.includes(b.team1Id)" size="tiny" type="info" round>我押</n-tag>
+                        <NTag v-if="grp.myBets.includes(b.team1Id)" size="tiny" type="info" round>我押</NTag>
                       </div>
                       <div class="team-meta">
                         战力 {{ (b.team1Power / POWER_UNIT).toFixed(1) }}亿 · 助威 {{ formatNumber(b.team1Cheer) }}
                       </div>
-                      <n-button
+                      <NButton
                         v-if="!grp.myBets.includes(b.team1Id)"
                         size="tiny"
                         :type="canBetRow(grp, b) ? 'primary' : 'default'"
@@ -305,18 +305,18 @@
                         @click="doGuess(b.team1Id, b, grp)"
                       >
                         押 {{ b.team1Name.slice(0, BET_BTN_NAME_LEN) }}
-                      </n-button>
+                      </NButton>
                     </div>
                     <div class="vs">VS</div>
                     <div class="team-block right">
                       <div class="team-name">
                         {{ b.team2Name }}
-                        <n-tag v-if="grp.myBets.includes(b.team2Id)" size="tiny" type="info" round>我押</n-tag>
+                        <NTag v-if="grp.myBets.includes(b.team2Id)" size="tiny" type="info" round>我押</NTag>
                       </div>
                       <div class="team-meta">
                         战力 {{ (b.team2Power / POWER_UNIT).toFixed(1) }}亿 · 助威 {{ formatNumber(b.team2Cheer) }}
                       </div>
-                      <n-button
+                      <NButton
                         v-if="!grp.myBets.includes(b.team2Id)"
                         size="tiny"
                         :type="canBetRow(grp, b) ? 'primary' : 'default'"
@@ -327,41 +327,41 @@
                         @click="doGuess(b.team2Id, b, grp)"
                       >
                         押 {{ b.team2Name.slice(0, BET_BTN_NAME_LEN) }}
-                      </n-button>
+                      </NButton>
                     </div>
                   </div>
                 </div>
-              </n-space>
+              </NSpace>
 
               <div
                 v-if="grp.state !== ApexScheduleStatus.None && betTotalPages(grp) > 1"
                 class="guess-pager"
               >
-                <n-button size="tiny" :disabled="betPage(grp) <= 0" @click="goBetPage(grp, -1)">
+                <NButton size="tiny" :disabled="betPage(grp) <= 0" @click="goBetPage(grp, -1)">
                   上一页
-                </n-button>
+                </NButton>
                 <span class="stage-date">
                   第 {{ betPage(grp) + 1 }}/{{ betTotalPages(grp) }} 页 · 已加载 {{ grp.matches.length }} 场
                 </span>
-                <n-button
+                <NButton
                   size="tiny"
                   :loading="grp.loading"
                   :disabled="betPage(grp) + 1 >= betTotalPages(grp)"
                   @click="goBetPage(grp, 1)"
                 >
                   下一页
-                </n-button>
+                </NButton>
               </div>
               <div v-else-if="grp.state !== ApexScheduleStatus.None" class="guess-pager">
                 <span class="stage-date">共 {{ grp.matches.length }} 场对阵</span>
               </div>
-            </n-card>
-          </n-space>
-        </n-card>
+            </NCard>
+          </NSpace>
+        </NCard>
 
-        <n-card title="📚 历史竞猜记录">
-          <n-empty v-if="betList.length === 0" description="暂无历史竞猜数据" style="padding: 40px 0" />
-          <n-data-table
+        <NCard title="📚 历史竞猜记录">
+          <NEmpty v-if="betList.length === 0" description="暂无历史竞猜数据" style="padding: 40px 0" />
+          <NDataTable
             v-else
             :columns="betColumns"
             :data="betList"
@@ -369,20 +369,20 @@
             :pagination="{ pageSize: 20 }"
             size="small"
           />
-        </n-card>
+        </NCard>
         <div class="stage-date" style="margin-top: 8px">{{ rateLimitText }}</div>
       </div>
 
       <!-- ==================== 助威（当前） ==================== -->
       <div v-show="activeSubTab === 'vote'" class="tab-content">
-        <n-alert v-if="actionCooldown.vote > 0" size="small" style="margin-bottom: 12px" type="warning">
+        <NAlert v-if="actionCooldown.vote > 0" size="small" style="margin-bottom: 12px" type="warning">
           助威被服务器限流（200400），请 {{ actionCooldown.vote }} 秒后再试；间隔由自适应限流学习得到，连续成功后会自动缩短。
-        </n-alert>
-        <n-card :title="`📣 ${currentRoundTitle}`" size="small" style="margin-bottom: 12px">
-          <n-alert v-if="!supportOpen" type="warning" size="small" style="margin-bottom: 12px">
+        </NAlert>
+        <NCard :title="`📣 ${currentRoundTitle}`" size="small" style="margin-bottom: 12px">
+          <NAlert v-if="!supportOpen" type="warning" size="small" style="margin-bottom: 12px">
             当前不在助威时间内（仅正式赛段 / 淘汰赛段可助威，且该期不能有已锁定或进行中的场次）。
-          </n-alert>
-          <n-empty
+          </NAlert>
+          <NEmpty
             v-if="currentVoteBoard.length === 0"
             description="当前暂无可助威的队伍"
             style="padding: 30px 0"
@@ -403,13 +403,13 @@
                 </div>
                 <div class="vote-cheer-num">
                   🔥 {{ formatNumber(t.cheerCnt) }}
-                  <n-tag v-if="t.level > 0" size="tiny" type="warning" round style="margin-left: 4px">
+                  <NTag v-if="t.level > 0" size="tiny" type="warning" round style="margin-left: 4px">
                     Lv.{{ t.level }}
-                  </n-tag>
+                  </NTag>
                   <span v-if="t.myCnt > 0" class="my-vote">我助威 {{ t.myCnt }} 次</span>
                 </div>
               </div>
-              <n-button
+              <NButton
                 size="tiny"
                 type="success"
                 round
@@ -419,15 +419,15 @@
                 @click="openVoteDialog(t.teamId, t.name, selectedRound)"
               >
                 {{ t.isOut ? "已淘汰" : "🚀 助威" }}
-              </n-button>
+              </NButton>
             </div>
           </div>
-        </n-card>
+        </NCard>
       </div>
     </div>
 
     <!-- 助威数量选择对话框 -->
-    <n-modal
+    <NModal
       v-model:show="voteDialogVisible"
       preset="card"
       :title="`助威 ${voteTargetName || ''}`"
@@ -435,23 +435,23 @@
       :bordered="false"
     >
       <div class="vote-dialog-body">
-        <n-space vertical size="large">
+        <NSpace vertical size="large">
           <div class="vote-dialog-tip">
             为 {{ voteTargetName }} 助威，当前持有
-            <n-tag size="small" type="info" round>{{ supportItemCnt }}</n-tag>
+            <NTag size="small" type="info" round>{{ supportItemCnt }}</NTag>
             个助威道具
           </div>
           <div class="vote-quantity">
-            <n-button size="small" @click="voteChangeNum(-10)">-10</n-button>
-            <n-button size="small" @click="voteChangeNum(-1)">-1</n-button>
+            <NButton size="small" @click="voteChangeNum(-10)">-10</NButton>
+            <NButton size="small" @click="voteChangeNum(-1)">-1</NButton>
             <span class="vote-num">{{ voteCnt }}</span>
-            <n-button size="small" @click="voteChangeNum(1)">+1</n-button>
-            <n-button size="small" @click="voteChangeNum(10)">+10</n-button>
-            <n-button size="small" @click="voteChangeNum(voteMaxCnt)">MAX</n-button>
+            <NButton size="small" @click="voteChangeNum(1)">+1</NButton>
+            <NButton size="small" @click="voteChangeNum(10)">+10</NButton>
+            <NButton size="small" @click="voteChangeNum(voteMaxCnt)">MAX</NButton>
           </div>
-          <n-space justify="end">
-            <n-button size="small" @click="voteDialogVisible = false">取消</n-button>
-            <n-button
+          <NSpace justify="end">
+            <NButton size="small" @click="voteDialogVisible = false">取消</NButton>
+            <NButton
               size="small"
               type="primary"
               :disabled="actionCooldown.vote > 0"
@@ -459,15 +459,36 @@
               @click="doVote"
             >
               确认助威{{ actionCooldown.vote > 0 ? `（冷却 ${actionCooldown.vote}s）` : "" }}
-            </n-button>
-          </n-space>
-        </n-space>
+            </NButton>
+          </NSpace>
+        </NSpace>
       </div>
-    </n-modal>
+    </NModal>
   </div>
 </template>
 
 <script setup>
+import { RefreshOutline } from "@vicons/ionicons5";
+import {
+  NAlert,
+  NButton,
+  NCard,
+  NCollapse,
+  NCollapseItem,
+  NDataTable,
+  NEmpty,
+  NGrid,
+  NGridItem,
+  NIcon,
+  NModal,
+  NSelect,
+  NSpace,
+  NSpin,
+  NTabPane,
+  NTabs,
+  NTag,
+  useMessage,
+} from "naive-ui";
 /**
  * 逐鹿盐山（APEX）面板
  *
@@ -480,27 +501,6 @@
  * 赛季更新后只需重新生成配置快照，本组件无需改动。
  */
 import { computed, h, onMounted, onUnmounted, reactive, ref, watch } from "vue";
-import {
-  NTag,
-  NButton,
-  NIcon,
-  NAlert,
-  NEmpty,
-  NTabs,
-  NTabPane,
-  NCard,
-  NGrid,
-  NGridItem,
-  NDataTable,
-  NCollapse,
-  NCollapseItem,
-  NSpace,
-  NSpin,
-  NSelect,
-  NModal,
-  useMessage,
-} from "naive-ui";
-import { RefreshOutline } from "@vicons/ionicons5";
 import { useTokenStore } from "@/stores/tokenStore";
 import {
   ApexAction,
@@ -510,13 +510,13 @@ import {
   runApexAction,
 } from "@/utils/apexRateLimit";
 import {
+  apexConstantConf,
   ApexRoundPhase,
   ApexScheduleStatus,
   ApexStageType,
-  apexConstantConf,
   calibrateServerTime,
-  canGuessRow,
   canGuessNow,
+  canGuessRow,
   checkNowInSeason,
   checkSupportInTime,
   getAdvanceNum,

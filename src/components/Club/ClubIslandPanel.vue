@@ -2,29 +2,29 @@
   <div class="island-panel">
     <!-- 顶部工具条 -->
     <div class="ip-toolbar">
-      <n-space size="small" align="center">
-        <n-tag v-if="islandLabel" size="small" type="warning" :bordered="false">
+      <NSpace size="small" align="center">
+        <NTag v-if="islandLabel" size="small" type="warning" :bordered="false">
           当前所在：{{ islandLabel }}
-        </n-tag>
+        </NTag>
         <span v-if="lastLoadAt" class="ip-dim">更新于 {{ lastLoadAt }}</span>
-      </n-space>
-      <n-space size="small">
-        <n-switch v-model:value="autoRefresh" size="small">
+      </NSpace>
+      <NSpace size="small">
+        <NSwitch v-model:value="autoRefresh" size="small">
           <template #checked>自动 60s</template>
           <template #unchecked>手动</template>
-        </n-switch>
-        <n-button size="small" secondary :loading="loading" @click="load">
-          <template #icon><n-icon><Refresh /></n-icon></template>
+        </NSwitch>
+        <NButton size="small" secondary :loading="loading" @click="load">
+          <template #icon><NIcon><Refresh /></NIcon></template>
           立即查询
-        </n-button>
-      </n-space>
+        </NButton>
+      </NSpace>
     </div>
 
     <div v-if="loading && !groupSelf" class="ip-state">
-      <n-spin size="small" />
+      <NSpin size="small" />
       <span>正在查询盐场小组积分…</span>
     </div>
-    <n-empty
+    <NEmpty
       v-else-if="!groupSelf"
       description="暂无盐场小组积分"
       size="large"
@@ -33,39 +33,39 @@
       <template #extra>
         <span class="ip-dim">{{ emptyHint }}</span>
       </template>
-    </n-empty>
+    </NEmpty>
 
     <template v-else>
       <!-- ============ 所在岛屿 ============ -->
       <div class="ip-island">
         <div class="ip-island-name">
           {{ islandLabel }}
-          <n-tag v-if="mapLabel" size="tiny" type="warning" :bordered="false">{{ mapLabel }}</n-tag>
+          <NTag v-if="mapLabel" size="tiny" type="warning" :bordered="false">{{ mapLabel }}</NTag>
         </div>
-        <n-grid x-gap="10" y-gap="10" cols="3" class="ip-stats">
-          <n-gi>
+        <NGrid x-gap="10" y-gap="10" cols="3" class="ip-stats">
+          <NGi>
             <div class="ip-stat">
               <span class="ip-stat-label">小组排名</span>
               <span class="ip-stat-value">
                 {{ groupSelf.rank }}<span class="ip-dim"> / {{ fmtNum(groupTotal) }}</span>
               </span>
             </div>
-          </n-gi>
-          <n-gi>
+          </NGi>
+          <NGi>
             <div class="ip-stat">
               <span class="ip-stat-label">本岛总榜</span>
               <span class="ip-stat-value">
                 {{ selfTotal?.rank ?? "-" }}<span class="ip-dim"> / {{ fmtNum(rankCnt) }}</span>
               </span>
             </div>
-          </n-gi>
-          <n-gi>
+          </NGi>
+          <NGi>
             <div class="ip-stat">
               <span class="ip-stat-label">盐场积分</span>
               <span class="ip-stat-value ip-hot">{{ fmtNum(groupSelf.score) }}</span>
             </div>
-          </n-gi>
-        </n-grid>
+          </NGi>
+        </NGrid>
       </div>
 
       <!-- ============ 所有岛屿 ============ -->
@@ -79,9 +79,9 @@
         >
           <div class="ip-ladder-head">
             <span class="ip-ladder-name">{{ isl.name }}</span>
-            <n-tag v-if="isl.type === islandType" size="tiny" type="warning" :bordered="false">
+            <NTag v-if="isl.type === islandType" size="tiny" type="warning" :bordered="false">
               当前
-            </n-tag>
+            </NTag>
             <span v-else class="ip-dim ip-ladder-tip">
               {{ isl.type < islandType ? "已晋升" : "未解锁" }}
             </span>
@@ -92,7 +92,7 @@
 
       <!-- ============ 小组积分榜 ============ -->
       <div class="ip-section-title">小组积分榜 · {{ boardRows.length }} 条</div>
-      <n-empty
+      <NEmpty
         v-if="!boardRows.length"
         description="该榜暂无数据"
         size="small"
@@ -117,20 +117,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import {
-  useMessage,
-  NButton,
-  NTag,
-  NGrid,
-  NGi,
-  NSpin,
-  NEmpty,
-  NIcon,
-  NSwitch,
-  NSpace,
-} from "naive-ui";
 import { Refresh } from "@vicons/ionicons5";
+import {
+  NButton,
+  NEmpty,
+  NGi,
+  NGrid,
+  NIcon,
+  NSpace,
+  NSpin,
+  NSwitch,
+  NTag,
+  useMessage,
+} from "naive-ui";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import { getRankQueryDate } from "@/utils/clubBattleUtils";
 
@@ -242,8 +242,8 @@ const fmtNum = (v) => {
   if (v == null || v === "") return "-";
   const n = Number(v);
   if (!Number.isFinite(n)) return String(v);
-  if (n >= 1e8) return (n / 1e8).toFixed(2) + "亿";
-  if (n >= 1e4) return (n / 1e4).toFixed(1) + "万";
+  if (n >= 1e8) return `${(n / 1e8).toFixed(2)  }亿`;
+  if (n >= 1e4) return `${(n / 1e4).toFixed(1)  }万`;
   return String(Math.round(n * 10) / 10);
 };
 

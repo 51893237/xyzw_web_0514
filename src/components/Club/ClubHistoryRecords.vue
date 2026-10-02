@@ -3,7 +3,7 @@
     <!-- Inline 模式：卡片渲染 -->
     <div v-if="inline" class="inline-wrapper" ref="exportDom">
       <div class="battle-records-content">
-        <n-data-table
+        <NDataTable
           :columns="columns"
           :data="tableData"
           :loading="loading"
@@ -26,19 +26,19 @@
     >
       <template #header-extra>
         <div class="header-actions">
-          <n-button size="small" :disabled="loading" @click="handleRefresh">
+          <NButton size="small" :disabled="loading" @click="handleRefresh">
             <template #icon>
-              <n-icon>
+              <NIcon>
                 <Refresh />
-              </n-icon>
+              </NIcon>
             </template>
             刷新
-          </n-button>
+          </NButton>
         </div>
       </template>
 
       <div class="battle-records-content">
-        <n-data-table
+        <NDataTable
           :columns="columns"
           :data="tableData"
           :loading="loading"
@@ -53,27 +53,18 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, h, nextTick } from "vue";
-import { useMessage, NDataTable, NTag, NButton, NIcon } from "naive-ui";
-import { useTokenStore } from "@/stores/tokenStore";
-import html2canvas from 'html2canvas';
-import { downloadCanvasAsImage } from "@/utils/imageExport";
 import {
-  Trophy,
-  Refresh,
   Copy,
-  ChevronDown,
-  ChevronUp,
-  DocumentText,
+  Refresh,
 } from "@vicons/ionicons5";
+import html2canvas from 'html2canvas';
+import { NButton, NDataTable, NIcon, NTag, useMessage } from "naive-ui";
+import { computed, h, nextTick, onMounted, ref } from "vue";
+import { useTokenStore } from "@/stores/tokenStore";
 import {
   getLastSaturday,
-  formatTimestamp,
-  parseBattleResult,
-  parseAttackType,
-  formatBattleRecordsForExport,
-  copyToClipboard,
 } from "@/utils/clubBattleUtils";
+import { downloadCanvasAsImage } from "@/utils/imageExport";
 
 const props = defineProps({
   visible: {
@@ -101,9 +92,7 @@ const battleRecords = ref(null);
 const expandedMembers = ref(new Set());
 const queryDate = ref("");
 
-const legionMatch = ref({
-  isRegistered: false,
-});
+
 
 const pagination = ref({
   pageSize: 10,
@@ -353,32 +342,10 @@ const handleExportImage = async () => {
 };
 
 // 格式化战力
-const formatPower = (power) => {
-  if (!power) return "0";
-  if (power >= 100000000) {
-    return (power / 100000000).toFixed(2) + "亿";
-  }
-  if (power >= 10000) {
-    return (power / 10000).toFixed(2) + "万";
-  }
-  return power.toString();
-};
+
 
 // 获取战斗样式类
-const getBattleClass = (battle) => {
-  const classes = [];
-  if (battle.newWinFlag === 2) {
-    classes.push("battle-win");
-  } else {
-    classes.push("battle-loss");
-  }
-  if (battle.attackType === 0) {
-    classes.push("battle-attack");
-  } else {
-    classes.push("battle-defend");
-  }
-  return classes.join(" ");
-};
+
 
 const legionWarTypesw = (legionWarType) => {
   switch (legionWarType) {
@@ -412,18 +379,10 @@ const legionWarTypesw = (legionWarType) => {
 };
 
 // 切换成员详情展开状态
-const toggleMemberDetails = (roleId) => {
-  if (expandedMembers.value.has(roleId)) {
-    expandedMembers.value.delete(roleId);
-  } else {
-    expandedMembers.value.add(roleId);
-  }
-};
+
 
 // 处理图片加载错误
-const handleImageError = (event) => {
-  event.target.style.display = "none";
-};
+
 
 // 查询战绩
 const fetchBattleRecords = async () => {
@@ -477,24 +436,7 @@ const handleRefresh = () => {
 };
 
 // 导出战绩
-const handleExport = async () => {
-  if (!battleRecords.value || !battleRecords.value.roleDetailsList) {
-    message.warning("没有可导出的数据");
-    return;
-  }
 
-  try {
-    const exportText = formatBattleRecordsForExport(
-      battleRecords.value.roleDetailsList,
-      queryDate.value,
-    );
-    await copyToClipboard(exportText);
-    message.success("战绩已复制到剪贴板");
-  } catch (error) {
-    console.error("导出失败:", error);
-    message.error("导出失败，请重试");
-  }
-};
 
 // 关闭弹窗
 const handleClose = () => {

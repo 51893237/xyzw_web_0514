@@ -53,23 +53,19 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useMessage } from "naive-ui";
-import { useTokenStore } from "@/stores/tokenStore";
 import {
-  PersonCircle,
-  Cube,
-  Settings,
-  CheckmarkCircle,
-  Time,
-  TrendingUp,
   Add,
+  CheckmarkCircle,
   Cloud,
+  Cube,
   GameController,
 } from "@vicons/ionicons5";
-import useIndexedDB from "@/hooks/useIndexedDB";
 import lz4 from "lz4js";
+import { useMessage } from "naive-ui";
+import { computed, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import useIndexedDB from "@/hooks/useIndexedDB";
+import { useTokenStore } from "@/stores/tokenStore";
 
 const router = useRouter();
 const message = useMessage();
@@ -151,7 +147,7 @@ const openGame = async () => {
   const hex = Array.from(converted)
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-  localStorage.setItem("bin_data_" + token.id, hex);
+  localStorage.setItem(`bin_data_${  token.id}`, hex);
   localStorage.setItem("current_bin_id", token.id);
   let binList = [];
   try {
@@ -162,7 +158,7 @@ const openGame = async () => {
       id: token.id,
       name: token.name || "Token",
       byteLength: binData.byteLength,
-      size: (binData.byteLength / 1024).toFixed(1) + " KB",
+      size: `${(binData.byteLength / 1024).toFixed(1)  } KB`,
       order: binList.length,
     });
     localStorage.setItem("bin_file_list", JSON.stringify(binList));

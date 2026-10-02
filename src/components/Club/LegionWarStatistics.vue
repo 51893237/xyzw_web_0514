@@ -230,24 +230,25 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
-import { useMessage } from "naive-ui";
-import { useTokenStore } from "@/stores/tokenStore";
-import { useLegionWarStore } from "@/stores/legionWarStore";
-import { extractValidData, formatPower } from "@/utils/legionWar";
-import { getCurrentTimeByFormat } from "@/utils/DateTimeUtils";
-import { isLegionWarAccessible } from "@/utils/clubBattleUtils";
-import { storeToRefs } from "pinia";
-import html2canvas from "html2canvas";
-import * as XLSX from "xlsx";
 import { 
-  LogInOutline, 
-  MegaphoneOutline, 
-  StatsChart,
+  DownloadOutline, 
+  ImageOutline, 
+  LogInOutline,
   RefreshOutline,
-  ImageOutline,
-  DownloadOutline
+  StatsChart
 } from "@vicons/ionicons5";
+
+import html2canvas from "html2canvas";
+import { useMessage } from "naive-ui";
+import { storeToRefs } from "pinia";
+import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
+import * as XLSX from "xlsx";
+import { useLegionWarStore } from "@/stores/legionWarStore";
+import { useTokenStore } from "@/stores/tokenStore";
+import { isLegionWarAccessible } from "@/utils/clubBattleUtils";
+import { getCurrentTimeByFormat } from "@/utils/DateTimeUtils";
+import { isSameGameValue } from "@/utils/gameValue.js";
+import { formatPower } from "@/utils/legionWar";
 
 const message = useMessage();
 const tokenStore = useTokenStore();
@@ -401,7 +402,7 @@ const individualData = computed(() => {
   
   // 筛选本俱乐部成员并排序
   return Object.values(validData.value.memberInfo)
-    .filter(item => item.legionId == myLegionId)
+    .filter(item => isSameGameValue(item.legionId, myLegionId))
     .map((item, index) => ({
       ...item,
       key: index,
@@ -423,7 +424,7 @@ const allIndividualData = computed(() => {
       return {
         ...item,
         key: item.id || index,
-        clubName: clubName,
+        clubName,
         kd: item.die > 0 ? (item.kill / item.die).toFixed(2) : item.kill.toFixed(2)
       };
     })
@@ -534,7 +535,7 @@ const individualColumns = [
   { 
     title: "K/D", 
     key: "kd", 
-    sorter: (a, b) => parseFloat(a.kd) - parseFloat(b.kd) 
+    sorter: (a, b) => Number.parseFloat(a.kd) - Number.parseFloat(b.kd) 
   }
 ];
 
@@ -588,7 +589,7 @@ const allIndividualColumns = [
   { 
     title: "K/D", 
     key: "kd", 
-    sorter: (a, b) => parseFloat(a.kd) - parseFloat(b.kd) 
+    sorter: (a, b) => Number.parseFloat(a.kd) - Number.parseFloat(b.kd) 
   }
 ];
 
@@ -599,12 +600,12 @@ const rowClassName = (row) => {
   
   // 如果有 legionId 字段，说明是成员数据
   if (row.legionId !== undefined) {
-    if (row.legionId == myLegionId) {
+    if (isSameGameValue(row.legionId, myLegionId)) {
       return 'my-legion-row';
     }
   } 
   // 否则认为是俱乐部数据
-  else if (row.id == myLegionId) {
+  else if (isSameGameValue(row.id, myLegionId)) {
     return 'my-legion-row';
   }
   

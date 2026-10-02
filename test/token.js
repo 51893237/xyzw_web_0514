@@ -1,24 +1,24 @@
-import { Buffer } from "buffer";
-import { getEnc, g_utils } from '../src/utils/bonProtocol.js'
+import { Buffer } from "node:buffer";
+import { g_utils, getEnc } from '../src/utils/bonProtocol.js'
 
 const tokenHex = "6712831";
 
 const reToken = (data) => {
-    let enc = getEnc("auto");
-    let xEnc = getEnc("x");
-    let bin = enc.decrypt(data);
-    let xData = xEnc.encrypt(bin);
+    const enc = getEnc("auto");
+    const xEnc = getEnc("x");
+    const bin = enc.decrypt(data);
+    const xData = xEnc.encrypt(bin);
     return xData;
 }
 
 const main = () => {
     const buf = Buffer.from(tokenHex, "hex");
 
-    let ress = g_utils.parse(buf);
+    const ress = g_utils.parse(buf);
     console.log("res =", ress);
 
-    let reTokenData = reToken(buf);
-    let reTokenBase64 = Buffer.from(reTokenData, 'binary').toString("base64");
+    const reTokenData = reToken(buf);
+    const reTokenBase64 = Buffer.from(reTokenData, 'binary').toString("base64");
     console.log("reTokenData = :", reTokenBase64);
 
     // let msg = ress._raw;

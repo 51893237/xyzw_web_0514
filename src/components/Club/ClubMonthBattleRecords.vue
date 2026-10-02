@@ -13,11 +13,11 @@
         
         <!-- 功能操作区 -->
         <div class="header-actions">
-          <n-radio-group v-model:value="currentStyle" size="small">
-            <n-radio-button value="default">默认</n-radio-button>
-            <n-radio-button value="style1">样式一</n-radio-button>
-            <n-radio-button value="style2">样式二</n-radio-button>
-          </n-radio-group>
+          <NRadioGroup v-model:value="currentStyle" size="small">
+            <NRadioButton value="default">默认</NRadioButton>
+            <NRadioButton value="style1">样式一</NRadioButton>
+            <NRadioButton value="style2">样式二</NRadioButton>
+          </NRadioGroup>
           <n-button size="small" :disabled="loading" @click="handleRefresh">
             <template #icon>
               <n-icon>
@@ -96,8 +96,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(member, index) in sortedMembers" :key="member.roleId" class="member-row">
-                      <td class="rank-col">{{ index + 1 }}</td>
+                    <tr v-for="(member, memberIndex) in sortedMembers" :key="member.roleId" class="member-row">
+                      <td class="rank-col">{{ memberIndex + 1 }}</td>
                       <td class="member-col">
                         <div class="member-info">
                           <img v-if="member.headImg" :src="member.headImg" :alt="member.name" class="member-avatar"
@@ -151,10 +151,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(player, index) in sortedMembers" :key="player.roleId">
+                      <tr v-for="(player, playerIndex) in sortedMembers" :key="player.roleId">
                          <td class="col-rank">
-                            <div v-if="index < 3" class="rank-medal">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                            <span v-else>{{ index + 1 }}</span>
+                            <div v-if="playerIndex < 3" class="rank-medal">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                            <span v-else>{{ playerIndex + 1 }}</span>
                          </td>
                          <td class="col-name">
                             <div class="player-info">
@@ -186,8 +186,8 @@
 
                    <div class="summary-card purple-header">
                       <div class="summary-title">击杀前3</div>
-                      <div v-for="(player, index) in monthlyKillRank" :key="'kill-'+index" class="top3-item">
-                         <div class="top3-rank"><div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div></div>
+                      <div v-for="(player, playerIndex) in monthlyKillRank" :key="`kill-${playerIndex}`" class="top3-item">
+                         <div class="top3-rank"><div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div></div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
                             <div v-else class="player-avatar-placeholder-xs">{{ player.name?.charAt(0) || '?' }}</div>
@@ -199,8 +199,8 @@
 
                    <div class="summary-card purple-header">
                       <div class="summary-title">攻城前3</div>
-                      <div v-for="(player, index) in monthlyOccupyRank" :key="'occupy-'+index" class="top3-item">
-                         <div class="top3-rank"><div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div></div>
+                      <div v-for="(player, playerIndex) in monthlyOccupyRank" :key="`occupy-${playerIndex}`" class="top3-item">
+                         <div class="top3-rank"><div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div></div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
                             <div v-else class="player-avatar-placeholder-xs">{{ player.name?.charAt(0) || '?' }}</div>
@@ -212,8 +212,8 @@
 
                    <div class="summary-card purple-header">
                       <div class="summary-title">KD 前3</div>
-                      <div v-for="(player, index) in monthlyKDRank" :key="'kd-'+index" class="top3-item">
-                         <div class="top3-rank"><div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div></div>
+                      <div v-for="(player, playerIndex) in monthlyKDRank" :key="`kd-${playerIndex}`" class="top3-item">
+                         <div class="top3-rank"><div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div></div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
                             <div v-else class="player-avatar-placeholder-xs">{{ player.name?.charAt(0) || '?' }}</div>
@@ -225,8 +225,8 @@
 
                    <div class="summary-card purple-header">
                       <div class="summary-title">复活丹前3</div>
-                      <div v-for="(player, index) in monthlyReviveRank" :key="'revive-'+index" class="top3-item">
-                         <div class="top3-rank"><div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div></div>
+                      <div v-for="(player, playerIndex) in monthlyReviveRank" :key="`revive-${playerIndex}`" class="top3-item">
+                         <div class="top3-rank"><div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div></div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
                             <div v-else class="player-avatar-placeholder-xs">{{ player.name?.charAt(0) || '?' }}</div>
@@ -304,8 +304,8 @@
                 <div class="rank-card-s2 red-border">
                    <div class="rank-card-title-s2"><span class="icon">⚔️</span> 击杀前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in monthlyKillRank" :key="'s2-kill-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in monthlyKillRank" :key="`s2-kill-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -318,8 +318,8 @@
                 <div class="rank-card-s2 orange-border">
                    <div class="rank-card-title-s2"><span class="icon">💣</span> 攻城前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in monthlyOccupyRank" :key="'s2-occupy-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in monthlyOccupyRank" :key="`s2-occupy-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -332,8 +332,8 @@
                 <div class="rank-card-s2 green-border">
                    <div class="rank-card-title-s2"><span class="icon">📊</span> KD 前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in monthlyKDRank" :key="'s2-kd-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in monthlyKDRank" :key="`s2-kd-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -346,8 +346,8 @@
                 <div class="rank-card-s2 gray-border">
                    <div class="rank-card-title-s2"><span class="icon">💀</span> 死亡前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in monthlyDeathRank" :key="'s2-death-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in monthlyDeathRank" :key="`s2-death-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -360,8 +360,8 @@
                 <div class="rank-card-s2 purple-border">
                    <div class="rank-card-title-s2"><span class="icon">💊</span> 复活丹前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in monthlyReviveRank" :key="'s2-revive-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in monthlyReviveRank" :key="`s2-revive-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -374,8 +374,8 @@
                  <div class="rank-card-s2 blue-border">
                    <div class="rank-card-title-s2"><span class="icon">🛡️</span> 生存前三</div>
                     <div class="rank-list-s2">
-                      <div v-for="(player, index) in monthlySurvivalRank" :key="'s2-survival-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in monthlySurvivalRank" :key="`s2-survival-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -400,10 +400,10 @@
                       </tr>
                    </thead>
                    <tbody>
-                      <tr v-for="(player, index) in sortedMembers" :key="'s2-row-'+player.roleId">
+                      <tr v-for="(player, playerIndex) in sortedMembers" :key="`s2-row-${player.roleId}`">
                          <td>
-                            <div v-if="index < 3" class="medal-icon">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                            <div v-else class="rank-num-plain">{{ index + 1 }}</div>
+                            <div v-if="playerIndex < 3" class="medal-icon">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                            <div v-else class="rank-num-plain">{{ playerIndex + 1 }}</div>
                          </td>
                          <td>
                             <div class="player-cell">
@@ -415,19 +415,19 @@
                          <td>
                             <div class="bar-cell">
                                <div class="bar-val red">{{ player.totalWinCnt }}</div>
-                               <div class="progress-bg"><div class="progress-fill red" :style="{width: getPercent(player.totalWinCnt, monthlyMaxKills) + '%'}"></div></div>
+                               <div class="progress-bg"><div class="progress-fill red" :style="{width: `${getPercent(player.totalWinCnt, monthlyMaxKills)  }%`}"></div></div>
                             </div>
                          </td>
                          <td>
                             <div class="bar-cell">
                                <div class="bar-val gray">{{ player.totalLoseCnt }}</div>
-                               <div class="progress-bg"><div class="progress-fill gray" :style="{width: getPercent(player.totalLoseCnt, monthlyMaxDeaths) + '%'}"></div></div>
+                               <div class="progress-bg"><div class="progress-fill gray" :style="{width: `${getPercent(player.totalLoseCnt, monthlyMaxDeaths)  }%`}"></div></div>
                             </div>
                          </td>
                          <td>
                             <div class="bar-cell">
                                <div class="bar-val orange">{{ player.totalBuildingCnt }}</div>
-                               <div class="progress-bg"><div class="progress-fill orange" :style="{width: getPercent(player.totalBuildingCnt, monthlyMaxOccupies) + '%'}"></div></div>
+                               <div class="progress-bg"><div class="progress-fill orange" :style="{width: `${getPercent(player.totalBuildingCnt, monthlyMaxOccupies)  }%`}"></div></div>
                             </div>
                          </td>
                          <td>{{ player.totalResurrection }}</td>
@@ -456,28 +456,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useMessage, NCheckboxGroup, NCheckbox, NRadioGroup, NRadioButton } from 'naive-ui'
-import { useTokenStore } from '@/stores/tokenStore'
-import html2canvas from 'html2canvas';
-import { downloadCanvasAsImage } from "@/utils/imageExport";
 import {
-  Trophy,
-  Refresh,
   Copy,
-  ChevronDown,
-  ChevronUp,
-  DocumentText
+  DocumentText,
+  Refresh
 } from '@vicons/ionicons5'
-import {
-  formatTimestamp,
-  parseBattleResult,
-  parseAttackType,
-  formatBattleRecordsForExport,
-  copyToClipboard
-} from '@/utils/clubBattleUtils'
+import html2canvas from 'html2canvas';
+import { NRadioButton, NRadioGroup, useMessage } from 'naive-ui'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useTokenStore } from '@/stores/tokenStore'
 
-const props = defineProps({
+
+import { downloadCanvasAsImage } from "@/utils/imageExport";
+
+defineProps({
   visible: {
     type: Boolean,
     default: false
@@ -486,22 +478,18 @@ const props = defineProps({
     type: Boolean,
     default: false
   }
-})
+});
+
 
 const exportDom = ref(null);
-const emit = defineEmits(['update:visible'])
-
 const message = useMessage()
 const tokenStore = useTokenStore()
 
-const showModal = computed({
-  get: () => props.visible,
-  set: (val) => emit('update:visible', val)
-})
+
 
 const loading = ref(false)
 const monthlyBattleRecords = ref({})
-const expandedMembers = ref(new Set())
+
 const battleDates = ref([])
 
 // 计算当月的5个战斗日期
@@ -700,7 +688,7 @@ const monthlyDeathRank = computed(() => [...sortedMembers.value].sort((a, b) => 
 const monthlyKDRank = computed(() => {
     return [...sortedMembers.value].map(m => ({
         ...m,
-        kd: parseFloat((m.totalWinCnt && m.totalLoseCnt ? m.totalWinCnt / m.totalLoseCnt : 0.00)).toFixed(2)
+        kd: Number.parseFloat((m.totalWinCnt && m.totalLoseCnt ? m.totalWinCnt / m.totalLoseCnt : 0.00)).toFixed(2)
     })).sort((a, b) => b.kd - a.kd).slice(0, 3);
 });
 
@@ -877,6 +865,7 @@ const handleExport = async () => {
 const exportToImage = async () => {
   // 校验：确保DOM已正确绑定
   if (!exportDom.value) {
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('未找到要导出的DOM元素');
     return;
   }
@@ -896,14 +885,13 @@ const exportToImage = async () => {
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error('DOM转图片失败：', err);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('导出图片失败，请重试');
   }
 };
 
 // 关闭弹窗
-const handleClose = () => {
-  expandedMembers.value.clear()
-}
+
 
 // 暴露方法给父组件
 defineExpose({

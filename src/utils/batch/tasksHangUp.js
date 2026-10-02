@@ -5,8 +5,8 @@
 
 /**
  * 创建挂机、答题、签到类任务执行器
- * @param {Object} deps - 依赖项
- * @returns {Object} 任务函数集合
+ * @param {object} deps - 依赖项
+ * @returns {object} 任务函数集合
  */
 export function createTasksHangUp(deps) {
   const {
@@ -672,7 +672,7 @@ export function createTasksHangUp(deps) {
         const result = await tokenStore.sendMessageWithPromise(
           tokenId,
           "warguess_startguess",
-          { guessCoin: coinToUse, legionId: legionId },
+          { guessCoin: coinToUse, legionId },
           5000,
         );
 

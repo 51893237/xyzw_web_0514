@@ -400,6 +400,11 @@ class BonEncoder {
     }
   }
 
+  /**
+   * Encode one BON value into the current writer, retaining referenced strings.
+   * @param {unknown} v Serializable protocol value.
+   * @returns {void} Writes the value to the internal buffer.
+   */
   encode(v) {
     if (v == null) {
       this.encodeNull();
@@ -436,7 +441,7 @@ class BonEncoder {
           return;
         }
         this.encodeObject(v);
-        return;
+        
     }
   }
 
@@ -456,11 +461,13 @@ class BonDecoder {
     this.strArr.length = 0;
   }
 
+  /**
+   * Decode the next BON tag, including nested collections and shared strings.
+   * @returns {unknown} Decoded protocol value, or null for an unknown tag.
+   */
   decode() {
     const tag = this.dr.readUInt8();
     switch (tag) {
-      default:
-        return null;
       case 1:
         return this.dr.readInt32();
       case 2:
@@ -492,7 +499,7 @@ class BonDecoder {
       }
       case 9: {
         const len = this.dr.read7BitInt();
-        const arr = new Array(len);
+        const arr = Array.from({ length: len });
         for (let i = 0; i < len; i++) arr[i] = this.decode();
         return arr;
       }
@@ -500,6 +507,8 @@ class BonDecoder {
         return new Date(this.dr.readInt64());
       case 99:
         return this.strArr[this.dr.read7BitInt()];
+      default:
+        return null;
     }
   }
 }
@@ -603,7 +612,7 @@ const registry = new Map();
 // lz4 + 头部掩码
 const lx = {
   encrypt: (buf) => {
-    let e = lz4.compress(buf);
+    const e = lz4.compress(buf);
     const t = 2 + ~~(Math.random() * 248);
     for (let n = Math.min(e.length, 100); --n >= 0; ) e[n] ^= t;
     e[0] = 112;
@@ -722,7 +731,7 @@ function getEnc(name) {
 }
 
 function encode(obj, enc) {
-  let bytes = bon.encode(obj, false);
+  const bytes = bon.encode(obj, false);
   const out = enc.encrypt(bytes);
   return out.buffer.byteLength === out.length
     ? out.buffer
@@ -744,17 +753,17 @@ const g_utils = {
 };
 
 export {
- Int64,
+ bon,
+ BonDecoder,
+ BonEncoder,
  DataReader,
  DataWriter,
- BonEncoder,
- BonDecoder,
- ProtoMsg,
- bon,
- getEnc,
  encode,
- parse,
  g_utils,
+ getEnc,
+ Int64,
+ parse,
+ ProtoMsg,
 };
 
 

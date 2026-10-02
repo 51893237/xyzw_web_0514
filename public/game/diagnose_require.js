@@ -68,7 +68,7 @@
         bonName = name;
         break;
       }
-    } catch (e) {}
+    } catch { /* Candidate module names may be absent in this bundle. */ }
   }
 
   if (bon) {

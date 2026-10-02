@@ -60,7 +60,7 @@ export function createConnectionManager({ tokenStore, batchSettings, addLog }) {
       throw new Error(`Token not found: ${tokenId}`);
     }
 
-    let status = tokenStore.getWebSocketStatus(tokenId);
+    const status = tokenStore.getWebSocketStatus(tokenId);
     let connected = status === "connected";
 
     if (!connected) {

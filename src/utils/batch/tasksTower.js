@@ -1,3 +1,5 @@
+
+import { isSameGameValue } from "@/utils/gameValue.js";
 import { getTowerActId } from "../towerActId.js";
 
 /**
@@ -13,9 +15,9 @@ import { normalizeWeirdTowerMaxClimb } from "../towerClimbLimit.js";
  * 两者不一致说明有章节奖励未领取，此时游戏服会拒绝 evotower_readyfight 并返回 12200020，
  * 导致爬塔无法开始。故需在爬塔前按 rewardTowerId 主动补齐。
  *
- * @param {Object} tokenStore - token store
+ * @param {object} tokenStore - token store
  * @param {string} tokenId - token id
- * @param {Object} evoTower - evotower_getinfo 返回的 evoTower 对象
+ * @param {object} evoTower - evotower_getinfo 返回的 evoTower 对象
  * @param {Function} onLog - 日志回调 (message, type) => void
  * @returns {Promise<number>} 实际补领的章节数
  */
@@ -64,8 +66,8 @@ async function claimPendingEvoTowerRewards(tokenStore, tokenId, evoTower, onLog)
 
 /**
  * 创建爬塔类任务执行器
- * @param {Object} deps - 依赖项
- * @returns {Object} 任务函数集合
+ * @param {object} deps - 依赖项
+ * @returns {object} 任务函数集合
  */
 export function createTasksTower(deps) {
   const {
@@ -494,7 +496,7 @@ export function createTasksTower(deps) {
                       await tokenStore.sendMessageWithPromise(
                         tokenId,
                         "evotower_claimtask",
-                        { taskId: taskId },
+                        { taskId },
                         2000
                       ).then(() => {
                          addLog({
@@ -741,7 +743,7 @@ export function createTasksTower(deps) {
 
         const actId = String(towerData.actId);
         if (actId.length >= 6) {
-           const year = "20" + actId.substring(0, 2);
+           const year = `20${  actId.substring(0, 2)}`;
            const month = actId.substring(2, 4);
            const day = actId.substring(4, 6);
            const startDate = new Date(`${year}-${month}-${day}T00:00:00`);
@@ -1055,7 +1057,7 @@ export function createTasksTower(deps) {
             "mergebox_openbox",
             {
               actType: 1,
-              pos: pos
+              pos
             },
             5000
           );
@@ -1186,15 +1188,15 @@ export function createTasksTower(deps) {
                  await tokenStore.sendMessageWithPromise(
                    tokenId,
                    "mergebox_claimmergeprogress",
-                   { actType: 1, taskId: parseInt(taskId) },
+                   { actType: 1, taskId: Number.parseInt(taskId) },
                    2000
                  ).catch(() => {});
 
                  const idStr = String(taskId);
-                 const lastTwo = parseInt(idStr.slice(-2));
+                 const lastTwo = Number.parseInt(idStr.slice(-2));
                  const taskInfo = rewardMapping[lastTwo];
                  const taskDesc = taskInfo 
-                    ? `${lastTwo}级 ${taskInfo.reward ? " 奖励" + taskInfo.reward : ""}` 
+                    ? `${lastTwo}级 ${taskInfo.reward ? ` 奖励${  taskInfo.reward}` : ""}` 
                     : `任务${taskId}`;
                  
                  addLog({
@@ -1215,10 +1217,10 @@ export function createTasksTower(deps) {
           for (const xStr in gridMap) {
             for (const yStr in gridMap[xStr]) {
               const item = gridMap[xStr][yStr];
-              if (item.gridConfId == 0 && item.gridItemId > 0 && !item.isLock) {
+              if (isSameGameValue(item.gridConfId, 0) && item.gridItemId > 0 && !item.isLock) {
                 items.push({
-                  x: parseInt(xStr),
-                  y: parseInt(yStr),
+                  x: Number.parseInt(xStr),
+                  y: Number.parseInt(yStr),
                   id: item.gridItemId
                 });
               }
@@ -1339,9 +1341,6 @@ export function createTasksTower(deps) {
 
 /**
  * 批量使用道具
- * @param {Object} deps
+ * @param {object} deps
  */
-function batchUseItems(deps) {
-  // logic to be implemented inside createTasksTower or moved here if refactored
-  // But based on the file structure, I should add it inside createTasksTower
-}
+

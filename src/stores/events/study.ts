@@ -1,7 +1,7 @@
+import type { EVM, XyzwSession } from ".";
 import { isInCurrentWeek, sleep } from "@/utils/base";
 import { gameLogger } from "@/utils/logger";
 import { findAnswer } from "@/utils/studyQuestionsFromJSON";
-import type { EVM, XyzwSession } from ".";
 
 export const StudyPlugin = ({
   onSome,
@@ -110,7 +110,7 @@ export const StudyPlugin = ({
     for (let rewardId = 1; rewardId <= 10; rewardId++) {
       try {
         client?.send('study_claimreward', {
-          rewardId: rewardId
+          rewardId
         })
         await new Promise(resolve => setTimeout(resolve, 200))
         gameLogger.verbose(`已发送奖励领取请求: rewardId=${rewardId}`)

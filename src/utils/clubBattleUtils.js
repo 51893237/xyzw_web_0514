@@ -1,6 +1,3 @@
-/**
- * 俱乐部战斗工具函数
- */
 
 /**
  * 获取最近的周六日期
@@ -8,11 +5,16 @@
  * @returns {string} 格式化的日期字符串 YYYY/MM/DD
  */
 import * as XLSX from "xlsx";
+/**
+ * 俱乐部战斗工具函数
+ */
+
+import { isSameGameValue } from "./gameValue.js";
 
 export function getLastSaturday() {
   const today = new Date();
   const dayOfWeek = today.getDay(); // 0=周日, 1=周一, ..., 6=周六
-  const todayDate = today.getDate(); // 当天日期
+  today.getDate(); // 当天日期
   const year = today.getFullYear();
   const month = today.getMonth();
 
@@ -27,7 +29,7 @@ export function getLastSaturday() {
     const firstDayOfWeek = firstDay.getDay();
 
     // 计算本月第一个周日的日期
-    let firstSunday = new Date(year, month, 1);
+    const firstSunday = new Date(year, month, 1);
     if (firstDayOfWeek === 0) {
       // 本月第一天就是周日
       firstSunday.setDate(1);
@@ -76,10 +78,10 @@ export function isNowInLegionWarTime() {
   const minutesCount = hours * 60 + minutes;
   //获取本月周日的数组
   const getSundayOfMonths = (year, month) => {
-    let sundayArr = [];
+    const sundayArr = [];
     for (let d = 0; d < 31; d++) {
-      let temp = new Date(year, month, d);
-      if (temp.getMonth() == month && temp.getDay() == 0) {
+      const temp = new Date(year, month, d);
+      if (isSameGameValue(temp.getMonth(), month) && isSameGameValue(temp.getDay(), 0)) {
         sundayArr.push(d);
       }
     }
@@ -88,15 +90,15 @@ export function isNowInLegionWarTime() {
 
   //当前时间是20.00~21.00,周日月赛则是20.00~21.30
   //前提是周六或第四周周日 1200=20*60   1260=21*60
-  if (dayOfWeek == 6 && minutesCount >= 1195 && minutesCount <= 1260) {
+  if (isSameGameValue(dayOfWeek, 6) && minutesCount >= 1195 && minutesCount <= 1260) {
     return true;
   }
   const sundayArr = getSundayOfMonths(today.getFullYear(), today.getMonth());
   //取第四个周末的日期
   if (
-    dayOfWeek == 0 &&
+    isSameGameValue(dayOfWeek, 0) &&
     sundayArr.length >= 4 &&
-    date == sundayArr[3] &&
+    isSameGameValue(date, sundayArr[3]) &&
     minutesCount >= 1195 &&
     minutesCount <= 1290
   ) {
@@ -216,7 +218,7 @@ export function getRankQueryDate() {
   // First, find the first Sunday
   const firstDay = new Date(year, month, 1);
   const dayOfWeek = firstDay.getDay();
-  let firstSundayDate = 1 + ((7 - dayOfWeek) % 7);
+  const firstSundayDate = 1 + ((7 - dayOfWeek) % 7);
 
   // 4th Sunday is 3 weeks after first Sunday
   const fourthSundayDate = firstSundayDate + 21;
@@ -279,22 +281,10 @@ export function getRankParams(warType) {
 }
 
 // 获取战斗情况
-const getBattleWinFlag = (newWinFlag) => {
-  if (newWinFlag === 2) {
-    return "胜利";
-  } else {
-    return "失败";
-  }
-};
+
 
 // 获取进攻防守方情况
-const getBattleAttackType = (attackType) => {
-  if (attackType === 0) {
-    return "进攻方";
-  } else {
-    return "防守方";
-  }
-};
+
 // 使用示例
 /**
  * 格式化时间戳为可读时间
@@ -398,11 +388,11 @@ export function formatBattleRecordsForExport(roleDetailsList, queryDate) {
 
   // 构造战斗数据工作表
   const processedData = roleDetailsList
-    .map((member, index) => {
+    .map((member) => {
       const targetRoleList = member.targetRoleList || [];
       return targetRoleList
         .filter((battle) => battle !== null)
-        .map((battle, battleIndex) => {
+        .map((battle) => {
           const targetRoleInfo = battle.targetRoleInfo || {};
           return [
             battle.roleInfo.roleId || 0,
@@ -444,7 +434,7 @@ export function formatBattleRecordsForExport(roleDetailsList, queryDate) {
       "战斗结果",
       "战斗时间",
     ],
-    ...processedDataWithKeys.map((battle, index) => [
+    ...processedDataWithKeys.map((battle) => [
       battle.roleId || 0,
       battle.roleName || "",
       battle.targetRoleId || 0,

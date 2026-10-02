@@ -202,27 +202,25 @@
 
 <script setup>
 import {
-  useTokenStore,
-  selectedToken,
-  selectedTokenId,
-} from "@/stores/tokenStore";
-import ThemeToggle from "@/components/Common/ThemeToggle.vue";
-import {
-  Home,
-  PersonCircle,
-  Cube,
-  Settings,
-  ChevronDown,
-  ChatbubbleEllipsesSharp,
-  LockClosedSharp,LockOpen,
-  Menu,
-  Layers,
   ArrowUpCircle,
+  ChatbubbleEllipsesSharp,
+  ChevronDown,
+  Cube,
+  Home,
+  Layers,LockOpen,
+  Menu,
+  PersonCircle,
+  Settings,
 } from "@vicons/ionicons5";
-
-import { useRouter } from 'vue-router'
 import { useMessage } from 'naive-ui'
 import { ref } from 'vue'
+
+import { useRouter } from 'vue-router'
+import ThemeToggle from "@/components/Common/ThemeToggle.vue";
+import {
+  selectedToken,
+  useTokenStore,
+} from "@/stores/tokenStore";
 import { isNowInLegionWarTime } from '@/utils/clubBattleUtils'
 
 const tokenStore = useTokenStore();

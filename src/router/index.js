@@ -18,7 +18,7 @@ const my_routes = [
   {
     path: '/tokens',
     name: 'TokenImport',
-    component: () => import('@/views/TokenImport/index.vue'),
+    component: () => import('@/views/TokenImport/TokenImport.vue'),
     meta: {
       title: 'Token管理',
       requiresToken: false
@@ -190,12 +190,10 @@ router.beforeEach((to, from, next) => {
   // 设置页面标题
   document.title = to.meta.title ? `${to.meta.title} - XYZW 游戏管理系统` : 'XYZW 游戏管理系统'
   if(to.name==="LegionWar"&&!isNowInLegionWarTime()){
-  // if(to.name==="LegionWar"&&isNowInLegionWarTime()){
     next('/admin/dashboard');
     return;
   }
   // 检查是否需要Token
-  // if (to.meta.requiresToken  && tokenStore.getWebSocketStatus(tokenStore.selectedToken.id)=="disconnected") {
     if (to.meta.requiresToken  && !tokenStore.hasTokens) {
     next('/tokens')
   } else if (to.path === '/' && tokenStore.hasTokens) {

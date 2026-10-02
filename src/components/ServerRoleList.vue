@@ -1,8 +1,8 @@
 <template>
   <div ref="listRootRef">
-    <n-card v-if="data && data.length > 0" :title="title" class="server-role-list-card">
+    <NCard v-if="data && data.length > 0" :title="title" class="server-role-list-card">
     <div class="server-role-list-search">
-      <n-input
+      <NInput
         v-model:value="serverSearchKeyword"
         placeholder="搜索区服（输入区服号，如 1）"
         clearable
@@ -10,9 +10,9 @@
         class="server-role-list-search__input"
       >
         <template #prefix>
-          <n-icon :component="SearchIcon" />
+          <NIcon :component="SearchIcon" />
         </template>
-      </n-input>
+      </NInput>
     </div>
     <!-- 移动端：卡片列表 -->
     <div class="server-role-list server-role-list--mobile">
@@ -30,19 +30,19 @@
           </div>
         </div>
         <div class="server-role-card__actions">
-          <n-button type="primary" size="small" block @click="emit('add', row)">
+          <NButton type="primary" size="small" block @click="emit('add', row)">
             添加
-          </n-button>
-          <n-button type="info" size="small" block @click="emit('download', row)">
+          </NButton>
+          <NButton type="info" size="small" block @click="emit('download', row)">
             下载
-          </n-button>
+          </NButton>
         </div>
       </div>
     </div>
     <!-- 桌面端：表格 -->
     <div class="server-role-list server-role-list--desktop">
       <div class="server-role-list-scroll" :style="scrollStyle">
-        <n-data-table
+        <NDataTable
           :columns="columns"
           :data="filteredData"
           :pagination="{ pageSize: 5 }"
@@ -50,19 +50,15 @@
         />
       </div>
     </div>
-  </n-card>
+  </NCard>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, h, ref, watch, nextTick } from "vue";
-import { NCard, NDataTable, NButton, NInput, NIcon } from "naive-ui";
 import { Search } from "@vicons/ionicons5";
+import { NButton, NCard, NDataTable, NIcon, NInput } from "naive-ui";
+import { computed, h, nextTick, ref, watch } from "vue";
 import { formatPower } from "@/utils/legionWar";
-
-const SearchIcon = Search;
-const serverSearchKeyword = ref("");
-const listRootRef = ref<HTMLElement | null>(null);
 
 const props = withDefaults(
   defineProps<{
@@ -77,11 +73,13 @@ const props = withDefaults(
     maxHeight: "",
   }
 );
-
 const emit = defineEmits<{
   add: [row: any];
   download: [row: any];
 }>();
+const SearchIcon = Search;
+const serverSearchKeyword = ref("");
+const listRootRef = ref<HTMLElement | null>(null);
 
 function getServerIdDisplay(row: any) {
   let sid = Number(row.serverId);

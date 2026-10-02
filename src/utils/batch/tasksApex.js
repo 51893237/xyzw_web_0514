@@ -9,6 +9,12 @@
  */
 
 import {
+  ApexAction,
+  apexCooldownLeft,
+  isApexRateLimited,
+  runApexAction,
+} from "@/utils/apexRateLimit";
+import {
   ApexScheduleStatus,
   calibrateServerTime,
   getAdvanceNum,
@@ -16,12 +22,6 @@ import {
   getCurrentSeason,
   getGuessTabs,
 } from "@/utils/apexRules";
-import {
-  ApexAction,
-  apexCooldownLeft,
-  isApexRateLimited,
-  runApexAction,
-} from "@/utils/apexRateLimit";
 
 /** 单次请求超时（ms） */
 const TIMEOUT_MS = 8000;

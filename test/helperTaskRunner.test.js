@@ -5,8 +5,8 @@ import {
   buildTenBatchPlan,
   getClaimableBoxPoints,
   getItemQuantity,
-  runInventoryVerifiedGameCommand,
   runBatchedGameCommand,
+  runInventoryVerifiedGameCommand,
 } from "../src/utils/helperTaskRunner.js";
 
 test("buildTenBatchPlan splits totals into ten-sized batches plus remainder", () => {
@@ -421,7 +421,7 @@ test("runInventoryVerifiedGameCommand does not fill when a failed intermediate c
 });
 
 test("runInventoryVerifiedGameCommand stops when verification shows no inventory decrease", async () => {
-  let inventory = 20;
+  const inventory = 20;
   const tokenStore = {
     async sendMessageWithPromise() {
       return { ok: true };

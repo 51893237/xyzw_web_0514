@@ -72,6 +72,7 @@ const fallbackToDataURL = (canvas, filename) => {
     document.body.removeChild(link);
   } catch (e) {
     console.error('DataURL导出失败:', e);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('导出图片失败，图片可能过大');
   }
 };

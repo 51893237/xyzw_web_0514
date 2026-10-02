@@ -16,7 +16,7 @@
       <span class="toolbar-warning">
         在窗口标题栏滚动可横向浏览；按住 Ctrl + 滚轮缩放页面，可同时查看更多账号
       </span>
-      <n-popover trigger="hover" placement="bottom-end" :width="360">
+      <NPopover trigger="hover" placement="bottom-end" :width="360">
         <template #trigger>
           <button class="crash-help-trigger" type="button">页面崩溃？</button>
         </template>
@@ -38,7 +38,7 @@
             下载 Chrome 官方 Windows 64 位捆绑包
           </a>
         </div>
-      </n-popover>
+      </NPopover>
     </header>
 
     <main
@@ -387,6 +387,7 @@ async function moveFrame(scopeId, direction, event) {
     stripScrollTarget = strip.scrollLeft;
   } catch (error) {
     console.error("Unable to move MultiGame frame:", error);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     window.alert("移动游戏窗口失败，请重试");
   } finally {
     movingFrame.value = false;
@@ -406,6 +407,7 @@ function closeFrame(frame) {
     launch.value = updatedLaunch;
   } catch (error) {
     console.error("Unable to close MultiGame frame:", error);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     window.alert("关闭游戏窗口失败，请重试");
   }
 }

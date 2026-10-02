@@ -1,3 +1,5 @@
+
+import { isSameGameValue } from "./gameValue.js";
 export const roadPointList = 
 [
   {
@@ -2636,13 +2638,13 @@ export class HexGraph{
 
   /**
    * 添加节点
-   * @param {Object} item 
-   * @param {Object} item.id 坐标点,由x_y构成
-   * @param {Object} item.type 坐标类型
-   * @param {Object} item.belongsLegionId  所属俱乐部id
-   * @param {Object} item.hP  血量
-   * @param {Object} item.maxHP  最大血量
-   * @param {Object} item.point 分数
+   * @param {object} item 
+   * @param {object} item.id 坐标点,由x_y构成
+   * @param {object} item.type 坐标类型
+   * @param {object} item.belongsLegionId  所属俱乐部id
+   * @param {object} item.hP  血量
+   * @param {object} item.maxHP  最大血量
+   * @param {object} item.point 分数
    */
   addNode(item){
     const nodeId = item.id;
@@ -2657,7 +2659,7 @@ export class HexGraph{
       point: item.point,
       colorBg: item?.belongsLegionInfo?.color||typeBg(item.type),
       typeName:typeName(item.type),
-      position:{"x":(item.id+"").split("_")[0],"y":(item.id+"").split("_")[1]},
+      position:{"x":(`${item.id}`).split("_")[0],"y":(`${item.id}`).split("_")[1]},
       neighbors: [] // 邻接节点（后续自动维护）
     };
     // 添加节点后，自动构建它与周围节点的邻接关系
@@ -2681,14 +2683,14 @@ export class HexGraph{
     const { x ,y } = node.position;
     // 根据行的奇偶，获取对应的邻接方向
     const dirs = x % 2 === 0 ? this.evenQDirs : this.oddQDirs;
-    if(x=="31"||x=="30"||x=="32"){
-      if(y=="8"||y=="9"){
+    if(isSameGameValue(x, "31")||isSameGameValue(x, "30")||isSameGameValue(x, "32")){
+      if(isSameGameValue(y, "8")||isSameGameValue(y, "9")){
         // console.log(node,dirs)
       }
     }
     // 遍历6个邻接方向，检查是否存在节点
     dirs.forEach(({ q: dq, r: dr }) => {
-      const neighborId = `${parseInt(x) + dq}_${parseInt(y) + dr}`;
+      const neighborId = `${Number.parseInt(x) + dq}_${Number.parseInt(y) + dr}`;
       const neighborNode = this.nodes[neighborId];
       // 如果邻接节点存在，互相添加到neighbors
       if (neighborNode) {
@@ -2701,7 +2703,7 @@ export class HexGraph{
   /**
    * 工具方法：根据坐标获取节点（寻路时用）
    * @param {*} nodeStr x_y 坐标字符串
-   * @returns 
+   * @returns {object|undefined} Battlefield node at the requested coordinates.
    */
   getNodeByCoords(nodeStr) {
     return this.nodes[nodeStr];
@@ -2724,8 +2726,8 @@ export class HexGraph{
       return false;
     }
     //确保nodes中有起始结点和终点
-    let startNode = this.getNodeByCoords(start)
-    let endNode = this.getNodeByCoords(end)
+    const startNode = this.getNodeByCoords(start)
+    const endNode = this.getNodeByCoords(end)
     if(!startNode||!endNode){
       return false;
     }
@@ -2739,7 +2741,7 @@ export class HexGraph{
     let found = false;
     while (queue.length > 0 && !found) {
       const currentNode = queue.shift(); // BFS是队列（先进先出）
-      if(currentNode.type!=9&&currentNode.belongsLegionId!=legionId){
+      if(!isSameGameValue(currentNode.type, 9)&&!isSameGameValue(currentNode.belongsLegionId, legionId)){
         continue;
       }
       // 遍历当前节点的所有邻接节点
@@ -2794,8 +2796,8 @@ const colorArray = [
   if (!rawResult || !rawResult.battlefield) {
     return false;
   }
-  let buildingData = rawResult.battlefield.buildingData;
-  let legionInfo = Object.fromEntries(Object.values(rawResult.battlefield.legions).map((item,index) => {
+  const buildingData = rawResult.battlefield.buildingData;
+  const legionInfo = Object.fromEntries(Object.values(rawResult.battlefield.legions).map((item) => {
     return [item.id, {
       "blessingCount": item.blessingIdList.length, //四圣个数
       "blessingScore": item.blessingScore, //四圣分数
@@ -2821,10 +2823,10 @@ const colorArray = [
     }]
   }))
   //统计具体信息
-  let memberInfo = Object.values(rawResult.battlefield.roles).map(item => {
-    legionInfo[item.legionID + ""].participantsCount++;
+  const memberInfo = Object.values(rawResult.battlefield.roles).map(item => {
+    legionInfo[`${item.legionID  }`].participantsCount++;
     if (item.isOnline) {
-      legionInfo[item.legionID + ""].OnlineCount++;
+      legionInfo[`${item.legionID  }`].OnlineCount++;
     }
     legionInfo[item.legionID].reviveCount += item.revive;
     legionInfo[item.legionID].danCount += item.d - 6 > 0 ? item.d - 6 : 0;
@@ -2917,10 +2919,10 @@ export const typeBg = (type)=>{
 export const formatPower = (power) => {
   if (!power) return '0'
   if (power >= 100000000) {
-    return (power / 100000000).toFixed(2) + '亿'
+    return `${(power / 100000000).toFixed(2)  }亿`
   }
   if (power >= 10000) {
-    return (power / 10000).toFixed(2) + '万'
+    return `${(power / 10000).toFixed(2)  }万`
   }
   return power.toString()
 }

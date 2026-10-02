@@ -1,9 +1,10 @@
-import { gameLogger } from "@/utils/logger";
+
 import type { EVM, XyzwSession } from ".";
+import { isSameGameValue } from "@/utils/gameValue.js";
+import { gameLogger } from "@/utils/logger";
 
 export const TowerPlugin = ({
-  onSome,
-  $emit
+  onSome
 }: EVM) => {
 
   onSome(["bosstower_getinforesp", "bosstower_getinfo"], (data: XyzwSession) => {
@@ -37,14 +38,14 @@ export const TowerPlugin = ({
 
   onSome(["tower_getinfo", "tower_getinforesp"], (data: XyzwSession) => {
     gameLogger.verbose(`收到查询塔事件: ${data.tokenId}`, data);
-    const { body, gameData, client } = data;
+    const { body, gameData } = data;
     // 保存爬塔结果到gameData中，供组件使用
     if (!gameData.value.towerResult) {
       gameData.value.towerResult = {};
     }
     if (!body) {
       gameLogger.warn("爬塔战斗开始响应为空");
-      return;
+      
     }
   });
 
@@ -104,7 +105,7 @@ export const TowerPlugin = ({
     gameData.value.lastUpdated = new Date().toISOString();
 
     // 检查是否需要自动领取奖励
-    if (!isSuccess && towerId == undefined) {
+    if (!isSuccess && isSameGameValue(towerId, undefined)) {
       return;
     }
 
@@ -133,7 +134,7 @@ export const TowerPlugin = ({
   });
 
   onSome(["tower_claimreward", "tower_claimrewardresp"], (data: XyzwSession) => {
-    const { body, gameData, client } = data;
+    const { body, client } = data;
     if (!body) {
       gameLogger.warn("爬塔战斗开始响应为空");
       return;

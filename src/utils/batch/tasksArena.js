@@ -3,12 +3,12 @@
  * 包含: batcharenafight, batchTopUpFish, batchTopUpArena
  */
 
-import { FISH_TARGET, ARENA_TARGET } from "./constants.js";
+import { ARENA_TARGET, FISH_TARGET } from "./constants.js";
 
 /**
  * 创建竞技场、补齐类任务执行器
- * @param {Object} deps - 依赖项
- * @returns {Object} 任务函数集合
+ * @param {object} deps - 依赖项
+ * @returns {object} 任务函数集合
  */
 export function createTasksArena(deps) {
   const {
@@ -27,7 +27,6 @@ export function createTasksArena(deps) {
     currentRunningTokenId,
     currentSettings,
     pickArenaTargetId,
-    getTodayStartSec,
     isTodayAvailable,
     calculateMonthProgress,
     delayConfig,
@@ -735,7 +734,7 @@ export function createTasksArena(deps) {
             type: "info",
           });
 
-          let actualFights = 0;
+          
           for (
             let i = 0;
             i < planFights &&
@@ -777,7 +776,7 @@ export function createTasksArena(deps) {
                 { targetId },
                 15000,
               );
-              actualFights++;
+              
               ticketsLeft--;
               addLog({
                 time: new Date().toLocaleTimeString(),

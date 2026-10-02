@@ -31,23 +31,23 @@
       <div class="function-section">
         <div class="function-left">
           <div class="export-options">
-            <n-radio-group v-model:value="currentStyle" size="small">
-              <n-radio-button value="style1">样式一</n-radio-button>
-              <n-radio-button value="style2">样式二</n-radio-button>
-            </n-radio-group>
-            <n-checkbox-group v-model:value="exportmethod" name="group-exportmethod" size="small">
-              <n-checkbox value="1">表格导出</n-checkbox>
-              <n-checkbox value="2">图片导出</n-checkbox>
-            </n-checkbox-group>
+            <NRadioGroup v-model:value="currentStyle" size="small">
+              <NRadioButton value="style1">样式一</NRadioButton>
+              <NRadioButton value="style2">样式二</NRadioButton>
+            </NRadioGroup>
+            <NCheckboxGroup v-model:value="exportmethod" name="group-exportmethod" size="small">
+              <NCheckbox value="1">表格导出</NCheckbox>
+              <NCheckbox value="2">图片导出</NCheckbox>
+            </NCheckboxGroup>
           </div>
         </div>
 
         <div class="function-right">
           <a-date-picker 
             v-model:value="queryDate" 
-            :defaultValue="queryDate"
+            :default-value="queryDate"
             @change="fetchBattleRecordsByDate" 
-            valueFormat="YYYY/MM/DD" 
+            value-format="YYYY/MM/DD" 
             format="YYYY/MM/DD"
             :disabled-date="disabledDate"
           />
@@ -114,10 +114,10 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr v-for="(player, index) in battleRecords.roleDetailsList" :key="player.roleId">
+                      <tr v-for="(player, playerIndex) in battleRecords.roleDetailsList" :key="player.roleId">
                          <td class="col-rank">
-                            <div v-if="index < 3" class="rank-medal">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                            <span v-else>{{ index + 1 }}</span>
+                            <div v-if="playerIndex < 3" class="rank-medal">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                            <span v-else>{{ playerIndex + 1 }}</span>
                          </td>
                          <td class="col-name">
                             <div class="player-info">
@@ -151,9 +151,9 @@
                    <!-- 击杀前3 -->
                    <div class="summary-card purple-header">
                       <div class="summary-title">击杀前3</div>
-                      <div v-for="(player, index) in killRank" :key="'kill-'+index" class="top3-item">
+                      <div v-for="(player, playerIndex) in killRank" :key="`kill-${playerIndex}`" class="top3-item">
                          <div class="top3-rank">
-                            <div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
+                            <div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
                          </div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
@@ -167,9 +167,9 @@
                    <!-- 攻城前3 -->
                    <div class="summary-card purple-header">
                       <div class="summary-title">攻城前3</div>
-                      <div v-for="(player, index) in occupyRank" :key="'occupy-'+index" class="top3-item">
+                      <div v-for="(player, playerIndex) in occupyRank" :key="`occupy-${playerIndex}`" class="top3-item">
                          <div class="top3-rank">
-                            <div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
+                            <div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
                          </div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
@@ -183,9 +183,9 @@
                    <!-- KD前3 -->
                    <div class="summary-card purple-header">
                       <div class="summary-title">KD 前3</div>
-                      <div v-for="(player, index) in kdRank" :key="'kd-'+index" class="top3-item">
+                      <div v-for="(player, playerIndex) in kdRank" :key="`kd-${playerIndex}`" class="top3-item">
                          <div class="top3-rank">
-                            <div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
+                            <div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
                          </div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
@@ -199,9 +199,9 @@
                    <!-- 复活丹前3 -->
                    <div class="summary-card purple-header">
                       <div class="summary-title">复活丹前3</div>
-                      <div v-for="(player, index) in reviveRank" :key="'revive-'+index" class="top3-item">
+                      <div v-for="(player, playerIndex) in reviveRank" :key="`revive-${playerIndex}`" class="top3-item">
                          <div class="top3-rank">
-                            <div class="rank-medal-small">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
+                            <div class="rank-medal-small">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
                          </div>
                          <div class="top3-info">
                             <img v-if="player.headImg" :src="player.headImg" class="player-avatar-xs" @error="handleImageError" />
@@ -283,8 +283,8 @@
                 <div class="rank-card-s2 red-border">
                    <div class="rank-card-title-s2"><span class="icon">⚔️</span> 击杀前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in killRank" :key="'s2-kill-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in killRank" :key="`s2-kill-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -297,8 +297,8 @@
                 <div class="rank-card-s2 orange-border">
                    <div class="rank-card-title-s2"><span class="icon">💣</span> 攻城前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in occupyRank" :key="'s2-occupy-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in occupyRank" :key="`s2-occupy-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -311,8 +311,8 @@
                 <div class="rank-card-s2 green-border">
                    <div class="rank-card-title-s2"><span class="icon">📊</span> KD 前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in kdRank" :key="'s2-kd-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in kdRank" :key="`s2-kd-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -325,8 +325,8 @@
                 <div class="rank-card-s2 gray-border">
                    <div class="rank-card-title-s2"><span class="icon">💀</span> 死亡前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in deathRank" :key="'s2-death-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in deathRank" :key="`s2-death-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -339,8 +339,8 @@
                 <div class="rank-card-s2 purple-border">
                    <div class="rank-card-title-s2"><span class="icon">💊</span> 复活丹前三</div>
                    <div class="rank-list-s2">
-                      <div v-for="(player, index) in reviveRank" :key="'s2-revive-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in reviveRank" :key="`s2-revive-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -354,8 +354,8 @@
                  <div class="rank-card-s2 blue-border">
                    <div class="rank-card-title-s2"><span class="icon">🛡️</span> 生存前三</div>
                     <div class="rank-list-s2">
-                      <div v-for="(player, index) in survivalRank" :key="'s2-survival-'+index" class="rank-item-s2">
-                         <div class="rank-num-s2">{{ index + 1 }}</div>
+                      <div v-for="(player, playerIndex) in survivalRank" :key="`s2-survival-${playerIndex}`" class="rank-item-s2">
+                         <div class="rank-num-s2">{{ playerIndex + 1 }}</div>
                          <div class="rank-player-s2">
                             <img v-if="player.headImg" :src="player.headImg" class="avatar-xxs" />
                             <span class="name">{{ player.name }}</span>
@@ -381,10 +381,10 @@
                       </tr>
                    </thead>
                    <tbody>
-                      <tr v-for="(player, index) in battleRecords.roleDetailsList" :key="'s2-row-'+player.roleId">
+                      <tr v-for="(player, playerIndex) in battleRecords.roleDetailsList" :key="`s2-row-${player.roleId}`">
                          <td>
-                            <div v-if="index < 3" class="medal-icon">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                            <div v-else class="rank-num-plain">{{ index + 1 }}</div>
+                            <div v-if="playerIndex < 3" class="medal-icon">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                            <div v-else class="rank-num-plain">{{ playerIndex + 1 }}</div>
                          </td>
                          <td>
                             <div class="player-cell">
@@ -396,19 +396,19 @@
                          <td>
                             <div class="bar-cell">
                                <div class="bar-val red">{{ player.winCnt }}</div>
-                               <div class="progress-bg"><div class="progress-fill red" :style="{width: getPercent(player.winCnt, maxKills) + '%'}"></div></div>
+                               <div class="progress-bg"><div class="progress-fill red" :style="{width: `${getPercent(player.winCnt, maxKills)  }%`}"></div></div>
                             </div>
                          </td>
                          <td>
                             <div class="bar-cell">
                                <div class="bar-val gray">{{ player.loseCnt }}</div>
-                               <div class="progress-bg"><div class="progress-fill gray" :style="{width: getPercent(player.loseCnt, maxDeaths) + '%'}"></div></div>
+                               <div class="progress-bg"><div class="progress-fill gray" :style="{width: `${getPercent(player.loseCnt, maxDeaths)  }%`}"></div></div>
                             </div>
                          </td>
                          <td>
                             <div class="bar-cell">
                                <div class="bar-val orange">{{ player.buildingCnt }}</div>
-                               <div class="progress-bg"><div class="progress-fill orange" :style="{width: getPercent(player.buildingCnt, maxOccupies) + '%'}"></div></div>
+                               <div class="progress-bg"><div class="progress-fill orange" :style="{width: `${getPercent(player.buildingCnt, maxOccupies)  }%`}"></div></div>
                             </div>
                          </td>
                          <td>{{ Math.max((player.loseCnt || 0) - 6, 0) }}</td>  
@@ -436,21 +436,22 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useMessage, NCheckboxGroup, NCheckbox, NRadioGroup, NRadioButton } from 'naive-ui'
-import { useTokenStore } from '@/stores/tokenStore'
-import html2canvas from 'html2canvas';
-import { downloadCanvasAsImage } from "@/utils/imageExport";
 import {
-  Refresh,
   Copy,
-  DocumentText
+  DocumentText,
+  Refresh
 } from '@vicons/ionicons5'
+
+import html2canvas from 'html2canvas';
+import { NCheckbox, NCheckboxGroup, NRadioButton, NRadioGroup, useMessage } from 'naive-ui'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useTokenStore } from '@/stores/tokenStore'
 import {
-  getLastSaturday,
   formatBattleRecordsForExport,
-  copyToClipboard
+  getLastSaturday
 } from '@/utils/clubBattleUtils'
+import { isSameGameValue } from "@/utils/gameValue.js";
+import { downloadCanvasAsImage } from "@/utils/imageExport";
 
 const currentStyle = ref(localStorage.getItem('club_battle_records_style') || 'style1')
 
@@ -468,12 +469,10 @@ const club = computed(() => info.value?.info || null);
 
 const loading = ref(false)
 const battleRecords = ref(null)
-const expandedMembers = ref(new Set())
+
 const queryDate = ref(getLastSaturday())
 
-const legionMatch = ref({
-  isRegistered: false
-})
+
 
 // 计算属性：总击杀
 const totalKills = computed(() => {
@@ -510,7 +509,7 @@ const kdRank = computed(() => {
   return [...battleRecords.value.roleDetailsList]
     .map(member => ({
       ...member,
-      kd: parseFloat((member.winCnt && member.loseCnt ? member.winCnt/member.loseCnt : 0.00)).toFixed(2)
+      kd: Number.parseFloat((member.winCnt && member.loseCnt ? member.winCnt/member.loseCnt : 0.00)).toFixed(2)
     }))
     .sort((a, b) => b.kd - a.kd)
     .slice(0, 3)
@@ -617,16 +616,7 @@ const getReviveColor = (val) => {
 }
 
 // 格式化战力
-const formatPower = (power) => {
-  if (!power) return '0'
-  if (power >= 100000000) {
-    return (power / 100000000).toFixed(2) + '亿'
-  }
-  if (power >= 10000) {
-    return (power / 10000).toFixed(2) + '万'
-  }
-  return power.toString()
-}
+
 
 
 
@@ -636,12 +626,12 @@ const handleImageError = (event) => {
 }
 
 const disabledDate = current => {
-  return (current.getDay() != 6 && current.getDay() != 0) || current > Date.now()
+  return (!isSameGameValue(current.getDay(), 6) && !isSameGameValue(current.getDay(), 0)) || current > Date.now()
 }
 
 //日期选择时调用查询战绩方法
 const fetchBattleRecordsByDate = (val)=>{
-  if(undefined != val){
+  if(!isSameGameValue(undefined, val)){
     queryDate.value = val
   }else{
     queryDate.value = getLastSaturday();
@@ -712,7 +702,7 @@ const handleExport = async () => {
 
   try {
     if (exportmethod.value.includes('1')) {
-      const exportText = formatBattleRecordsForExport(battleRecords.value.roleDetailsList, queryDate.value)
+      formatBattleRecordsForExport(battleRecords.value.roleDetailsList, queryDate.value);
     }
     if (exportmethod.value.includes('2')) {
       exportToImage()
@@ -727,6 +717,7 @@ const handleExport = async () => {
 const exportToImage = async () => {
   // 校验：确保DOM已正确绑定
   if (!exportDom.value) {
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('未找到要导出的DOM元素');
     return;
   }
@@ -761,10 +752,11 @@ const exportToImage = async () => {
     });
 
     // 6. Canvas转图片链接并下载
-    const filename = queryDate.value.replace("/",'年').replace("/",'月')+'日盐场战报.png';
+    const filename = `${queryDate.value.replace("/",'年').replace("/",'月')}日盐场战报.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error('DOM转图片失败：', err);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('导出图片失败，请重试');
   }
 };

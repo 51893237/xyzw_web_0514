@@ -1,5 +1,5 @@
 <template>
-  <MyCard class="skin-challenge" :statusClass="statusClass">
+  <MyCard class="skin-challenge" :status-class="statusClass">
     <template #icon>
       <img src="/icons/1733492491706152.png" alt="换皮闯关" />
     </template>
@@ -64,10 +64,10 @@
 </template>
 
 <script setup>
+import { useMessage } from "naive-ui";
 import { computed, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import { getTowerActId } from "@/utils/towerActId.js";
-import { useMessage } from "naive-ui";
 import MyCard from "../Common/MyCard.vue";
 
 const tokenStore = useTokenStore();
@@ -82,7 +82,7 @@ const isActivityValid = computed(() => {
   if (idStr.length < 6) return false;
   
   // Format: YYMMDDX -> 20YY-MM-DD
-  const year = "20" + idStr.substring(0, 2);
+  const year = `20${  idStr.substring(0, 2)}`;
   const month = idStr.substring(2, 4);
   const day = idStr.substring(4, 6);
   

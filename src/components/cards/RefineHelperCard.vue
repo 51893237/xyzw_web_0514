@@ -1,5 +1,5 @@
 <template>
-  <MyCard class="refine-helper" :statusClass="{ active: state.isRunning }">
+  <MyCard class="refine-helper" :status-class="{ active: state.isRunning }">
     <template #icon>
       <img src="/icons/ta.png" alt="洗练图标" />
     </template>
@@ -188,8 +188,8 @@
             <!-- 条件列表 -->
             <div class="conditions-list">
               <div 
-                v-for="(condition, index) in targetConditions" 
-                :key="index" 
+                v-for="(condition, conditionIndex) in targetConditions" 
+                :key="conditionIndex" 
                 class="condition-item"
               >
                 <div class="auto-form">
@@ -217,7 +217,7 @@
                     <n-button 
                       type="error" 
                       size="small" 
-                      @click="removeCondition(index)"
+                      @click="removeCondition(conditionIndex)"
                       :disabled="targetConditions.length <= 1"
                     >
                       删除
@@ -257,11 +257,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
 import { useMessage } from "naive-ui";
+import { computed, ref } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
-import MyCard from "../Common/MyCard.vue";
 import { HERO_DICT } from "@/utils/HeroList.js";
+import MyCard from "../Common/MyCard.vue";
 
 const tokenStore = useTokenStore();
 const message = useMessage();

@@ -62,13 +62,15 @@
 </template>
 
 <script setup>
-import { ref, onMounted,toRaw } from 'vue'
-import { roadPointList,extractValidData,typeName,typeBg,formatPower,HexGraph } from "@/utils/legionWar"
+import { useMessage } from 'naive-ui'
+
+import { onMounted, ref } from 'vue'
+import { useTokenStore } from '@/stores/tokenStore'
 import { getCurrentTimeByFormat } from "@/utils/DateTimeUtils"
 
+import { isSameGameValue } from "@/utils/gameValue.js";
+import {extractValidData,formatPower,HexGraph,typeBg } from "@/utils/legionWar"
 import { XyzwLegionWarWebSocketClient } from '@/utils/xyzwLegionWarWebSocket'
-import { useTokenStore } from '@/stores/tokenStore'
-import { useMessage } from 'naive-ui'
 
 const tokenStore = useTokenStore()
 const message = useMessage()
@@ -81,27 +83,15 @@ const hint = ref(null);
 const isEntireBattlefield = ref(false);
 const currentDateTime = ref(getCurrentTimeByFormat("yyyy-MM-dd HH:mm:ss"));
 
-const connectionStatusText = computed(() => {
-  return legionWarWebSocket?.status === "connected" ? "已连接" : "未连接";
-});
-const connectionStatus = computed(() => {
-  return legionWarWebSocket?.status === "connected" ? "connected" : "disconnected";
-});
+
+
 
 const connectionClass = computed(() => {
   return isEntireBattlefield.value ? "status-connected" : "status-disconnected";
 });
-const isConnected = computed(() => {
-  return connectionStatus?.value === "connected";
-});
 
-const toggleConnection = () => {
-  if (connectionStatus?.value === "connected") {
-    disconnectWebSocket();
-  } else {
-    connectWebSocket();
-  }
-};
+
+
 
 /**
  * 是占领情况还是分布情况
@@ -113,7 +103,7 @@ const isOccupyOrDistribution = ref(false);
 const isLegionOrIndividual = ref(false); 
 
 //处理change事件
-const handleChange = function(value) {
+const handleChange = function() {
   drawCanvasContent();
 }
 
@@ -121,16 +111,16 @@ const handleChange = function(value) {
  * 发送各俱乐部免费复活到俱乐部频道
  */
 const sendMessageToLegion =async function(){
-  let arr = Object.values(validData.value.legionInfo)
+  const arr = Object.values(validData.value.legionInfo)
   const messageList = [];
   for(let i =0;i<2;i++){
     let message = ``;
     for (let j = 0; j < 10; j++) {
       const element = arr[j+(i*10)];
-      if(j!=0){
+      if(!isSameGameValue(j, 0)){
         message+="\n";
       }
-      message +=element.name+":剩"+(150-element.reviveCount);
+      message +=`${element.name}:剩${150-element.reviveCount}`;
     }
     messageList.push(message);
   }
@@ -165,7 +155,7 @@ const arr = Array.from({ length: 41 }, () =>
   Array.from({ length: 41 }, () => 0)
 );
 //记录左侧绘制后最大点
-let leftMaxPoint=[0,0];
+const leftMaxPoint=[0,0];
 let validData =ref(null);
 
 const result = ref(null)
@@ -216,7 +206,7 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
   //清空画布
   ctx.clearRect(0, 0, ctx.canvas.width / dpr, ctx.canvas.height / dpr)
   //获取图结构的实例
-  let graph = HexGraph.getInstance();
+  const graph = HexGraph.getInstance();
   //删除所有结点
   graph.removeAllNode();
   //提取result.value中的数据
@@ -242,9 +232,9 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
   //如果是占领布局
   if(!isOccupyOrDistribution.value){
     //处理地图连通
-    let asc = true //是否升序
+    const asc = true //是否升序
     Object.values(validData.value.legionInfo).forEach(element => {
-      let tempArr = Object.keys(element.buildings).sort((a, b) => {
+      const tempArr = Object.keys(element.buildings).sort((a, b) => {
         // 拆分key为两个数字（如"19_28" → [19, 28]）
         const [a1, a2] = a.split('_').map(Number);
         const [b1, b2] = b.split('_').map(Number);
@@ -261,7 +251,7 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
       //此处填充两点之间路径颜色,可以采用单循环,但是会有些点不被填充颜色
       for(let buildingIndex =0;buildingIndex<tempArr.length;buildingIndex++){
         for(let buildingIndexTemp =buildingIndex;buildingIndexTemp<tempArr.length;buildingIndexTemp++){
-          let graphresult = graph.findShortestPath(tempArr[buildingIndex],tempArr[buildingIndexTemp],element.id);
+          const graphresult = graph.findShortestPath(tempArr[buildingIndex],tempArr[buildingIndexTemp],element.id);
           if(graphresult){
             graphresult.forEach(item=>{
               item.belongsLegionId=element.id;
@@ -273,27 +263,27 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
     });
   }else{
     //如果是分布布局,将各个大本营的颜色设为对应俱乐部的背景色
-    let legionList = Object.values(validData.value.legionInfo);
+    const legionList = Object.values(validData.value.legionInfo);
     for(let i =0;i<legionList.length;i++){
-      let node = graph.getNodeByCoords(legionList[i].strongholdId);
+      const node = graph.getNodeByCoords(legionList[i].strongholdId);
       node.belongsLegionId=legionList[i].id
       node.colorBg=legionList[i].color;
     }
   }
 
   //获取所有结点
-  let mergedArr = graph.getAllNodes()
+  const mergedArr = graph.getAllNodes()
   //所有节点放入二维数组中
   mergedArr.forEach(item => {
-    let row=item.position.x;
-    let col=item.position.y;
+    const row=item.position.x;
+    const col=item.position.y;
     //如果是布局情况
-    if(isOccupyOrDistribution.value&&item.type !=4){
+    if(isOccupyOrDistribution.value&&!isSameGameValue(item.type, 4)){
       item.belongsLegionId=-1;
       item.colorBg=typeBg(9)
     }
-    if (parseInt(row) >= 0 && parseInt(row) < 41 && parseInt(col) >= 0 && parseInt(col) < 32) {
-      arr[parseInt(col)][parseInt(row)] = item; // 赋值
+    if (Number.parseInt(row) >= 0 && Number.parseInt(row) < 41 && Number.parseInt(col) >= 0 && Number.parseInt(col) < 32) {
+      arr[Number.parseInt(col)][Number.parseInt(row)] = item; // 赋值
     } else {
       console.warn(`坐标[${row},${col}]越界，跳过赋值`);
     }
@@ -319,11 +309,11 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
   //点击事件存储的临时对象
   let tempValue={};
   //用于记录最后绘制级内容的数组
-  let drawPointArr = [];
+  const drawPointArr = [];
   //根据二位数组绘制内容
   for (let row = 0; row <= 31; row++) {
     for (let col = 0; col <= 40; col++) {
-      if (row>2&&arr[row][col] != 0) {
+      if (row>2&&!isSameGameValue(arr[row][col], 0)) {
         // 计算中心坐标（处理错位）
         const x = col * (hexWidth * 0.75) + hexSize + gap * col;
         const y = row * hexHeight + (col % 2 === 1 ? hexHeight / 2 : 0) + gap * row;
@@ -341,9 +331,9 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
         // 绘制六边形
         drawHexagon(x, y, colorTemp);
         
-        if(arr[row][col].type!=9){
+        if(!isSameGameValue(arr[row][col].type, 9)){
           let name =arr[row][col].typeName.replace("据点","");
-          if(name=="大本营"){
+          if(isSameGameValue(name, "大本营")){
             ctx.fillStyle = "#055138";
             name=validData.value.legionInfo[arr[row][col].belongsLegionId].name
           }
@@ -367,7 +357,7 @@ const drawCanvasLeft = (mouseX=0,mouseY=0,type='') => {
           );
   }
 
-  if(tempValue.type!=9&&Object.keys(tempValue).length>0&&type==='click'){
+  if(!isSameGameValue(tempValue.type, 9)&&Object.keys(tempValue).length>0&&type==='click'){
     drawClickContent(mouseX,mouseY,tempValue)
   }
 
@@ -394,7 +384,7 @@ const drawCanvasRight = (tableData) =>{
     let tableConfig={}
     if(!isLegionOrIndividual.value){
       tableData = Object.values(tableData.legionInfo).sort((a,b)=>b.score-a.score).map(item=>{
-        return [item.name,item.killCnt,item.reviveCount+"/150",item.score,item.redCount,formatPower(item.power),item.participantsCount+"/"+item.memberCount,item.danCount,item.blessingCount+"个共"+item.blessingScore+"分",item.color]
+        return [item.name,item.killCnt,`${item.reviveCount}/150`,item.score,item.redCount,formatPower(item.power),`${item.participantsCount}/${item.memberCount}`,item.danCount,`${item.blessingCount}个共${item.blessingScore}分`,item.color]
       })
       tableConfig={
         x: leftMaxPoint[0]+20,
@@ -402,7 +392,7 @@ const drawCanvasRight = (tableData) =>{
         columns: 9, // 3列
         rows: 20, // 4行内容（不含表头）
         headerData: ['俱乐部名称','击杀数', '免费复活', '积分', '红数', '战力', '人数', '花费总丹', '四圣'], // 表头
-        tableData: tableData?tableData:[],
+        tableData: tableData || [],
         columnWidth: 78, // 单元格宽度（可根据内容调整）
         rowHeight: 37, // 单元格高度
         scale: 1 
@@ -410,8 +400,8 @@ const drawCanvasRight = (tableData) =>{
     }else{
       let tableDataTemp=[] 
       Object.values(tableData.memberInfo).forEach(item=>{
-        if(item.legionId==tokenStore.gameData?.roleInfo?.role.legionId){
-          tableDataTemp.push([item.name,item.kill,item.die,item.revive+"/5",item.score,item.digGround,item.dan,parseFloat(item.kill/item.die).toFixed(2)]);
+        if(isSameGameValue(item.legionId, tokenStore.gameData?.roleInfo?.role.legionId)){
+          tableDataTemp.push([item.name,item.kill,item.die,`${item.revive}/5`,item.score,item.digGround,item.dan,Number.parseFloat(item.kill/item.die).toFixed(2)]);
         }
       })
       tableDataTemp=tableDataTemp.sort((a,b)=> {return b[1]-a[1]})
@@ -421,7 +411,7 @@ const drawCanvasRight = (tableData) =>{
         columns: 8, // 3列
         rows: tableDataTemp?tableDataTemp.length:30, // 4行内容（不含表头）
         headerData: ['名称','击杀数', '死亡次数', '已复活次数', '积分', '刨地','复活丹', 'K/D'], // 表头
-        tableData: tableDataTemp?tableDataTemp:[],
+        tableData: tableDataTemp || [],
         columnWidth: 88, // 单元格宽度（可根据内容调整）
         rowHeight: 25, // 单元格高度
         scale: 1 
@@ -467,7 +457,7 @@ const drawCanvasRight = (tableData) =>{
     borderColor, headerTextColor, cellTextColor, fontSize, font, scale
   } = config;
   // 计算缩放后的实际尺寸（适配画布缩放）
-  let scaledColW = columnWidth * scale;
+  const scaledColW = columnWidth * scale;
   const scaledRowH = rowHeight * scale;
   const scaledFontSize = fontSize * scale;
   const scaledLineWidth = 1 * scale; // 边框线宽
@@ -484,8 +474,8 @@ const drawCanvasRight = (tableData) =>{
   );
 
   let currentX=x;
-  let addColumnWidth=20;
-  let reduceColumnWidth=20;
+  const addColumnWidth=20;
+  const reduceColumnWidth=20;
   // 2. 绘制表头（第1行）
   for (let col = 0; col < columns; col++) {
     ctx.fillStyle = headerBgColor;
@@ -584,7 +574,7 @@ const drawClickContent = (mousex, mousey, value, scale=1, offsetX=0, offsetY=0, 
   let text = '';
   if (typeof value === 'object' && value !== null ) {
     text = Object.entries(value).map(([key, val]) => `${key}: ${val}`).join('\n');
-    let item =value;
+    const item =value;
     text =`坐标:${item.id}\n血量:${item.hP}/${item.maxHP}\n类型:${item.typeName}\n分数:${item.point}\n所属俱乐部:${validData.value.legionInfo[item.belongsLegionId]?.name||'无所属'}`
   } else {
     text = String(value || '无数据');
@@ -609,8 +599,6 @@ const drawClickContent = (mousex, mousey, value, scale=1, offsetX=0, offsetY=0, 
   // 信息框默认显示在鼠标右下方，避免溢出canvas边界
   let boxX = canvasX + scaledGap;
   let boxY = canvasY + scaledGap;
-  const canvasWidth = ctx.canvas.width / dpr; // canvas可视宽度（去除dpr）
-  const canvasHeight = ctx.canvas.height / dpr; // canvas可视高度（去除dpr）
 
   // 右边界溢出：信息框移到鼠标左侧
   if (boxX + scaledBoxWidth > leftMaxPoint[0]+10) {
@@ -720,7 +708,7 @@ const fetchBattleRecords1 = async (getbattlefield) => {
       try {
         setTimeout( () => {
           isEntireBattlefield.value=true;
-          const entire = legionWarWebSocket.send("war_enterbattlefield",{battlefieldId:hint.value,useGzip:true})
+          legionWarWebSocket.send("war_enterbattlefield",{battlefieldId:hint.value,useGzip:true});
         }, 5000);
       } catch (error) {
         console.error(`初始请求盐场信息失败 [${tokenId}]`, error)
@@ -736,7 +724,6 @@ const fetchBattleRecords1 = async (getbattlefield) => {
       }
     })
     legionWarWebSocket.onDisconnect = (event) => {
-      const reason = event.code === 1006 ? '异常断开' : event.reason || ''
       console.log(event)
     }
 

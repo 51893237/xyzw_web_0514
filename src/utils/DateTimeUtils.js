@@ -24,7 +24,7 @@
   const second = String(now.getSeconds()).padStart(2, '0'); // 秒数补0
 
   // 第三步：替换格式中的占位符
-  let result = format
+  const result = format
       .replace(/yyyy/g, year)
       .replace(/MM/g, month)
       .replace(/dd/g, day)

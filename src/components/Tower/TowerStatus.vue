@@ -96,8 +96,7 @@
 
     <div class="card-actions">
       <button
-        :class="[
-          'climb-button',
+        class="climb-button" :class="[
           {
             active: canClimb,
             disabled: !canClimb,
@@ -120,7 +119,10 @@
 </template>
 
 <script setup>
+import { useMessage } from "naive-ui";
 // 停止批量爬塔操作
+import { computed, onMounted, ref, watch } from "vue";
+import { useTokenStore } from "@/stores/tokenStore";
 let stopFlag = false;
 
 const stopClimbing = () => {
@@ -132,9 +134,6 @@ const stopClimbing = () => {
   isClimbing.value = false;
   message.info("已手动停止批量爬塔");
 };
-import { computed, onMounted, ref, watch } from "vue";
-import { useTokenStore } from "@/stores/tokenStore";
-import { useMessage } from "naive-ui";
 
 const tokenStore = useTokenStore();
 const message = useMessage();
@@ -145,7 +144,7 @@ const isBuying = ref(false); // 购买小鱼干状态
 const showBuyEnergyDialog = ref(false); // 购买弹窗显示
 const buyEnergyNum = ref(1); // 购买数量（1-100）
 const climbTimeout = ref(null); // 用于超时重置状态
-const lastClimbResult = ref(null); // 最后一次爬塔结果
+ // 最后一次爬塔结果
 
 // 计算属性 - 从gameData中获取塔相关信息
 const roleInfo = computed(() => {
@@ -287,7 +286,7 @@ const startTowerClimb = async () => {
   isClimbing.value = true;
   stopFlag = false;
   let climbCount = 0;
-  let maxClimb = 100; // 最多批量次数，防止死循环
+  const maxClimb = 100; // 最多批量次数，防止死循环
   // 设置超时保护，60秒后自动重置状态
   climbTimeout.value = setTimeout(() => {
     isClimbing.value = false;
@@ -317,7 +316,7 @@ const startTowerClimb = async () => {
     }
     message.success(`已自动爬塔${climbCount}次，体力已耗尽或达到上限。`);
   } catch (error) {
-    message.error("批量爬塔失败: " + (error.message || "未知错误"));
+    message.error(`批量爬塔失败: ${  error.message || "未知错误"}`);
   }
 
   // 清除超时并重置状态
@@ -352,11 +351,9 @@ const getTowerInfo = async () => {
       return;
     }
     // 首先获取角色信息，这包含了塔的数据
-    const roleResult = tokenStore.sendMessage(tokenId, "role_getroleinfo");
+    tokenStore.sendMessage(tokenId, "role_getroleinfo");
     // 直接请求塔信息
-    const towerResult = tokenStore.sendMessage(tokenId, "tower_getinfo");
-    if (!roleResult && !towerResult) {
-    }
+    tokenStore.sendMessage(tokenId, "tower_getinfo");
   } catch (error) {
     // 获取塔信息失败：静默，避免噪声
   }
@@ -429,7 +426,7 @@ watch(
 onMounted(() => {
   // 检查WebSocket客户端
   if (tokenStore.selectedToken) {
-    const client = tokenStore.getWebSocketClient(tokenStore.selectedToken.id);
+    tokenStore.getWebSocketClient(tokenStore.selectedToken.id);
   }
 
   // 组件挂载时获取塔信息

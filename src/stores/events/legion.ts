@@ -1,9 +1,8 @@
-import { gameLogger } from "@/utils/logger";
 import type { EVM, XyzwSession } from ".";
+import { gameLogger } from "@/utils/logger";
 
 export const LegionPlugin = ({
-  onSome,
-  $emit
+  onSome
 }: EVM) => {
   onSome(
     [

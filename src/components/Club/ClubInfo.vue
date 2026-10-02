@@ -1,5 +1,5 @@
 <template>
-  <MyCard class="club-info" :statusClass="{ active: !!club }">
+  <MyCard class="club-info" :status-class="{ active: !!club }">
     <template #icon>
       <img src="/icons/1733492491706152.png" alt="俱乐部图标" />
     </template>
@@ -14,20 +14,20 @@
       <div v-if="!club" class="empty-club">
         <n-empty description="暂无俱乐部" />
         <div class="actions">
-          <n-button size="small" @click="refreshClub">刷新</n-button>
+          <NButton size="small" @click="refreshClub">刷新</NButton>
         </div>
       </div>
       <div v-else class="club-layout">
         <div class="toolbar">
-          <n-space size="small">
+          <NSpace size="small">
             <!-- 申请列表按钮 -->
-            <n-button v-if="canKick" size="small" @click="getApplyList">申请列表</n-button>
-            <n-button size="small" @click="refreshClub">刷新</n-button>
-          </n-space>
+            <NButton v-if="canKick" size="small" @click="getApplyList">申请列表</NButton>
+            <NButton size="small" @click="refreshClub">刷新</NButton>
+          </NSpace>
         </div>
 
         <!-- 申请列表悬浮界面 -->
-        <n-modal
+        <NModal
           v-model:show="showApplyList"
           title="俱乐部申请列表"
           :mask-closable="true"
@@ -39,24 +39,24 @@
           :content-style="{ padding: '0', maxHeight: 'calc(80vh - 60px)', overflow: 'auto' }"
         >
           <template #header-extra>
-            <n-space size="small">
-              <n-button
+            <NSpace size="small">
+              <NButton
                 size="small"
                 type="primary"
                 @click="approveAll"
                 :disabled="applyList.length === 0"
               >
                 一键通过
-              </n-button>
-              <n-button
+              </NButton>
+              <NButton
                 size="small"
                 type="error"
                 @click="rejectAll"
                 :disabled="applyList.length === 0"
               >
                 一键拒绝
-              </n-button>
-            </n-space>
+              </NButton>
+            </NSpace>
           </template>
           <div v-if="loadingApply" class="loading">
             <n-spin size="small" />
@@ -79,7 +79,7 @@
                 @mouseleave="hoveredItemId = null"
               >
                 <div class="apply-left">
-                  <n-avatar
+                  <NAvatar
                     :size="28"
                     :src="apply.headImg || '/icons/xiaoyugan.png'"
                   />
@@ -102,23 +102,23 @@
                   </div>
                 </div>
                 <div class="apply-right">
-                  <n-space size="small">
-                    <n-button
+                  <NSpace size="small">
+                    <NButton
                       size="tiny"
                       type="primary"
                       @click="approveApply(apply.roleId)"
                     >
                       通过
-                    </n-button>
-                    <n-button size="tiny" @click="rejectApply(apply.roleId)">
+                    </NButton>
+                    <NButton size="tiny" @click="rejectApply(apply.roleId)">
                       拒绝
-                    </n-button>
-                  </n-space>
+                    </NButton>
+                  </NSpace>
                 </div>
               </div>
             </div>
           </div>
-        </n-modal>
+        </NModal>
 
         <!-- 左：俱乐部信息 -->
         <div class="club-main">
@@ -129,13 +129,13 @@
           <n-tabs v-model:value="activeTab" type="line" animated>
           <n-tab-pane name="overview" tab="概览" display-directive="show:lazy">
             <div class="overview">
-              <n-grid x-gap="12" y-gap="12" cols="2" item-responsive>
+              <NGrid x-gap="12" y-gap="12" cols="2" item-responsive>
                 <!-- 头部信息 -->
-                <n-gi span="2">
-                  <n-card embedded :bordered="false" content-style="padding: 16px;">
-                    <n-thing>
+                <NGi span="2">
+                  <NCard embedded :bordered="false" content-style="padding: 16px;">
+                    <NThing>
                       <template #avatar>
-                        <n-avatar
+                        <NAvatar
                           :size="64"
                           :src="club.logo || '/icons/xiaoyugan.png'"
                           style="box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
@@ -145,14 +145,14 @@
                         <span style="font-size: 18px; font-weight: bold;">{{ club.name }}</span>
                       </template>
                       <template #description>
-                        <n-space size="small" style="margin-top: 4px;">
-                          <n-tag size="small" :bordered="false" type="warning">ID: {{ club.id }}</n-tag>
-                          <n-tag size="small" :bordered="false" type="info">服务器: {{ club.serverId - 27 }}</n-tag>
-                          <n-tag size="small" :bordered="false" type="success">成员: {{ memberCount }}</n-tag>
-                        </n-space>
+                        <NSpace size="small" style="margin-top: 4px;">
+                          <NTag size="small" :bordered="false" type="warning">ID: {{ club.id }}</NTag>
+                          <NTag size="small" :bordered="false" type="info">服务器: {{ club.serverId - 27 }}</NTag>
+                          <NTag size="small" :bordered="false" type="success">成员: {{ memberCount }}</NTag>
+                        </NSpace>
                       </template>
                       <template #header-extra>
-                        <n-button
+                        <NButton
                           size="small"
                           :type="legionSignedIn ? 'success' : 'primary'"
                           :secondary="legionSignedIn"
@@ -160,62 +160,62 @@
                           :disabled="legionSignedIn"
                         >
                           <template #icon>
-                            <n-icon><ShieldCheckmark /></n-icon>
+                            <NIcon><ShieldCheckmark /></NIcon>
                           </template>
                           {{ legionSignedIn ? "已签到" : "俱乐部签到" }}
-                        </n-button>
+                        </NButton>
                       </template>
-                    </n-thing>
-                  </n-card>
-                </n-gi>
+                    </NThing>
+                  </NCard>
+                </NGi>
 
                 <!-- 统计数据 -->
-                <n-gi>
-                  <n-card size="small" embedded :bordered="false" style="height: 100%;">
-                    <n-statistic label="战力">
+                <NGi>
+                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
+                    <NStatistic label="战力">
                       <template #prefix>
-                        <n-icon color="#18a058"><BarChart /></n-icon>
+                        <NIcon color="#18a058"><BarChart /></NIcon>
                       </template>
                       {{ formatNumber(clubOverview.power) }}
-                    </n-statistic>
-                  </n-card>
-                </n-gi>
-                <n-gi>
-                  <n-card size="small" embedded :bordered="false" style="height: 100%;">
-                    <n-statistic label="红粹">
+                    </NStatistic>
+                  </NCard>
+                </NGi>
+                <NGi>
+                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
+                    <NStatistic label="红粹">
                       <template #prefix>
-                        <n-icon color="#d03050"><Flame /></n-icon>
+                        <NIcon color="#d03050"><Flame /></NIcon>
                       </template>
                       {{ clubOverview.redQuench }}
-                    </n-statistic>
-                  </n-card>
-                </n-gi>
-                <n-gi>
-                  <n-card size="small" embedded :bordered="false" style="height: 100%;">
-                    <n-statistic label="当前BossId">
+                    </NStatistic>
+                  </NCard>
+                </NGi>
+                <NGi>
+                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
+                    <NStatistic label="当前BossId">
                       <template #prefix>
-                        <n-icon color="#8a2be2"><Skull /></n-icon>
+                        <NIcon color="#8a2be2"><Skull /></NIcon>
                       </template>
                       {{ clubOverview.currentBossId }}
-                    </n-statistic>
-                  </n-card>
-                </n-gi>
-                <n-gi>
-                  <n-card size="small" embedded :bordered="false" style="height: 100%;">
-                    <n-statistic label="Boss剩余血量">
+                    </NStatistic>
+                  </NCard>
+                </NGi>
+                <NGi>
+                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
+                    <NStatistic label="Boss剩余血量">
                       <template #prefix>
-                        <n-icon color="#f0a020"><Skull /></n-icon>
+                        <NIcon color="#f0a020"><Skull /></NIcon>
                       </template>
                       {{ clubOverview.currentHP }}
-                    </n-statistic>
-                  </n-card>
-                </n-gi>
+                    </NStatistic>
+                  </NCard>
+                </NGi>
 
                 <!-- Boss 击杀情况 -->
-                <n-gi span="2" v-if="clubOverview.unfoughtBosses && clubOverview.unfoughtBosses.length > 0">
-                  <n-alert type="warning" :bordered="false">
+                <NGi span="2" v-if="clubOverview.unfoughtBosses && clubOverview.unfoughtBosses.length > 0">
+                  <NAlert type="warning" :bordered="false">
                     <template #icon>
-                      <n-icon><Skull /></n-icon>
+                      <NIcon><Skull /></NIcon>
                     </template>
                     <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                       <div>
@@ -226,38 +226,38 @@
                         </div>
                       </div>
                     </div>
-                    <n-collapse arrow-placement="right" style="margin-top: 8px;">
-                      <n-collapse-item title="展开查看遗漏Boss列表" name="1">
-                        <n-space size="small" style="margin-top: 8px;">
-                          <n-tag v-for="boss in clubOverview.unfoughtBosses" :key="boss" type="error" size="small" :bordered="false">
+                    <NCollapse arrow-placement="right" style="margin-top: 8px;">
+                      <NCollapseItem title="展开查看遗漏Boss列表" name="1">
+                        <NSpace size="small" style="margin-top: 8px;">
+                          <NTag v-for="boss in clubOverview.unfoughtBosses" :key="boss" type="error" size="small" :bordered="false">
                             {{ boss }}
-                          </n-tag>
-                        </n-space>
-                      </n-collapse-item>
-                    </n-collapse>
-                  </n-alert>
-                </n-gi>
+                          </NTag>
+                        </NSpace>
+                      </NCollapseItem>
+                    </NCollapse>
+                  </NAlert>
+                </NGi>
 
                 <!-- 公告 -->
-                <n-gi span="2" v-if="club.announcement">
-                  <n-card size="small" title="公告" embedded :bordered="false">
+                <NGi span="2" v-if="club.announcement">
+                  <NCard size="small" title="公告" embedded :bordered="false">
                     <template #header-extra>
-                      <n-icon size="18" color="#f0a020"><Megaphone /></n-icon>
+                      <NIcon size="18" color="#f0a020"><Megaphone /></NIcon>
                     </template>
                     <div style="white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: #666;">
                       {{ club.announcement }}
                     </div>
-                  </n-card>
-                </n-gi>
+                  </NCard>
+                </NGi>
 
                 <!-- 会长 -->
-                <n-gi span="2" v-if="leader">
-                  <n-card size="small" title="会长" embedded :bordered="false">
+                <NGi span="2" v-if="leader">
+                  <NCard size="small" title="会长" embedded :bordered="false">
                     <template #header-extra>
-                      <n-icon size="18" color="#2080f0"><Person /></n-icon>
+                      <NIcon size="18" color="#2080f0"><Person /></NIcon>
                     </template>
                     <div style="display: flex; align-items: center; gap: 12px;">
-                      <n-avatar
+                      <NAvatar
                         round
                         :size="40"
                         :src="leader.headImg || '/icons/xiaoyugan.png'"
@@ -268,15 +268,15 @@
                         <div style="font-size: 12px; color: #999;">ID: {{ leader.roleId }}</div>
                       </div>
                     </div>
-                  </n-card>
-                </n-gi>
-              </n-grid>
+                  </NCard>
+                </NGi>
+              </NGrid>
             </div>
           </n-tab-pane>
 
           <n-tab-pane name="members" tab="成员" display-directive="show:lazy">
             <div class="members" ref="exportDom">
-              <n-data-table
+              <NDataTable
                 :columns="memberColumns"
                 :data="topMembers"
                 :bordered="false"
@@ -316,9 +316,9 @@
             <span class="section-sub">所在岛屿 · 实时排名</span>
           </div>
           <div class="club-side-body">
-            <n-alert v-if="childError" type="error" :bordered="false" title="盐场面板渲染失败">
+            <NAlert v-if="childError" type="error" :bordered="false" title="盐场面板渲染失败">
               <div style="font-size: 12px; word-break: break-all;">{{ childError }}</div>
-            </n-alert>
+            </NAlert>
             <ClubIslandPanel v-else />
           </div>
         </aside>
@@ -327,7 +327,7 @@
   </MyCard>
 
   <!-- 玩家信息模态框 -->
-  <n-modal
+  <NModal
     v-model:show="showPlayerInfoModal"
     preset="card"
     title="成员信息"
@@ -342,7 +342,7 @@
 
     <div v-if="playerInfo" class="player-info-content">
       <div class="player-info-main">
-        <n-avatar
+        <NAvatar
           round
           :size="60"
           :src="playerInfo.headImg"
@@ -351,7 +351,7 @@
         <div class="player-info-detail">
           <h3>
             {{ playerInfo.name }}
-            <n-tag
+            <NTag
               v-if="playerInfo.legacy > 0"
               :style="{
                 color: '#fff',
@@ -361,7 +361,7 @@
               style="margin-left: 8px"
             >
               {{ legacycolor[playerInfo.legacy]?.name || "未知" }}
-            </n-tag>
+            </NTag>
           </h3>
           <div class="detail-row">
             <span
@@ -408,12 +408,12 @@
           v-if="playerInfo.heroList && playerInfo.heroList.length > 0"
         >
           <div
-            v-for="(hero, index) in playerInfo.heroList"
-            :key="hero.heroId || index"
+            v-for="(hero, heroIndex) in playerInfo.heroList"
+            :key="hero.heroId || heroIndex"
             class="hero-item"
             @click="selectHeroInfo(hero)"
           >
-            <n-avatar
+            <NAvatar
               round
               :size="40"
               :src="hero.heroAvate"
@@ -452,12 +452,12 @@
       </div>
     </div>
     <template #footer>
-      <n-button @click="showPlayerInfoModal = false">关闭</n-button>
+      <NButton @click="showPlayerInfoModal = false">关闭</NButton>
     </template>
-  </n-modal>
+  </NModal>
 
   <!-- 武将详情模态框 -->
-  <n-modal
+  <NModal
     v-model:show="showHeroModal"
     class="hero-detail-modal"
     preset="card"
@@ -468,7 +468,7 @@
   >
     <div v-if="heroModealTemp" class="hero-modal-content">
       <div class="hero-modal-header">
-        <n-avatar
+        <NAvatar
           round
           :size="80"
           :src="heroModealTemp.heroAvate"
@@ -482,62 +482,62 @@
             }}</span>
             <span class="stat-item">等级: {{ heroModealTemp.level }}</span>
             <span class="stat-item">星级: {{ heroModealTemp.star }}</span>
-            <n-tag :type="heroModealTemp.HolyBeast ? 'success' : 'warning'">
+            <NTag :type="heroModealTemp.HolyBeast ? 'success' : 'warning'">
               {{ heroModealTemp.HolyBeast ? "已激活" : "未激活" }}
-            </n-tag>
+            </NTag>
           </div>
         </div>
       </div>
 
       <div class="hero-modal-details">
-        <n-descriptions label-placement="left" column="3" bordered>
-          <n-descriptions-item label="战力">
+        <NDescriptions label-placement="left" column="3" bordered>
+          <NDescriptionsItem label="战力">
             {{ formatNumber(heroModealTemp.power) }}
-          </n-descriptions-item>
-          <n-descriptions-item label="等级">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="等级">
             {{ heroModealTemp.level }}
-          </n-descriptions-item>
-          <n-descriptions-item label="星级">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="星级">
             {{ heroModealTemp.star }}
-          </n-descriptions-item>
-          <n-descriptions-item label="开孔数">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="开孔数">
             {{ heroModealTemp.hole }}
-          </n-descriptions-item>
-          <n-descriptions-item label="红孔数">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="红孔数">
             {{ heroModealTemp.red }}
-          </n-descriptions-item>
-          <n-descriptions-item label="四圣状态">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="四圣状态">
             {{ heroModealTemp.HolyBeast ? "已激活" : "未激活" }}
-          </n-descriptions-item>
-          <n-descriptions-item label="四圣等级" v-if="heroModealTemp.HolyBeast">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="四圣等级" v-if="heroModealTemp.HolyBeast">
             {{ heroModealTemp.HBlevel }}
-          </n-descriptions-item>
-          <n-descriptions-item label="鱼灵">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="鱼灵">
             {{
-              heroModealTemp?.PearlInfo?.FishInfo?.name != undefined
+              !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
                 ? heroModealTemp.PearlInfo?.FishInfo?.name
                 : "无"
             }}
-          </n-descriptions-item>
-          <n-descriptions-item label="鱼珠技能">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="鱼珠技能">
             {{
-              heroModealTemp?.PearlInfo?.PearlSkill?.name != undefined
+              !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
                 ? heroModealTemp.PearlInfo?.PearlSkill?.name
                 : "无"
             }}
-          </n-descriptions-item>
-          <n-descriptions-item label="鱼灵洗练">
+          </NDescriptionsItem>
+          <NDescriptionsItem label="鱼灵洗练">
             <div v-if="heroModealTemp?.PearlInfo?.slotMap?.length > 0">
               <div
                 v-for="item in heroModealTemp.PearlInfo.slotMap"
                 :key="item.id"
                 class="ModalEquipment"
-                :style="'background-color:' + item.value"
+                :style="`background-color:${  item.value}`"
               ></div>
             </div>
             <div v-else>无</div>
-          </n-descriptions-item>
-        </n-descriptions>
+          </NDescriptionsItem>
+        </NDescriptions>
       </div>
 
       <div class="hero-modal-equipment">
@@ -600,22 +600,24 @@
     </div>
 
     <template #footer>
-      <n-button @click="showHeroModal = false">关闭</n-button>
+      <NButton @click="showHeroModal = false">关闭</NButton>
     </template>
-  </n-modal>
+  </NModal>
 </template>
 
 <script setup>
-import { ref, computed, h, watch, nextTick, onErrorCaptured } from "vue";
-import { useMessage, useDialog, NDataTable, NModal, NAvatar, NTag, NDescriptions, NDescriptionsItem, NButton, NSpace, NIcon, NGrid, NGi, NStatistic, NThing, NAlert, NCollapse, NCollapseItem, NCard } from "naive-ui";
-import { useTokenStore } from "@/stores/tokenStore";
-import { Copy, Refresh, BarChart, Flame, Skull, Megaphone, Person, ShieldCheckmark } from "@vicons/ionicons5";
-import ClubHistoryRecords from "./ClubHistoryRecords.vue";
-import ClubWeirdTowerInfo from "./ClubWeirdTowerInfo.vue";
-import ClubIslandPanel from "./ClubIslandPanel.vue";
-import { HERO_DICT, legacycolor, HeroFillInfo, getLineupType, LINEUP_RULES } from "@/utils/HeroList";
+import { BarChart, Copy, Flame, Megaphone, Person, Refresh, ShieldCheckmark, Skull } from "@vicons/ionicons5";
+
 import html2canvas from 'html2canvas';
+import { NAlert, NAvatar, NButton, NCard, NCollapse, NCollapseItem, NDataTable, NDescriptions, NDescriptionsItem, NGi, NGrid, NIcon, NModal, NSpace, NStatistic, NTag, NThing, useDialog, useMessage } from "naive-ui";
+import { computed, h, nextTick, onErrorCaptured, ref, watch } from "vue";
+import { useTokenStore } from "@/stores/tokenStore";
+import { isSameGameValue } from "@/utils/gameValue.js";
+import { getLineupType, HERO_DICT, HeroFillInfo, legacycolor, LINEUP_RULES } from "@/utils/HeroList";
 import { downloadCanvasAsImage } from "@/utils/imageExport";
+import ClubHistoryRecords from "./ClubHistoryRecords.vue";
+import ClubIslandPanel from "./ClubIslandPanel.vue";
+import ClubWeirdTowerInfo from "./ClubWeirdTowerInfo.vue";
 
 const tokenStore = useTokenStore();
 const message = useMessage();
@@ -706,8 +708,8 @@ const getHeroInfo = (heroObj) => {
       // 兼容 id 和 heroId
       const id = hero.heroId || hero.id;
       
-      let heroInfo = HERO_DICT[id] || {};
-      let equipmentInfo = hero.equipment
+      const heroInfo = HERO_DICT[id] || {};
+      const equipmentInfo = hero.equipment
         ? getEquipment(hero.equipment)
         : { redCount: 0, holeCount: 0 };
 
@@ -715,13 +717,13 @@ const getHeroInfo = (heroObj) => {
       const heroId = id || `unknown_${index}`;
       const heroName = hero.heroName || hero.name || heroInfo.name || `未知武将_${index}`;
 
-      let tempObj = {
-        heroId: heroId, //英雄ID
+      const tempObj = {
+        heroId, //英雄ID
         artifactId: hero.artifactId || "", //英雄装备ID，用于匹配鱼灵信息
         power: hero.power || 0, //英雄战力
         star: hero.star || 0, //英雄星级
         equipment: hero.equipment, //英雄具体孔数和红数
-        heroName: heroName, //英雄姓名
+        heroName, //英雄姓名
         heroAvate: hero.heroAvate || hero.headImg || heroInfo.avatar || "",
         level: hero.level || 0, //英雄等级
         hole: equipmentInfo.holeCount, //英雄开孔数量
@@ -761,7 +763,7 @@ const getEquipment = (equipment) => {
     //遍历每件装备的属性
     Object.values(equ.quenches).forEach((item) => {
       holeCount++;
-      if (item.colorId == 6) {
+      if (isSameGameValue(item.colorId, 6)) {
         redCount++;
       }
     });
@@ -960,7 +962,7 @@ const fetchTargetInfo = async (roleId) => {
         bottleType: 0,
         includeBottleTeam: false,
         isSearch: false,
-        roleId: roleId,
+        roleId,
         includeHero: true,
         includeHeroDetail: true,
         includePearl: true,
@@ -1036,13 +1038,13 @@ const fetchTargetInfo = async (roleId) => {
       maxPower: formatNumber(legionMaxPower),
       currentRedDrum: roleRedQuench,
       maxRedDrum: roleMaxRed,
-      totalRedCount: totalRedCount,
-      totalHoleCount: totalHoleCount,
-      legionRedQuench: legionRedQuench,
-      legionMaxRed: legionMaxRed,
+      totalRedCount,
+      totalHoleCount,
+      legionRedQuench,
+      legionMaxRed,
       heroList: heroAndholdAndRed.heroList,
       legacy: result.roleInfo.legacy?.color || 0,
-      lineupType: lineupType,
+      lineupType,
     };
 
     playerInfo.value = playerData;
@@ -1343,7 +1345,7 @@ const getApplyList = async () => {
     handleApplyListResp({ body: responseBody });
   } catch (error) {
     loadingApply.value = false;
-    message.error("获取申请列表失败: " + (error.message || "未知错误"));
+    message.error(`获取申请列表失败: ${  error.message || "未知错误"}`);
     console.error("获取申请列表出错:", error);
   }
 };
@@ -1468,8 +1470,8 @@ const handleApplyListResp = (session) => {
           name: role.name,
           power: role.power,
           roleId: role.roleId,
-          serverId: role.ext?.["server_id"] || "",
-          applyReason: role.ext?.["legion_apply_reason"] || "",
+          serverId: role.ext?.server_id || "",
+          applyReason: role.ext?.legion_apply_reason || "",
         }));
         // 停止加载状态
         loadingApply.value = false;
@@ -1487,8 +1489,8 @@ const handleApplyListResp = (session) => {
           .filter((apply) => apply.roleId && apply.name)
           .map((apply) => ({
             ...apply,
-            serverId: apply.ext?.["server_id"] || "",
-            applyReason: apply.ext?.["legion_apply_reason"] || "",
+            serverId: apply.ext?.server_id || "",
+            applyReason: apply.ext?.legion_apply_reason || "",
           }));
         loadingApply.value = false;
         message.success(`获取到 ${applyList.value.length} 个申请`);
@@ -1499,8 +1501,8 @@ const handleApplyListResp = (session) => {
           .filter((apply) => apply.roleId && apply.name)
           .map((apply) => ({
             ...apply,
-            serverId: apply.ext?.["server_id"] || "",
-            applyReason: apply.ext?.["legion_apply_reason"] || "",
+            serverId: apply.ext?.server_id || "",
+            applyReason: apply.ext?.legion_apply_reason || "",
           }));
         loadingApply.value = false;
         message.success(`获取到 ${applyList.value.length} 个申请`);
@@ -1517,8 +1519,8 @@ const handleApplyListResp = (session) => {
         .filter((apply) => apply.roleId && apply.name)
         .map((apply) => ({
           ...apply,
-          serverId: apply.ext?.["server_id"] || "",
-          applyReason: apply.ext?.["legion_apply_reason"] || "",
+          serverId: apply.ext?.server_id || "",
+          applyReason: apply.ext?.legion_apply_reason || "",
         }));
       loadingApply.value = false;
       message.success(`获取到 ${applyList.value.length} 个申请`);
@@ -1578,12 +1580,12 @@ const clubOverview = computed(() => {
     base.redQuenchCnt ??
       i.redQuenchCnt ??
       stats["red:quench"] ??
-      stats["red_quench"] ??
+      stats.red_quench ??
       0,
   );
   const lastWarRank =
     stats["last:war:rank"] ??
-    stats["lastWarRank"] ??
+    stats.lastWarRank ??
     stats["legion:last:war:rank"] ??
     "-";
   const noApply = Boolean(base.noApply ?? i.noApply);
@@ -1630,14 +1632,14 @@ const jobLabel = (job) => {
 };
 
 const redQuenchlabel = (redQuenchl) => {
-  return redQuenchl + "红";
+  return `${redQuenchl  }红`;
 };
 
 const formatNumber = (num) => {
   const n = Number(num || 0);
-  if (n >= 1e12) return (n / 1e12).toFixed(2) + "兆";
-  if (n >= 1e8) return (n / 1e8).toFixed(2) + "亿";
-  if (n >= 1e4) return (n / 1e4).toFixed(2) + "万";
+  if (n >= 1e12) return `${(n / 1e12).toFixed(2)  }兆`;
+  if (n >= 1e8) return `${(n / 1e8).toFixed(2)  }亿`;
+  if (n >= 1e4) return `${(n / 1e4).toFixed(2)  }万`;
   return String(n);
 };
 </script>

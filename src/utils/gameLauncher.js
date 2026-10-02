@@ -68,7 +68,7 @@ export function createCompatibleRandomUUID(cryptoSource = globalThis.crypto) {
     return cryptoSource.randomUUID();
   }
   if (typeof cryptoSource?.getRandomValues !== "function") {
-    throw new Error("安全随机UUID生成不可用");
+    throw new TypeError("安全随机UUID生成不可用");
   }
 
   const bytes = new Uint8Array(16);

@@ -1,5 +1,5 @@
 <template>
-  <MyCard class="monthly-tasks" :statusClass="monthActivity ? 'active' : ''">
+  <MyCard class="monthly-tasks" :status-class="monthActivity ? 'active' : ''">
     <template #icon>
       <img src="/icons/1736425783912140.png" alt="月度任务" />
     </template>
@@ -78,8 +78,8 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
 import { useMessage } from "naive-ui";
+import { computed, onMounted, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import MyCard from "../Common/MyCard.vue";
 

@@ -33,7 +33,7 @@
 
         <!-- 爬塔列表 - 表格展示 -->
         <div v-else-if="memberScores.length > 0" ref="exportDom" class="records-list">
-           <n-data-table
+           <NDataTable
             :columns="columns"
             :data="memberScores"
             :bordered="false"
@@ -44,7 +44,7 @@
           />
         </div>
         <div v-else class="empty-state">
-           <n-empty description="暂无数据" />
+           <NEmpty description="暂无数据" />
         </div>
       </div>
     </div>
@@ -54,22 +54,22 @@
       @after-leave="handleClose">
       <template #header-extra>
         <div class="header-actions">
-          <n-button size="small" :disabled="loading" @click="handleRefresh">
+          <NButton size="small" :disabled="loading" @click="handleRefresh">
             <template #icon>
-              <n-icon>
+              <NIcon>
                 <Refresh />
-              </n-icon>
+              </NIcon>
             </template>
             刷新
-          </n-button>
-          <n-button type="primary" size="small" :disabled="!memberScores || loading" @click="handleExport" :loading="isExporting">
+          </NButton>
+          <NButton type="primary" size="small" :disabled="!memberScores || loading" @click="handleExport" :loading="isExporting">
             <template #icon>
-              <n-icon>
+              <NIcon>
                 <Copy />
-              </n-icon>
+              </NIcon>
             </template>
             导出
-          </n-button>
+          </NButton>
         </div>
       </template>
 
@@ -83,7 +83,7 @@
 
         <!-- 爬塔列表 - 表格展示 -->
         <div v-else-if="memberScores.length > 0" ref="exportDom" class="records-list">
-           <n-data-table
+           <NDataTable
             :columns="columns"
             :data="memberScores"
             :bordered="false"
@@ -94,7 +94,7 @@
           />
         </div>
         <div v-else class="empty-state">
-           <n-empty description="暂无数据" />
+           <NEmpty description="暂无数据" />
         </div>
       </div>
     </n-modal>
@@ -102,20 +102,16 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, h, nextTick } from 'vue'
-import { useMessage, NDataTable, NAvatar, NEmpty, NButton, NIcon } from 'naive-ui'
-import { useTokenStore } from '@/stores/tokenStore'
-import html2canvas from 'html2canvas';
-import { downloadCanvasAsImage } from "@/utils/imageExport";
 import {
-  Trophy,
-  Refresh,
   Copy,
-  ChevronDown,
-  ChevronUp,
-  DocumentText
+  Refresh
 } from '@vicons/ionicons5'
+import html2canvas from 'html2canvas';
+import { NAvatar, NButton, NDataTable, NEmpty, NIcon, useMessage } from 'naive-ui'
+import { computed, h, nextTick, onMounted, ref } from 'vue'
+import { useTokenStore } from '@/stores/tokenStore'
 import { gettoday } from '@/utils/clubWarrankUtils'
+import { downloadCanvasAsImage } from "@/utils/imageExport";
 const props = defineProps({
   visible: {
     type: Boolean,
@@ -127,9 +123,8 @@ const props = defineProps({
   }
 })
 
-const exportDom = ref(null)
 const emit = defineEmits(['update:visible'])
-
+const exportDom = ref(null)
 const message = useMessage()
 const tokenStore = useTokenStore()
 const isExporting = ref(false)
@@ -288,9 +283,7 @@ const columns = computed(() => {
 })
 
 // 处理图片加载错误
-const handleImageError = (event) => {
-  event.target.style.display = 'none'
-}
+
 
 // 怪异塔层数转换
 const handleEvotower = (towerId) => {
@@ -342,7 +335,7 @@ const fetchWeirdTowerInfo = async () => {
     const participantMap = new Map();
     if (result && result.memberScores) {
        Object.entries(result.memberScores).forEach(([roleId, towerCount]) => {
-         participantMap.set(parseInt(roleId), towerCount);
+         participantMap.set(Number.parseInt(roleId), towerCount);
        });
     }
 
@@ -354,7 +347,7 @@ const fetchWeirdTowerInfo = async () => {
           roleId: member.roleId,
           name: member.name,
           headImg: member.headImg,
-          towerCount: towerCount,
+          towerCount,
           towerCountconvert: handleEvotower(towerCount),
           power: member.power // 用于辅助排序
         };
@@ -363,8 +356,8 @@ const fetchWeirdTowerInfo = async () => {
         // 如果没有俱乐部成员信息（异常情况），尝试使用参与者数据（缺少名字头像）
         // 这里为了避免完全空白，至少显示ID和层数
          members = Object.entries(result.memberScores).map(([roleId, towerCount]) => ({
-            roleId: parseInt(roleId),
-            towerCount: towerCount,
+            roleId: Number.parseInt(roleId),
+            towerCount,
             towerCountconvert: handleEvotower(towerCount),
             name: `ID:${roleId}`, // 缺少名字
             headImg: '', // 缺少头像
@@ -440,7 +433,7 @@ const exportToImage = async () => {
 
   // 6. Canvas转图片链接并下载
   const dateStr = gettoday();
-  const filename = dateStr.replace("/",'年').replace("/",'月')+'日俱乐部怪异塔数据.png';
+  const filename = `${dateStr.replace("/",'年').replace("/",'月')}日俱乐部怪异塔数据.png`;
   downloadCanvasAsImage(canvas, filename);
 };
 

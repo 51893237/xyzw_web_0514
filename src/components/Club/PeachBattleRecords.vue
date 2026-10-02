@@ -27,11 +27,11 @@
     <div class="function-section">
       <div class="function-left">
         <div class="export-options">
-          <n-radio-group v-model:value="currentStyle" size="small">
-            <n-radio-button value="default">默认</n-radio-button>
-            <n-radio-button value="style1">样式一</n-radio-button>
-            <n-radio-button value="style2">样式二</n-radio-button>
-          </n-radio-group>
+          <NRadioGroup v-model:value="currentStyle" size="small">
+            <NRadioButton value="default">默认</NRadioButton>
+            <NRadioButton value="style1">样式一</NRadioButton>
+            <NRadioButton value="style2">样式二</NRadioButton>
+          </NRadioGroup>
         </div>
       </div>
 
@@ -39,9 +39,9 @@
         <a-date-picker 
           v-model:value="queryDate" 
           @change="fetchBattleRecordsByDate" 
-          valueFormat="YYYY/MM/DD" 
+          value-format="YYYY/MM/DD" 
           :disabled-date="disabledDate"
-          :defaultValue="queryDate"
+          :default-value="queryDate"
           format="YYYY/MM/DD"
         />
         <n-button 
@@ -151,8 +151,8 @@
               <div class="ranking-content">
                 <div class="ranking-side own">
                   <div class="ranking-subtitle">我方 Top3</div>
-                  <div v-for="(player, index) in battleRecords.ownClub.killRank.slice(0, 3)" :key="index" class="ranking-item">
-                    <div class="rank-number">{{ index + 1 }}</div>
+                  <div v-for="(player, playerIndex) in battleRecords.ownClub.killRank.slice(0, 3)" :key="playerIndex" class="ranking-item">
+                    <div class="rank-number">{{ playerIndex + 1 }}</div>
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
                     <span class="player-name">{{ player.roleInfo.name }}</span>
@@ -161,8 +161,8 @@
                 </div>
                 <div class="ranking-side opponent">
                   <div class="ranking-subtitle">敌方 Top3</div>
-                  <div v-for="(player, index) in battleRecords.opponentClub.killRank.slice(0, 3)" :key="index" class="ranking-item">
-                    <div class="rank-number">{{ index + 1 }}</div>
+                  <div v-for="(player, playerIndex) in battleRecords.opponentClub.killRank.slice(0, 3)" :key="playerIndex" class="ranking-item">
+                    <div class="rank-number">{{ playerIndex + 1 }}</div>
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
                     <span class="player-name">{{ player.roleInfo.name }}</span>
@@ -178,8 +178,8 @@
               <div class="ranking-content">
                 <div class="ranking-side own">
                   <div class="ranking-subtitle">我方 Top3</div>
-                  <div v-for="(player, index) in battleRecords.ownClub.kdRank.slice(0, 3)" :key="index" class="ranking-item">
-                    <div class="rank-number">{{ index + 1 }}</div>
+                  <div v-for="(player, playerIndex) in battleRecords.ownClub.kdRank.slice(0, 3)" :key="playerIndex" class="ranking-item">
+                    <div class="rank-number">{{ playerIndex + 1 }}</div>
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
                     <span class="player-name">{{ player.roleInfo.name }}</span>
@@ -188,8 +188,8 @@
                 </div>
                 <div class="ranking-side opponent">
                   <div class="ranking-subtitle">敌方 Top3</div>
-                  <div v-for="(player, index) in battleRecords.opponentClub.kdRank.slice(0, 3)" :key="index" class="ranking-item">
-                    <div class="rank-number">{{ index + 1 }}</div>
+                  <div v-for="(player, playerIndex) in battleRecords.opponentClub.kdRank.slice(0, 3)" :key="playerIndex" class="ranking-item">
+                    <div class="rank-number">{{ playerIndex + 1 }}</div>
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
                     <span class="player-name">{{ player.roleInfo.name }}</span>
@@ -205,8 +205,8 @@
               <div class="ranking-content">
                 <div class="ranking-side own">
                   <div class="ranking-subtitle">我方 Top3</div>
-                  <div v-for="(player, index) in battleRecords.ownClub.reviveRank.slice(0, 3)" :key="index" class="ranking-item">
-                    <div class="rank-number">{{ index + 1 }}</div>
+                  <div v-for="(player, playerIndex) in battleRecords.ownClub.reviveRank.slice(0, 3)" :key="playerIndex" class="ranking-item">
+                    <div class="rank-number">{{ playerIndex + 1 }}</div>
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
                     <span class="player-name">{{ player.roleInfo.name }}</span>
@@ -215,8 +215,8 @@
                 </div>
                 <div class="ranking-side opponent">
                   <div class="ranking-subtitle">敌方 Top3</div>
-                  <div v-for="(player, index) in battleRecords.opponentClub.reviveRank.slice(0, 3)" :key="index" class="ranking-item">
-                    <div class="rank-number">{{ index + 1 }}</div>
+                  <div v-for="(player, playerIndex) in battleRecords.opponentClub.reviveRank.slice(0, 3)" :key="playerIndex" class="ranking-item">
+                    <div class="rank-number">{{ playerIndex + 1 }}</div>
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
                     <span class="player-name">{{ player.roleInfo.name }}</span>
@@ -242,8 +242,8 @@
                   <div class="header-stat">复活</div>
                   <div class="header-stat">K/D</div>
                 </div>
-                <div v-for="(player, index) in battleRecords.ownClub.godRank" :key="index" class="god-ranking-item">
-                  <div class="god-rank-number">{{ index + 1 }}</div>
+                <div v-for="(player, playerIndex) in battleRecords.ownClub.godRank" :key="playerIndex" class="god-ranking-item">
+                  <div class="god-rank-number">{{ playerIndex + 1 }}</div>
                   <div class="player-avatar-cell">
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
@@ -270,8 +270,8 @@
                   <div class="header-stat">复活</div>
                   <div class="header-stat">K/D</div>
                 </div>
-                <div v-for="(player, index) in battleRecords.opponentClub.godRank" :key="index" class="god-ranking-item">
-                  <div class="god-rank-number">{{ index + 1 }}</div>
+                <div v-for="(player, playerIndex) in battleRecords.opponentClub.godRank" :key="playerIndex" class="god-ranking-item">
+                  <div class="god-rank-number">{{ playerIndex + 1 }}</div>
                   <div class="player-avatar-cell">
                     <img v-if="player.roleInfo.headImg" :src="player.roleInfo.headImg" :alt="player.roleInfo.name" class="player-avatar" @error="handleImageError">
                     <div v-else class="player-avatar-placeholder">{{ player.roleInfo.name?.charAt(0) || '?' }}</div>
@@ -333,7 +333,7 @@
                        
                        <div class="summary-card">
                           <div class="summary-title">击杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.killRank.slice(0, 3)" :key="'kill-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.killRank.slice(0, 3)" :key="`kill-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.killCnt }}</span>
                           </div>
@@ -341,7 +341,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">KD Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.kdRank.slice(0, 3)" :key="'kd-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.kdRank.slice(0, 3)" :key="`kd-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.kd }}</span>
                           </div>
@@ -349,7 +349,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">复活 Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.reviveRank.slice(0, 3)" :key="'revive-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.reviveRank.slice(0, 3)" :key="`revive-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.reviveCnt }}</span>
                           </div>
@@ -357,7 +357,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">连杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.killStreakRank.slice(0, 3)" :key="'killstreak-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.killStreakRank.slice(0, 3)" :key="`killstreak-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.mCKCnt }}</span>
                           </div>
@@ -379,10 +379,10 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(player, index) in battleRecords.ownClub.killRank" :key="index">
+                          <tr v-for="(player, playerIndex) in battleRecords.ownClub.killRank" :key="playerIndex">
                              <td class="col-rank">
-                                <div v-if="index < 3" class="rank-medal">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                                <span v-else>{{ index + 1 }}</span>
+                                <div v-if="playerIndex < 3" class="rank-medal">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                                <span v-else>{{ playerIndex + 1 }}</span>
                              </td>
                              <td class="col-name">
                                 <div class="player-info">
@@ -428,7 +428,7 @@
                        
                        <div class="summary-card">
                           <div class="summary-title">击杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.killRank.slice(0, 3)" :key="'kill-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.killRank.slice(0, 3)" :key="`kill-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.killCnt }}</span>
                           </div>
@@ -436,7 +436,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">KD Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.kdRank.slice(0, 3)" :key="'kd-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.kdRank.slice(0, 3)" :key="`kd-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.kd }}</span>
                           </div>
@@ -444,7 +444,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">复活 Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.reviveRank.slice(0, 3)" :key="'revive-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.reviveRank.slice(0, 3)" :key="`revive-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.reviveCnt }}</span>
                           </div>
@@ -452,7 +452,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">连杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.killStreakRank.slice(0, 3)" :key="'killstreak-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.killStreakRank.slice(0, 3)" :key="`killstreak-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.mCKCnt }}</span>
                           </div>
@@ -474,10 +474,10 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="(player, index) in battleRecords.opponentClub.killRank" :key="index">
+                          <tr v-for="(player, playerIndex) in battleRecords.opponentClub.killRank" :key="playerIndex">
                              <td class="col-rank">
-                                <div v-if="index < 3" class="rank-medal">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                                <span v-else>{{ index + 1 }}</span>
+                                <div v-if="playerIndex < 3" class="rank-medal">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                                <span v-else>{{ playerIndex + 1 }}</span>
                              </td>
                              <td class="col-name">
                                 <div class="player-info">
@@ -564,7 +564,7 @@
                   <div class="style2-rankings-row">
                        <div class="summary-card">
                           <div class="summary-title">击杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.killRank.slice(0, 3)" :key="'kill-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.killRank.slice(0, 3)" :key="`kill-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.killCnt }}</span>
                           </div>
@@ -572,7 +572,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">KD Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.kdRank.slice(0, 3)" :key="'kd-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.kdRank.slice(0, 3)" :key="`kd-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.kd }}</span>
                           </div>
@@ -580,7 +580,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">复活 Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.reviveRank.slice(0, 3)" :key="'revive-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.reviveRank.slice(0, 3)" :key="`revive-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.reviveCnt }}</span>
                           </div>
@@ -588,7 +588,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">连杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.ownClub.killStreakRank.slice(0, 3)" :key="'killstreak-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.ownClub.killStreakRank.slice(0, 3)" :key="`killstreak-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.mCKCnt }}</span>
                           </div>
@@ -610,10 +610,10 @@
                           </tr>
                        </thead>
                        <tbody>
-                          <tr v-for="(player, index) in battleRecords.ownClub.killRank" :key="index">
+                          <tr v-for="(player, playerIndex) in battleRecords.ownClub.killRank" :key="playerIndex">
                              <td>
-                                <div v-if="index < 3" class="medal-icon">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                                <div v-else class="rank-num-plain">{{ index + 1 }}</div>
+                                <div v-if="playerIndex < 3" class="medal-icon">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                                <div v-else class="rank-num-plain">{{ playerIndex + 1 }}</div>
                              </td>
                              <td>
                                 <div class="player-cell">
@@ -625,7 +625,7 @@
                              <td>
                                 <div class="bar-cell">
                                    <div class="bar-val red">{{ player.killCnt }}</div>
-                                   <div class="progress-bg"><div class="progress-fill red" :style="{width: getPercent(player.killCnt, getMaxKills(battleRecords.ownClub)) + '%'}"></div></div>
+                                   <div class="progress-bg"><div class="progress-fill red" :style="{width: `${getPercent(player.killCnt, getMaxKills(battleRecords.ownClub))  }%`}"></div></div>
                                 </div>
                              </td>
                              <td>{{ player.mCKCnt || 0 }}</td>
@@ -679,7 +679,7 @@
                   <div class="style2-rankings-row">
                        <div class="summary-card">
                           <div class="summary-title">击杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.killRank.slice(0, 3)" :key="'kill-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.killRank.slice(0, 3)" :key="`kill-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.killCnt }}</span>
                           </div>
@@ -687,7 +687,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">KD Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.kdRank.slice(0, 3)" :key="'kd-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.kdRank.slice(0, 3)" :key="`kd-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.kd }}</span>
                           </div>
@@ -695,7 +695,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">复活 Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.reviveRank.slice(0, 3)" :key="'revive-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.reviveRank.slice(0, 3)" :key="`revive-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.reviveCnt }}</span>
                           </div>
@@ -703,7 +703,7 @@
 
                        <div class="summary-card">
                           <div class="summary-title">连杀 Top3</div>
-                          <div v-for="(player, index) in battleRecords.opponentClub.killStreakRank.slice(0, 3)" :key="'killstreak-'+index" class="top3-item">
+                          <div v-for="(player, playerIndex) in battleRecords.opponentClub.killStreakRank.slice(0, 3)" :key="`killstreak-${playerIndex}`" class="top3-item">
                              <span class="top3-name">{{ player.roleInfo.name }}</span>
                              <span class="top3-value">{{ player.mCKCnt }}</span>
                           </div>
@@ -725,10 +725,10 @@
                           </tr>
                        </thead>
                        <tbody>
-                          <tr v-for="(player, index) in battleRecords.opponentClub.killRank" :key="index">
+                          <tr v-for="(player, playerIndex) in battleRecords.opponentClub.killRank" :key="playerIndex">
                              <td>
-                                <div v-if="index < 3" class="medal-icon">{{ index === 0 ? '🥇' : index === 1 ? '🥈' : '🥉' }}</div>
-                                <div v-else class="rank-num-plain">{{ index + 1 }}</div>
+                                <div v-if="playerIndex < 3" class="medal-icon">{{ playerIndex === 0 ? '🥇' : playerIndex === 1 ? '🥈' : '🥉' }}</div>
+                                <div v-else class="rank-num-plain">{{ playerIndex + 1 }}</div>
                              </td>
                              <td>
                                 <div class="player-cell">
@@ -740,7 +740,7 @@
                              <td>
                                 <div class="bar-cell">
                                    <div class="bar-val red">{{ player.killCnt }}</div>
-                                   <div class="progress-bg"><div class="progress-fill red" :style="{width: getPercent(player.killCnt, getMaxKills(battleRecords.opponentClub)) + '%'}"></div></div>
+                                   <div class="progress-bg"><div class="progress-fill red" :style="{width: `${getPercent(player.killCnt, getMaxKills(battleRecords.opponentClub))  }%`}"></div></div>
                                 </div>
                              </td>
                              <td>{{ player.mCKCnt || 0 }}</td>
@@ -771,27 +771,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
-import { useMessage, NCheckboxGroup, NCheckbox, NRadioGroup, NRadioButton } from 'naive-ui'
-import { useTokenStore } from '@/stores/tokenStore'
-import html2canvas from 'html2canvas';
-import { downloadCanvasAsImage } from "@/utils/imageExport";
 import {
-  Trophy,
-  Refresh,
   Copy,
-  ChevronDown,
-  ChevronUp,
-  DocumentText
+  DocumentText,
+  Refresh
 } from '@vicons/ionicons5'
-import {
-  getLastSaturday,
-  formatTimestamp,
-  parseBattleResult,
-  parseAttackType,
-  formatBattleRecordsForExport,
-  copyToClipboard
-} from '@/utils/clubBattleUtils'
+
+import html2canvas from 'html2canvas';
+import { NRadioButton, NRadioGroup, useMessage } from 'naive-ui'
+import { onMounted, ref, watch } from 'vue'
+import { useTokenStore } from '@/stores/tokenStore'
+import { isSameGameValue } from "@/utils/gameValue.js";
+
+
+import { downloadCanvasAsImage } from "@/utils/imageExport";
 
 // 获取最近的周日日期
 // 如果今天是周日，返回今天的日期；否则返回上周日的日期
@@ -831,32 +824,30 @@ watch(currentStyle, (newStyle) => {
   localStorage.setItem('peach_battle_records_style', newStyle)
 })
 
-const exportmethod = ref(['1']);
+
 const exportDom = ref(null);
 
 const message = useMessage()
 const tokenStore = useTokenStore()
-const info = computed(() => tokenStore.gameData?.legionInfo || null);
-const club = computed(() => info.value?.info || null);
+
+
 
 const loading = ref(false)
 const battleRecords = ref(null)
-const expandedMembers = ref(new Set())
+
 const queryDate = ref(getLastSunday());
 
 
-const legionMatch = ref({
-  isRegistered: false
-})
+
 
 // 格式化战力
 const formatPower = (power) => {
   if (!power) return '0'
   if (power >= 100000000) {
-    return (power / 100000000).toFixed(2) + '亿'
+    return `${(power / 100000000).toFixed(2)  }亿`
   }
   if (power >= 10000) {
-    return (power / 10000).toFixed(2) + '万'
+    return `${(power / 10000).toFixed(2)  }万`
   }
   return power.toString()
 }
@@ -893,29 +884,10 @@ const getReviveColor = (val) => {
 }
 
 // 获取战斗样式类
-const getBattleClass = (battle) => {
-  const classes = []
-  if (battle.newWinFlag === 2) {
-    classes.push('battle-win')
-  } else {
-    classes.push('battle-loss')
-  }
-  if (battle.attackType === 0) {
-    classes.push('battle-attack')
-  } else {
-    classes.push('battle-defend')
-  }
-  return classes.join(' ')
-}
+
 
 // 切换成员详情展开状态
-const toggleMemberDetails = (roleId) => {
-  if (expandedMembers.value.has(roleId)) {
-    expandedMembers.value.delete(roleId)
-  } else {
-    expandedMembers.value.add(roleId)
-  }
-}
+
 
 // 处理图片加载错误
 const handleImageError = (event) => {
@@ -923,12 +895,12 @@ const handleImageError = (event) => {
 }
 
 const disabledDate = current => {
-  return (current.getDay() != 0) || current > Date.now()
+  return (!isSameGameValue(current.getDay(), 0)) || current > Date.now()
 }
 
 //日期选择时调用查询战绩方法
 const fetchBattleRecordsByDate = (val)=>{
-  if(undefined != val){
+  if(!isSameGameValue(undefined, val)){
     queryDate.value = val
   }else{
     queryDate.value = getLastSunday();
@@ -1016,7 +988,7 @@ const fetchBattleRecordsByDate = (val)=>{
       const calculateKD = (player) => {
         const killCnt = player.killCnt || 0
         const reviveCnt = player.reviveCnt || 0
-        return reviveCnt > 0 ? parseFloat((killCnt / reviveCnt).toFixed(2)) : 0
+        return reviveCnt > 0 ? Number.parseFloat((killCnt / reviveCnt).toFixed(2)) : 0
       }
       
       // 处理我方数据
@@ -1048,13 +1020,13 @@ const fetchBattleRecordsByDate = (val)=>{
       // 计算我方总体数据
       const ownTotalKills = processedOwnRecords.reduce((sum, player) => sum + (player.killCnt || 0), 0)
       const ownTotalRevives = processedOwnRecords.reduce((sum, player) => sum + (player.reviveCnt || 0), 0)
-      const ownTotalKD = ownTotalRevives > 0 ? parseFloat((ownTotalKills / ownTotalRevives).toFixed(2)) : 0
+      const ownTotalKD = ownTotalRevives > 0 ? Number.parseFloat((ownTotalKills / ownTotalRevives).toFixed(2)) : 0
       const ownTotalPower = processedOwnRecords.reduce((sum, player) => sum + (player.roleInfo.power || 0), 0)
       
       // 计算敌方总体数据
       const opponentTotalKills = processedOpponentRecords.reduce((sum, player) => sum + (player.killCnt || 0), 0)
       const opponentTotalRevives = processedOpponentRecords.reduce((sum, player) => sum + (player.reviveCnt || 0), 0)
-      const opponentTotalKD = opponentTotalRevives > 0 ? parseFloat((opponentTotalKills / opponentTotalRevives).toFixed(2)) : 0
+      const opponentTotalKD = opponentTotalRevives > 0 ? Number.parseFloat((opponentTotalKills / opponentTotalRevives).toFixed(2)) : 0
       const opponentTotalPower = processedOpponentRecords.reduce((sum, player) => sum + (player.roleInfo.power || 0), 0)
       
       // 构建最终数据结构
@@ -1135,6 +1107,7 @@ const handleExport = async () => {
 const exportToImage = async () => {
   // 校验：确保DOM已正确绑定
   if (!exportDom.value) {
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('未找到要导出的DOM元素');
     return;
   }
@@ -1169,18 +1142,17 @@ const exportToImage = async () => {
     });
 
     // 6. Canvas转图片链接并下载
-    const filename = queryDate.value.replace("/",'年').replace("/",'月')+'日蟠桃园战报.png';
+    const filename = `${queryDate.value.replace("/",'年').replace("/",'月')}日蟠桃园战报.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error('DOM转图片失败：', err);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert('导出图片失败，请重试');
   }
 };
 
 // 关闭弹窗
-const handleClose = () => {
-  expandedMembers.value.clear()
-}
+
 
 // 暴露方法给父组件
 defineExpose({

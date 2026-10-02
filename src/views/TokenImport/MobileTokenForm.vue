@@ -7,21 +7,21 @@
         <li>输入短信验证码后登录</li>
         <li>选择需要添加的游戏角色</li>
       </ol>
-      <n-checkbox v-model:checked="saveCombUser">强制下线账号请勾选</n-checkbox>
+      <NCheckbox v-model:checked="saveCombUser">强制下线账号请勾选</NCheckbox>
     </div>
 
-    <n-form :model="mobileForm" label-placement="top" class="login-form">
-      <n-form-item label="手机号">
-        <n-input
+    <NForm :model="mobileForm" label-placement="top" class="login-form">
+      <NFormItem label="手机号">
+        <NInput
           v-model:value="mobileForm.phone"
           inputmode="numeric"
           maxlength="11"
           placeholder="请输入手机号"
           :disabled="isLoggingIn"
         />
-      </n-form-item>
-      <n-form-item label="短信验证码">
-        <n-input
+      </NFormItem>
+      <NFormItem label="短信验证码">
+        <NInput
           v-model:value="mobileForm.code"
           inputmode="numeric"
           maxlength="6"
@@ -30,42 +30,42 @@
           @keyup.enter="loginWithVerificationCode"
         >
           <template #suffix>
-            <n-button
+            <NButton
               text
               type="primary"
               :loading="isSendingCode"
               :disabled="isLoggingIn || cooldownSeconds > 0"
               @click="sendVerificationCode"
             >
-              <template #icon><n-icon><SendOutline /></n-icon></template>
+              <template #icon><NIcon><SendOutline /></NIcon></template>
               {{ cooldownSeconds > 0 ? `${cooldownSeconds}s` : "获取验证码" }}
-            </n-button>
+            </NButton>
           </template>
-        </n-input>
-      </n-form-item>
-    </n-form>
+        </NInput>
+      </NFormItem>
+    </NForm>
 
     <div class="form-actions login-actions">
-      <n-button
+      <NButton
         type="primary"
         block
         :loading="isLoggingIn"
         :disabled="!activeLoginMatchId"
         @click="loginWithVerificationCode"
       >
-        <template #icon><n-icon><LogInOutline /></n-icon></template>
+        <template #icon><NIcon><LogInOutline /></NIcon></template>
         登录并获取角色
-      </n-button>
+      </NButton>
     </div>
 
-    <n-form :model="importForm" label-placement="top" class="name-form">
-      <n-form-item label="角色命名格式">
-        <n-input v-model:value="importForm.nameTemplate" placeholder="{name}-{index}-{id}" />
+    <NForm :model="importForm" label-placement="top" class="name-form">
+      <NFormItem label="角色命名格式">
+        <NInput v-model:value="importForm.nameTemplate" placeholder="{name}-{index}-{id}" />
         <template #feedback>
           支持变量: {name}角色名, {id}角色ID, {index}角色序号, {server}区服
         </template>
-      </n-form-item>
-    </n-form>
+      </NFormItem>
+    </NForm>
 
     <ServerRoleList
       :data="serverListData"
@@ -76,45 +76,45 @@
     />
 
     <a-list>
-      <a-list-item v-for="(role, index) in roleList" :key="role.id">
+      <a-list-item v-for="(role, roleIndex) in roleList" :key="role.id">
         <div class="role-row">
           <div>
             <strong>角色名称:</strong> {{ role.name }}<br />
             <strong>服务器:</strong> {{ role.server }}<br />
             <strong>角色序号:</strong> {{ role.roleIndex }}
           </div>
-          <n-button type="error" size="small" @click="removeRole(index)">删除</n-button>
+          <NButton type="error" size="small" @click="removeRole(roleIndex)">删除</NButton>
         </div>
       </a-list-item>
     </a-list>
 
     <div class="form-actions">
-      <n-button type="primary" size="large" block :loading="isImporting" @click="handleImport">
-        <template #icon><n-icon><CloudUpload /></n-icon></template>
+      <NButton type="primary" size="large" block :loading="isImporting" @click="handleImport">
+        <template #icon><NIcon><CloudUpload /></NIcon></template>
         添加Token
-      </n-button>
-      <n-button block :disabled="isLoggingIn || isSendingCode" @click="$emit('cancel')">
-        <template #icon><n-icon><Close /></n-icon></template>
+      </NButton>
+      <NButton block :disabled="isLoggingIn || isSendingCode" @click="$emit('cancel')">
+        <template #icon><NIcon><Close /></NIcon></template>
         取消
-      </n-button>
+      </NButton>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, reactive, ref } from "vue";
 import { Close, CloudUpload, LogInOutline, SendOutline } from "@vicons/ionicons5";
 import { NButton, NCheckbox, NForm, NFormItem, NIcon, NInput, useMessage } from "naive-ui";
-import { getServerList, getTokenId, transformToken } from "@/utils/token";
-import { encodeHortorLoginPayload } from "@/utils/hortorMobileLogin";
+import { onUnmounted, reactive, ref } from "vue";
 import useIndexedDB from "@/hooks/useIndexedDB";
-import { g_utils } from "@/utils/bonProtocol";
+import { useTokenStore } from "@/stores/tokenStore";
 import {
   buildRoleBin,
   downloadBinFile,
   getRoleBinFileName,
 } from "@/utils/binFile";
-import { useTokenStore } from "@/stores/tokenStore";
+import { g_utils } from "@/utils/bonProtocol";
+import { encodeHortorLoginPayload } from "@/utils/hortorMobileLogin";
+import { getServerList, getTokenId, transformToken } from "@/utils/token";
 
 const emit = defineEmits(["cancel", "ok"]);
 const message = useMessage();
@@ -400,10 +400,10 @@ const addSelectedRole = async (roleInfo: any) => {
     const { roleIndex, serverNumber } = getServerInfo(roleInfo.serverId);
     const roleName = roleInfo.name || `角色_${roleInfo.roleId}`;
     const name = (importForm.nameTemplate || "{name}-{index}-{id}")
-      .replace(/{name}/g, roleName)
-      .replace(/{index}/g, String(roleIndex))
-      .replace(/{id}/g, String(roleInfo.roleId))
-      .replace(/{server}/g, `${serverNumber}服`);
+      .replace(/\{name\}/g, roleName)
+      .replace(/\{index\}/g, String(roleIndex))
+      .replace(/\{id\}/g, String(roleInfo.roleId))
+      .replace(/\{server\}/g, `${serverNumber}服`);
     if (roleList.value.some((role) => role.roleId === roleInfo.roleId && role.name === name)) {
       message.warning(`角色 ${name} 已在待添加列表中`);
       return;
@@ -482,3 +482,10 @@ onUnmounted(clearCooldown);
 .login-actions { margin-top: calc(var(--spacing-md) * -1); }
 .role-row { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: var(--spacing-md); }
 </style>
+
+<route lang="json">
+{
+  "name": "/TokenImport/mobile",
+  "path": "/TokenImport/mobile"
+}
+</route>

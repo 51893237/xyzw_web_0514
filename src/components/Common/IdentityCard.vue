@@ -135,16 +135,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import { legacycolor as rawLegacyColor } from "@/utils/HeroList";
+
+defineProps<{ visible?: boolean; embedded?: boolean }>();
+
+const emit = defineEmits(["close"]);
 
 const legacycolor = rawLegacyColor as any;
 
 const tokenStore = useTokenStore();
 
-const props = defineProps<{ visible?: boolean; embedded?: boolean }>();
-const emit = defineEmits(["close"]);
 const isExpanded = ref(false);
 
 const wsStatus = computed(() => {
@@ -210,8 +212,8 @@ const formatPower = (power: number) => {
   if (!power) return "0";
   const yi = 100_000_000;
   const wan = 10_000;
-  if (power >= yi) return (power / yi).toFixed(1) + "亿";
-  if (power >= wan) return (power / wan).toFixed(1) + "万";
+  if (power >= yi) return `${(power / yi).toFixed(1)  }亿`;
+  if (power >= wan) return `${(power / wan).toFixed(1)  }万`;
   return power.toLocaleString();
 };
 
@@ -219,8 +221,8 @@ const formatNumber = (num: number) => {
   const n = Number(num || 0);
   const yi = 100_000_000;
   const wan = 10_000;
-  if (n >= yi) return (n / yi).toFixed(1) + "亿";
-  if (n >= wan) return (n / wan).toFixed(1) + "万";
+  if (n >= yi) return `${(n / yi).toFixed(1)  }亿`;
+  if (n >= wan) return `${(n / wan).toFixed(1)  }万`;
   return n.toLocaleString();
 };
 

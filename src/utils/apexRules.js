@@ -37,10 +37,10 @@
 
 import {
   APEX_TAOTAI_STAGES,
-  apexScheduleMap,
-  apexStageNames,
-  apexSeasonConf,
   apexConstantConf,
+  apexScheduleMap,
+  apexSeasonConf,
+  apexStageNames,
   apexSupportLevels,
 } from "./apexStageMap";
 

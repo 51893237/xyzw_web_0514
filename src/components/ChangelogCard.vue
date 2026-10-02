@@ -79,9 +79,8 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
 
-const props = defineProps({
+defineProps({
   entry: {
     type: Object,
     required: true,

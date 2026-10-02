@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="club-warrank-container">
     <div class="club-warrank-card">
       <!-- 头部信息区 -->
@@ -58,24 +58,24 @@
       <div class="function-section">
         <div class="function-left">
           <div class="export-options">
-            <n-checkbox-group
+            <NCheckboxGroup
               v-model:value="exportmethod"
               name="group-exportmethod"
               size="small"
             >
-              <n-checkbox value="1">表格导出</n-checkbox>
-              <n-checkbox value="2">图片导出</n-checkbox>
-            </n-checkbox-group>
+              <NCheckbox value="1">表格导出</NCheckbox>
+              <NCheckbox value="2">图片导出</NCheckbox>
+            </NCheckboxGroup>
           </div>
         </div>
 
         <div class="function-right">
           <a-date-picker
             v-model:value="inputDate1"
-            :defaultValue="inputDate1"
-            valueFormat="YYYY/MM/DD"
+            :default-value="inputDate1"
+            value-format="YYYY/MM/DD"
             format="YYYY/MM/DD"
-            :allowClear="false"
+            :allow-clear="false"
             :disabled-date="disabledDate"
             @change="fetchBattleRecordsByDate"
           />
@@ -243,7 +243,7 @@
             :columns="saltTableColumns"
             :data="groupedSaltTableData"
             :bordered="true"
-            :class="['salt-table']"
+            class="salt-table"
             :row-class-name="getSaltTableRowClassName"
             size="small"
             :scroll-x="1380"
@@ -264,7 +264,7 @@
     </div>
 
     <!-- 玩家信息模态框 -->
-    <n-modal
+    <NModal
       v-model:show="showPlayerInfoModal"
       preset="card"
       title="对手信息"
@@ -279,7 +279,7 @@
 
       <div v-if="playerInfo" class="player-info-content">
         <div class="player-info-main">
-          <n-avatar
+          <NAvatar
             round
             :size="60"
             :src="playerInfo.headImg"
@@ -319,7 +319,7 @@
               <label for="fightCount" class="fight-count-label"
                 >切磋次数:</label
               >
-              <n-input
+              <NInput
                 id="fightCount"
                 v-model:value="fightCount"
                 type="number"
@@ -434,12 +434,12 @@
           <!-- 战斗结果列表 -->
           <div class="result-list">
             <div
-              v-for="(battle, index) in fightResult.resultCount"
-              :key="index"
-              :class="['battle-result-item', battle.isWin ? 'win' : 'loss']"
+              v-for="(battle, battleIndex) in fightResult.resultCount"
+              :key="battleIndex"
+              class="battle-result-item" :class="[battle.isWin ? 'win' : 'loss']"
             >
               <div class="battle-header">
-                <span class="battle-index">第 {{ index + 1 }} 场</span>
+                <span class="battle-index">第 {{ battleIndex + 1 }} 场</span>
                 <n-tag :type="battle.isWin ? 'success' : 'error'" size="small">
                   {{ battle.isWin ? "胜利" : "失败" }}
                 </n-tag>
@@ -447,7 +447,7 @@
 
               <div class="battle-details">
                 <div class="battle-side left-side">
-                  <n-avatar
+                  <NAvatar
                     round
                     :size="32"
                     :src="battle.leftheadImg"
@@ -467,7 +467,7 @@
                 <div class="battle-vs">VS</div>
 
                 <div class="battle-side right-side">
-                  <n-avatar
+                  <NAvatar
                     round
                     :size="32"
                     :src="battle.rightheadImg"
@@ -512,12 +512,12 @@
             v-if="playerInfo.heroList && playerInfo.heroList.length > 0"
           >
             <div
-              v-for="(hero, index) in playerInfo.heroList"
-              :key="hero.heroId || index"
+              v-for="(hero, heroIndex) in playerInfo.heroList"
+              :key="hero.heroId || heroIndex"
               class="hero-item"
               @click="selectHeroInfo(hero)"
             >
-              <n-avatar
+              <NAvatar
                 round
                 :size="40"
                 :src="hero.heroAvate"
@@ -555,10 +555,10 @@
           </div>
         </div>
       </div>
-    </n-modal>
+    </NModal>
 
     <!-- 武将详情模态框 -->
-    <n-modal
+    <NModal
       v-model:show="showHeroModal"
       class="hero-detail-modal"
       preset="card"
@@ -628,14 +628,14 @@
             </n-descriptions-item>
             <n-descriptions-item label="鱼灵">
               {{
-                heroModealTemp?.PearlInfo?.FishInfo?.name != undefined
+                !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
                   ? heroModealTemp.PearlInfo?.FishInfo?.name
                   : "无"
               }}
             </n-descriptions-item>
             <n-descriptions-item label="鱼珠技能">
               {{
-                heroModealTemp?.PearlInfo?.PearlSkill?.name != undefined
+                !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
                   ? heroModealTemp.PearlInfo?.PearlSkill?.name
                   : "无"
               }}
@@ -646,7 +646,7 @@
                   v-for="item in heroModealTemp.PearlInfo.slotMap"
                   :key="item.id"
                   class="ModalEquipment"
-                  :style="'background-color:' + item.value"
+                  :style="`background-color:${  item.value}`"
                 ></div>
               </div>
               <div v-else>无</div>
@@ -716,54 +716,45 @@
       <template #footer>
         <n-button @click="showHeroModal = false">关闭</n-button>
       </template>
-    </n-modal>
+    </NModal>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, reactive, watch } from "vue";
 import {
-  useMessage,
-  NDatePicker,
-  NCheckboxGroup,
-  NCheckbox,
-  NModal,
+  Copy,
+  CreateOutline,
+  DocumentText,
+  Refresh,
+} from "@vicons/ionicons5";
+
+import html2canvas from "html2canvas";
+import {
   NAvatar,
+  NCheckbox,
+  NCheckboxGroup,
   NInput,
   NInputNumber,
+  NModal,
   NSelect,
+  useMessage,
 } from "naive-ui";
+import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
-import html2canvas from "html2canvas";
-import { downloadCanvasAsImage } from "@/utils/imageExport";
 import {
-  Trophy,
-  Refresh,
-  Copy,
-  ChevronDown,
-  ChevronUp,
-  DocumentText,
-  CreateOutline,
-} from "@vicons/ionicons5";
-import {
-  getLastSaturday,
-  formatTimestamp,
   formatTimestamp1,
-  parseBattleResult,
-  parseAttackType,
-  formatBattleRecordsForExport,
-  copyToClipboard,
+  getLastSaturday,
 } from "@/utils/clubBattleUtils";
 import {
-  gettoday,
-  formatWarrankRecordsForExport,
   allianceincludes,
+  formatWarrankRecordsForExport,
+  gettoday,
 } from "@/utils/clubWarrankUtils";
-import { HERO_DICT, HeroFillInfo, legacycolor, getLineupType, LINEUP_RULES } from "@/utils/HeroList";
+import { isSameGameValue } from "@/utils/gameValue.js";
+import { getLineupType, HERO_DICT, HeroFillInfo, legacycolor, LINEUP_RULES } from "@/utils/HeroList";
+import { downloadCanvasAsImage } from "@/utils/imageExport";
 
-const ScoreShow = ref(1);
-
-const props = defineProps({
+defineProps({
   visible: {
     type: Boolean,
     default: false,
@@ -774,20 +765,19 @@ const props = defineProps({
   },
 });
 
+
+
+const ScoreShow = ref(1);
+
 const exportmethod = ref(["2"]);
 const exportDom = ref(null);
-const emit = defineEmits(["update:visible"]);
-
 const message = useMessage();
 const tokenStore = useTokenStore();
 const selectedTokenId = computed(() => tokenStore.selectedToken?.id || "");
 const currentClubInfo = ref(null);
 const currentLegionInfo = computed(() => currentClubInfo.value?.info || null);
 
-const showModal = computed({
-  get: () => props.visible,
-  set: (val) => emit("update:visible", val),
-});
+
 
 const loading1 = ref(false);
 const battleRecords1 = ref(null);
@@ -999,7 +989,7 @@ const getEquipment = (equipment) => {
     //遍历每件装备的属�?
     Object.values(equ.quenches).forEach((item) => {
       holeCount++;
-      if (item.colorId == 6) {
+      if (isSameGameValue(item.colorId, 6)) {
         redCount++;
       }
     });
@@ -1012,15 +1002,15 @@ const getMergedTableRowColSpan = (row) => (row.__isGroupHeader || row.__isFetchT
 const getHiddenMergedTableCellColSpan = (row) => (row.__isGroupHeader || row.__isFetchTimeFooter) ? 0 : 1;
 const formatDateTime = (date) => {
   const pad = (value) => String(value).padStart(2, "0");
-  return [
+  return `${[
     date.getFullYear(),
     pad(date.getMonth() + 1),
     pad(date.getDate()),
-  ].join("-") + " " + [
+  ].join("-")  } ${  [
     pad(date.getHours()),
     pad(date.getMinutes()),
     pad(date.getSeconds()),
-  ].join(":");
+  ].join(":")}`;
 };
 const getSaltFetchTimeText = () => {
   const fetchTime = saltFetchStartTime.value || new Date();
@@ -1097,7 +1087,7 @@ const isCurrentAccountClub = (row) => {
 
   const currentId = clubInfo.id ?? clubInfo.legionId;
   const rowId = row.id ?? row.legionId;
-  if (currentId != null && rowId != null && String(currentId) === String(rowId)) {
+  if (!isSameGameValue(currentId, null) && !isSameGameValue(rowId, null) && String(currentId) === String(rowId)) {
     return true;
   }
 
@@ -1206,7 +1196,7 @@ const saltTableColumns = [
     render: (row) => {
       if (row.__isGroupHeader || row.__isFetchTimeFooter) return null;
       return h('div', { style: { display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: '9px', justifyContent: 'center', alignItems: 'flex-start', width: 'calc(100% + 8px)', minWidth: '528px', margin: '0 -4px' } },
-        row.topHeroes.map((hero, index) =>
+        row.topHeroes.map((hero) =>
           h('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '6px', width: '170px', padding: '5px 5px 5px 5px', background: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', flexShrink: '0' } }, [
             h('div', { style: { width: '36px', height: '36px', minWidth: '36px', minHeight: '36px', flexShrink: '0', cursor: 'pointer' }, onClick: () => handleHeroClick(hero) }, [
               hero.headImg
@@ -1220,12 +1210,12 @@ const saltTableColumns = [
             h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: '1 1 auto', minWidth: '0' } }, [
               h('div', { style: { display: 'flex', alignItems: 'center', gap: '3px', width: '100%', minWidth: '0', whiteSpace: 'nowrap' } }, [
                 h('span', { style: { fontSize: '11px', fontWeight: '500', color: '#1f2937', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: '0' } }, hero.name || '未知'),
-                h('span', { style: { fontSize: '9px', color: 'white', background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)', padding: '1px 3px', borderRadius: '8px', fontWeight: 'bold', marginLeft: 'auto', flexShrink: '0' } }, '圣' + hero.holyBeast)
+                h('span', { style: { fontSize: '9px', color: 'white', background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)', padding: '1px 3px', borderRadius: '8px', fontWeight: 'bold', marginLeft: 'auto', flexShrink: '0' } }, `圣${  hero.holyBeast}`)
               ]),
               h('div', { style: { display: 'flex', alignItems: 'center', gap: '4px', width: '100%', minWidth: '0', whiteSpace: 'nowrap' } }, [
                 h('span', { style: { fontSize: '11px', color: '#6b7280', whiteSpace: 'nowrap', minWidth: '50px', flexShrink: '0' } }, formatPower(hero.power)),
                 h('span', { style: getLineupTagStyle(hero.lineupType) }, hero.lineupType || '其他'),
-                h('span', { style: { fontSize: '11px', fontWeight: '500', marginLeft: 'auto', flexShrink: '0', color: '#ef4444' } }, hero.redQuench + '红')
+                h('span', { style: { fontSize: '11px', fontWeight: '500', marginLeft: 'auto', flexShrink: '0', color: '#ef4444' } }, `${hero.redQuench  }红`)
               ])
             ])
           ])
@@ -1267,8 +1257,8 @@ const getHeroInfo = (heroObj) => {
       // 跳过无效英雄数据
       if (!hero) return;
 
-      let heroInfo = HERO_DICT[hero.heroId] || {};
-      let equipmentInfo = hero.equipment
+      const heroInfo = HERO_DICT[hero.heroId] || {};
+      const equipmentInfo = hero.equipment
         ? getEquipment(hero.equipment)
         : { redCount: 0, holeCount: 0 };
 
@@ -1276,13 +1266,13 @@ const getHeroInfo = (heroObj) => {
       const heroId = hero.heroId || `unknown_${index}`;
       const heroName = hero.heroName || heroInfo.name || `未知武将_${index}`;
 
-      let tempObj = {
-        heroId: heroId, //英雄ID
+      const tempObj = {
+        heroId, //英雄ID
         artifactId: hero.artifactId || "", //英雄装备ID，用于匹配鱼灵信�?
         power: hero.power || 0, //英雄战力
         star: hero.star || 0, //英雄星级
         equipment: hero.equipment, //英雄具体孔数和红�?
-        heroName: heroName, //英雄姓名
+        heroName, //英雄姓名
         heroAvate: hero.heroAvate || heroInfo.avatar || "",
         level: hero.level || 0, //英雄等级
         hole: equipmentInfo.holeCount, //英雄开孔数�?
@@ -1368,7 +1358,7 @@ const fetchTargetInfo = async (roleId) => {
         bottleType: 0,
         includeBottleTeam: false,
         isSearch: false,
-        roleId: roleId,
+        roleId,
         includeHero: true,
         includeHeroDetail: true,
         includePearl: true,
@@ -1466,11 +1456,11 @@ const fetchTargetInfo = async (roleId) => {
       currentRedDrum: roleRedQuench,
       maxRedDrum: roleMaxRed,
       // 总红数和总开孔数
-      totalRedCount: totalRedCount,
-      totalHoleCount: totalHoleCount,
+      totalRedCount,
+      totalHoleCount,
       // 俱乐部红淬数�?
-      legionRedQuench: legionRedQuench,
-      legionMaxRed: legionMaxRed,
+      legionRedQuench,
+      legionMaxRed,
       // 英雄列表
       heroList: heroAndholdAndRed.heroList,
       legacy: result.roleInfo.legacy?.color || 0, // 功法等级
@@ -1507,8 +1497,8 @@ const handleHeroClick = (hero) => {
 
 // 验证切磋次数
 const validateFightCount = (value) => {
-  const num = parseInt(value);
-  isFightCountValid.value = !isNaN(num) && num >= 1 && num <= 100;
+  const num = Number.parseInt(value);
+  isFightCountValid.value = !Number.isNaN(+(num)) && num >= 1 && num <= 100;
 };
 
 // 重置切磋结果
@@ -1561,7 +1551,7 @@ const handleDuel = async () => {
     return;
   }
 
-  const totalCount = parseInt(fightCount.value);
+  const totalCount = Number.parseInt(fightCount.value);
   message.info(`开始连续切磋 ${playerInfo.value.name}，共${totalCount}次`);
 
   if (!tokenStore.selectedToken) {
@@ -1599,7 +1589,7 @@ const handleDuel = async () => {
   try {
     let winCount = 0;
     let lossCount = 0;
-    let resultCount = []; // 存储每场战斗的详细结�?
+    const resultCount = []; // 存储每场战斗的详细结�?
 
     // 重置掉将统计
     dieStats.ourDieHeroGameCount = 0;
@@ -1629,7 +1619,7 @@ const handleDuel = async () => {
         // 检查我方掉将情�?
         if (result.battleData.result?.sponsor?.teamInfo) {
           result.battleData.result.sponsor.teamInfo.forEach((item) => {
-            if (item.hp == 0) {
+            if (isSameGameValue(item.hp, 0)) {
               leftCount++;
             }
           });
@@ -1638,7 +1628,7 @@ const handleDuel = async () => {
         // 检查敌方掉将情�?
         if (result.battleData.result?.accept?.teamInfo) {
           result.battleData.result.accept.teamInfo.forEach((item) => {
-            if (item.hp == 0) {
+            if (isSameGameValue(item.hp, 0)) {
               rightCount++;
             }
           });
@@ -1874,22 +1864,18 @@ const getActiveAllianceCount = (alliance) => {
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return (power / 100000000).toFixed(2) + "亿";
+    return `${(power / 100000000).toFixed(2)  }亿`;
   }
   if (power >= 10000) {
-    return (power / 10000).toFixed(2) + "万";
+    return `${(power / 10000).toFixed(2)  }万`;
   }
   return power.toString();
 };
 
-const formatScore = (Score) => {
-  return Score ? Score.toFixed(0).toString() : "0";
-};
+
 
 // 处理图片加载错误
-const handleImageError = (event) => {
-  event.target.style.display = "none";
-};
+
 
 const disabledDate = (current) => {
   const date = typeof current?.toDate === "function" ? current.toDate() : new Date(current);
@@ -1914,39 +1900,14 @@ const selectStatCalendarDate = (value) => {
 };
 
 // 联盟样式�?
-const getAllianceClass = (alliance) => {
-  switch (alliance) {
-    case "大联盟":
-      return "alliance-large";
-    case "梦盟":
-      return "alliance-dream";
-    case "正义联盟":
-      return "alliance-xin-justice";
-    case "龙盟":
-      return "alliance-dragon";
-    case "曦盟":
-      return "alliance-xi";
-    case "未知联盟":
-      return "alliance-unknown";
-    default:
-      return "alliance-other";
-  }
-};
+
 
 // 红淬样式�?
-const getRedQuenchClass = (redQuench) => {
-  if (redQuench >= 60) {
-    return "redquench-high";
-  } else if (redQuench >= 50) {
-    return "redquench-medium";
-  } else {
-    return "redquench-low";
-  }
-};
+
 
 //日期选择时调用查询战绩方�?
 const fetchBattleRecordsByDate = (val) => {
-  if (undefined != val) {
+  if (!isSameGameValue(undefined, val)) {
     inputDate1.value = val;
   } else {
     inputDate1.value = getLastSaturday();
@@ -1991,7 +1952,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
   await fetchCurrentClubInfo(tokenId);
   if (selectedTokenId.value !== tokenId) return;
 
-  if (gettoday() == queryDate.value && new Date().getHours() < 21) {
+  if (isSameGameValue(gettoday(), queryDate.value) && new Date().getHours() < 21) {
     let getbattlefield;
     try {
       getbattlefield = await tokenStore.sendMessageWithPromise(
@@ -2068,13 +2029,13 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
                 bottleType: 0,
                 includeBottleTeam: false,
                 isSearch: false,
-                roleId: roleId,
+                roleId,
               },
               5000,
             );
 
             let holyBeast = 0;
-            for (const [heroId, heroData] of Object.entries(
+            for (const [, heroData] of Object.entries(
               tempRoleInfo?.roleInfo?.heroes,
             )) {
               if (heroData.hB?.active !== undefined) {
@@ -2088,7 +2049,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
               headImg: memberData.headImg || memberData.custom?.headImg || "",
               power: tempRoleInfo?.roleInfo?.power || 0,
               redQuench: memberData.custom?.red_quench_cnt || 0,
-              holyBeast: holyBeast,
+              holyBeast,
               lineupType: getLineupType(
                 getHeroInfo(tempRoleInfo?.roleInfo?.heroes || {}).heroList || [],
               ),
@@ -2101,7 +2062,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
 
           // 提取红淬数量数组
           const redQuenchCounts = top3Heroes.map(
-            (hero) => hero.redQuench + "红",
+            (hero) => `${hero.redQuench  }红`,
           );
           // 提取圣物数量数组
           const HolyBeastNum = top3Heroes.map((hero) => hero.holyBeast);
@@ -2269,13 +2230,13 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
                 bottleType: 0,
                 includeBottleTeam: false,
                 isSearch: false,
-                roleId: roleId,
+                roleId,
               },
               5000,
             );
 
             let holyBeast = 0;
-            for (const [heroId, heroData] of Object.entries(
+            for (const [, heroData] of Object.entries(
               tempRoleInfo?.roleInfo?.heroes,
             )) {
               if (heroData.hB?.active !== undefined) {
@@ -2289,7 +2250,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
               headImg: memberData.headImg || memberData.custom?.headImg || "",
               power: tempRoleInfo?.roleInfo?.power || 0,
               redQuench: memberData.custom?.red_quench_cnt || 0,
-              holyBeast: holyBeast,
+              holyBeast,
               lineupType: getLineupType(
                 getHeroInfo(tempRoleInfo?.roleInfo?.heroes || {}).heroList || [],
               ),
@@ -2302,7 +2263,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
 
           // 提取红淬数量数组
           const redQuenchCounts = top3Heroes.map(
-            (hero) => hero.redQuench + "红",
+            (hero) => `${hero.redQuench  }红`,
           );
           // 提取圣物数量数组
           const HolyBeastNum = top3Heroes.map((hero) => hero.holyBeast);
@@ -2480,7 +2441,7 @@ const handleExport1 = async () => {
 
   try {
     if (exportmethod.value.includes("1")) {
-      const exportText = formatWarrankRecordsForExport(
+      formatWarrankRecordsForExport(
         battleRecords1.value.legionRankList,
         queryDate.value,
       );
@@ -2498,6 +2459,7 @@ const handleExport1 = async () => {
 const exportToImage = async () => {
   // 校验：确保DOM已正确绑�?
   if (!exportDom.value) {
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert("未找到要导出的DOM元素");
     return;
   }
@@ -2575,11 +2537,12 @@ const exportToImage = async () => {
 
     // 6. Canvas转图片链接并下载
     const filename =
-      queryDate.value.replace("/", "年").replace("/", "月") +
-      "日盐场匹配信息.png";
+      `${queryDate.value.replace("/", "年").replace("/", "月") 
+      }日盐场匹配信息.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error("DOM转图片失败：", err);
+    // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert("导出图片失败，请重试");
   } finally {
     exportDom.value.classList.remove("salt-image-exporting");
@@ -2630,9 +2593,7 @@ const getAllianceTagClass = (alliance) => {
 };
 
 // 关闭弹窗
-const handleClose = () => {
-  expandedMembers.value.clear();
-};
+
 
 // 暴露方法给父组件
 defineExpose({
