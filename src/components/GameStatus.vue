@@ -170,12 +170,18 @@
     <SkinChallengeCard v-show="activeSection === 'activity'" />
 
     <!-- 逐鹿盐山分组 -->
-    <div class="apex-challenge-group" v-if="activeSection === 'apexChallengeGroup'">
+    <div
+      class="apex-challenge-group"
+      v-if="activeSection === 'apexChallengeGroup'"
+    >
       <ApexChallenge />
     </div>
 
     <!-- 营地挑战分组 -->
-    <div class="camp-challenge-group" v-if="activeSection === 'campChallengeGroup'">
+    <div
+      class="camp-challenge-group"
+      v-if="activeSection === 'campChallengeGroup'"
+    >
       <CampChallenge />
     </div>
 
@@ -364,7 +370,6 @@ import { useMessage } from "naive-ui";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 
-
 import ApexChallenge from "./Apex/ApexChallenge.vue";
 import BottleHelperCard from "./cards/BottleHelperCard.vue";
 import BoxHelperCard from "./cards/BoxHelperCard.vue";
@@ -417,7 +422,7 @@ const rankSubTab = ref("serverrank");
 
 // 盐场匹配信息详情 / 蟠桃园信息 界面样式选择（style1=原有样式，style2=移植样式）
 const warrankStyle = ref(
-  localStorage.getItem("club_warrank_style") || "style1"
+  localStorage.getItem("club_warrank_style") || "style1",
 );
 const peachStyle = ref(localStorage.getItem("peach_info_style") || "style1");
 
@@ -429,7 +434,6 @@ watch(peachStyle, (newStyle) => {
 });
 
 // 活动开放时间：仅周一到周三可参与
-
 
 const bottleHelper = ref({
   isRunning: false,
@@ -454,7 +458,6 @@ const legionSignin = ref({
 
 // 使用 tokenStore 中的答题状态（仍用于 badge 状态等场景，如果仅在子组件中使用也可移除）
 
-
 // 计算属性
 const roleInfo = computed(() => {
   return tokenStore.gameData?.roleInfo || null;
@@ -471,9 +474,7 @@ const isShowTowerStatus = computed(() => {
 
 // WebSocket连接状态
 
-
 // 格式化时间 - 确保显示到秒
-
 
 // 更新数据
 const updateGameStatus = () => {
@@ -569,11 +570,7 @@ const startTimer = () => {
 
 // 盐罐机器人操作
 
-
 // 挂机操作 - 参考HangUpStatus逻辑优化
-
-
-
 
 // 功能开关：暂时隐藏俱乐部排位与旧签到卡片
 const ENABLE_LEGION_MATCH = false;

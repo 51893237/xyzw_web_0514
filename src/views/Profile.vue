@@ -179,7 +179,6 @@ const preferences = reactive({
 
 // 密码验证规则
 
-
 // 选项数据
 const themeOptions = [
   { label: "跟随系统", value: "auto" },
@@ -220,8 +219,6 @@ const changePassword = async () => {
   }
 };
 
-
-
 const updateTheme = (theme) => {
   preferences.theme = theme;
   localStorage.setItem("theme", theme);
@@ -238,8 +235,6 @@ const updateTheme = (theme) => {
     else document.documentElement.removeAttribute("data-theme");
   }
 };
-
-
 
 const setupTwoFactor = () => {
   message.info("两步验证设置功能开发中...");

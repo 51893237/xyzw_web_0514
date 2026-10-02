@@ -4,7 +4,9 @@
     <div class="toolbar">
       <div class="left">
         <NTag type="warning" round size="small">逐鹿盐山</NTag>
-        <NTag v-if="season > 0" type="info" size="small" round> {{ formatSeason(season) }} </NTag>
+        <NTag v-if="season > 0" type="info" size="small" round>
+          {{ formatSeason(season) }}
+        </NTag>
         <NSelect
           v-if="availableRounds.length"
           v-model:value="selectedRound"
@@ -15,14 +17,28 @@
         <NTag v-if="selectedRoundEnded" size="small" round type="default">
           历史期 · 已结束
         </NTag>
-        <NTag v-else-if="selectedRound" size="small" round type="error">当前期</NTag>
-        <NTag v-if="activeStageName && !selectedRoundEnded" size="small" round type="success">
+        <NTag v-else-if="selectedRound" size="small" round type="error"
+          >当前期</NTag
+        >
+        <NTag
+          v-if="activeStageName && !selectedRoundEnded"
+          size="small"
+          round
+          type="success"
+        >
           {{ activeStageName }}
         </NTag>
       </div>
       <div class="right">
-        <NButton size="small" :loading="loading" :disabled="!isConnected" @click="fetchAllData">
-          <template #icon><NIcon><RefreshOutline /></NIcon></template>
+        <NButton
+          size="small"
+          :loading="loading"
+          :disabled="!isConnected"
+          @click="fetchAllData"
+        >
+          <template #icon
+            ><NIcon><RefreshOutline /></NIcon
+          ></template>
           刷新数据
         </NButton>
       </div>
@@ -41,18 +57,25 @@
         <span v-else>已选择：第 {{ selectedRound }} 期 · 当前期</span>
       </template>
       <template v-if="selectedRoundEnded">
-        该期已于 {{ selectedRoundEndText }} 结束，仅供回看，不提供助威 / 竞猜操作。
+        该期已于 {{ selectedRoundEndText }} 结束，仅供回看，不提供助威 /
+        竞猜操作。
       </template>
       <template v-else>
         <template v-if="activeStageItem">
           进行中：<b>{{ activeStageName }}</b>
-          <template v-if="activeStageItem.dateText && activeStageItem.dateText !== '待开启'">
+          <template
+            v-if="
+              activeStageItem.dateText && activeStageItem.dateText !== '待开启'
+            "
+          >
             （{{ activeStageItem.dateText }}）
           </template>
         </template>
         <template v-else-if="nextStageItem">
           下一阶段：<b>{{ nextStageItem.label }}</b>
-          <template v-if="nextStageItem.dateText && nextStageItem.dateText !== '待开启'">
+          <template
+            v-if="nextStageItem.dateText && nextStageItem.dateText !== '待开启'"
+          >
             （{{ nextStageItem.dateText }}）
           </template>
         </template>
@@ -66,17 +89,20 @@
     <!-- 连接状态提示 -->
     <NAlert v-if="!isConnected" type="warning" style="margin-bottom: 12px">
       <template #header>WebSocket 未连接</template>
-      请先在 Token 管理中导入并连接游戏服务器。连接成功后会自动加载数据，也可手动点击"刷新数据"。
+      请先在 Token
+      管理中导入并连接游戏服务器。连接成功后会自动加载数据，也可手动点击"刷新数据"。
     </NAlert>
 
     <!-- 赛季更新提示：配置快照未覆盖当前赛季 -->
     <NAlert v-if="confStale" type="error" style="margin-bottom: 12px">
       <template #header>配置与当前赛季不匹配</template>
-      服务端赛季为第 {{ roleSeason }} 赛季，但本地配置快照未覆盖当前时间（不处于任何赛季窗口）。
-      请以服务端最新配置重新生成 <code>src/utils/apexStageMap.js</code>：
-      先拉取 <code>data/version.json</code> 取得版本号，再下载
-      <code>data/&lt;版本号&gt;/config.json</code> 存为 <code>/tmp/xyzw_config.json</code>，
-      然后重跑随附的生成脚本刷新快照。
+      服务端赛季为第
+      {{ roleSeason }}
+      赛季，但本地配置快照未覆盖当前时间（不处于任何赛季窗口）。
+      请以服务端最新配置重新生成 <code>src/utils/apexStageMap.js</code>： 先拉取
+      <code>data/version.json</code> 取得版本号，再下载
+      <code>data/&lt;版本号&gt;/config.json</code> 存为
+      <code>/tmp/xyzw_config.json</code>， 然后重跑随附的生成脚本刷新快照。
     </NAlert>
 
     <!-- 空状态 -->
@@ -113,17 +139,26 @@
             <div class="banner-title">🐉 逐鹿盐山</div>
             <div class="banner-sub">
               {{ formatSeason(season) }} · 第 {{ selectedRound || "-" }} 期
-              <NTag v-if="selectedRoundEnded" size="tiny" round type="default">历史期 · 只读</NTag>
-              <template v-if="seasonConf">（{{ seasonConf.startDate }} ~ {{ seasonConf.endDate }}）</template>
+              <NTag v-if="selectedRoundEnded" size="tiny" round type="default"
+                >历史期 · 只读</NTag
+              >
+              <template v-if="seasonConf"
+                >（{{ seasonConf.startDate }} ~
+                {{ seasonConf.endDate }}）</template
+              >
             </div>
           </div>
           <div class="banner-right">
             <div class="banner-stat">
-              <div class="banner-num">{{ Object.keys(roleInfo.guessMap || {}).length }}</div>
+              <div class="banner-num">
+                {{ Object.keys(roleInfo.guessMap || {}).length }}
+              </div>
               <div class="banner-label">参与竞猜期</div>
             </div>
             <div class="banner-stat">
-              <div class="banner-num">{{ Object.keys(roleInfo.voteMap || {}).length }}</div>
+              <div class="banner-num">
+                {{ Object.keys(roleInfo.voteMap || {}).length }}
+              </div>
               <div class="banner-label">助威轮次</div>
             </div>
             <div class="banner-stat">
@@ -133,20 +168,32 @@
           </div>
         </div>
 
-        <NCard :title="`⏱ 第${selectedRound || '-'}期阶段进度`" size="small" style="margin-top: 12px">
+        <NCard
+          :title="`⏱ 第${selectedRound || '-'}期阶段进度`"
+          size="small"
+          style="margin-top: 12px"
+        >
           <div class="stage-timeline">
             <div
               v-for="st in stageTimeline"
               :key="st.key"
               class="stage-node"
-              :class="{ active: st.isActive, done: st.isEnded, disabled: !st.isEnable }"
+              :class="{
+                active: st.isActive,
+                done: st.isEnded,
+                disabled: !st.isEnable,
+              }"
             >
               <div class="stage-dot">●</div>
               <div class="stage-body">
                 <div class="stage-name">
                   {{ st.label }}
-                  <NTag v-if="st.isActive" size="tiny" type="error" round>进行中</NTag>
-                  <NTag v-else-if="st.isEnded" size="tiny" type="success" round>已结束</NTag>
+                  <NTag v-if="st.isActive" size="tiny" type="error" round
+                    >进行中</NTag
+                  >
+                  <NTag v-else-if="st.isEnded" size="tiny" type="success" round
+                    >已结束</NTag
+                  >
                 </div>
                 <div class="stage-date">{{ st.dateText }}</div>
               </div>
@@ -169,8 +216,16 @@
 
       <!-- ==================== 赛程（当前 + 历史） ==================== -->
       <div v-show="activeSubTab === 'schedule'" class="tab-content">
-        <NCard :title="`🗓 第${selectedRound || '-'}期赛程`" size="small" style="margin-bottom: 12px">
-          <NEmpty v-if="currentSchedule.length === 0" description="当前暂无进行中的赛程" style="padding: 30px 0" />
+        <NCard
+          :title="`🗓 第${selectedRound || '-'}期赛程`"
+          size="small"
+          style="margin-bottom: 12px"
+        >
+          <NEmpty
+            v-if="currentSchedule.length === 0"
+            description="当前暂无进行中的赛程"
+            style="padding: 30px 0"
+          />
           <div v-else class="stage-timeline">
             <div
               v-for="(st, si) in currentSchedule"
@@ -182,8 +237,12 @@
               <div class="stage-body">
                 <div class="stage-name">
                   {{ st.stageName }}
-                  <NTag v-if="st.isToday" size="tiny" type="error" round>今日</NTag>
-                  <NTag v-if="st.isPast" size="tiny" type="success" round>已过</NTag>
+                  <NTag v-if="st.isToday" size="tiny" type="error" round
+                    >今日</NTag
+                  >
+                  <NTag v-if="st.isPast" size="tiny" type="success" round
+                    >已过</NTag
+                  >
                 </div>
                 <div class="stage-date">{{ st.dateText }}</div>
                 <div class="stage-sids">赛程ID: {{ st.sids.join(", ") }}</div>
@@ -222,24 +281,49 @@
                           <div class="team-block" :class="{ win: m.team1Win }">
                             <div class="team-name">
                               {{ m.team1Name }}
-                              <NTag v-if="m.team1Win" round size="tiny" type="success">胜</NTag>
+                              <NTag
+                                v-if="m.team1Win"
+                                round
+                                size="tiny"
+                                type="success"
+                                >胜</NTag
+                              >
                             </div>
-                            <div class="team-meta">战力 {{ (m.team1Power / POWER_UNIT).toFixed(1) }}亿</div>
+                            <div class="team-meta">
+                              战力
+                              {{ (m.team1Power / POWER_UNIT).toFixed(1) }}亿
+                            </div>
                           </div>
                           <div class="vs">VS</div>
-                          <div class="team-block right" :class="{ win: m.team2Win }">
+                          <div
+                            class="team-block right"
+                            :class="{ win: m.team2Win }"
+                          >
                             <div class="team-name">
                               {{ m.team2Name }}
-                              <NTag v-if="m.team2Win" round size="tiny" type="success">胜</NTag>
+                              <NTag
+                                v-if="m.team2Win"
+                                round
+                                size="tiny"
+                                type="success"
+                                >胜</NTag
+                              >
                             </div>
-                            <div class="team-meta">战力 {{ (m.team2Power / POWER_UNIT).toFixed(1) }}亿</div>
+                            <div class="team-meta">
+                              战力
+                              {{ (m.team2Power / POWER_UNIT).toFixed(1) }}亿
+                            </div>
                           </div>
                         </div>
                       </NCard>
                     </NSpace>
                   </NCollapseItem>
                 </NCollapse>
-                <NEmpty v-else description="该期暂无对阵记录" style="padding: 20px 0" />
+                <NEmpty
+                  v-else
+                  description="该期暂无对阵记录"
+                  style="padding: 20px 0"
+                />
               </NCollapseItem>
             </NCollapse>
           </NSpin>
@@ -248,10 +332,21 @@
 
       <!-- ==================== 竞猜（当前 + 历史） ==================== -->
       <div v-show="activeSubTab === 'bet'" class="tab-content">
-        <NAlert v-if="actionCooldown.guess > 0" size="small" style="margin-bottom: 12px" type="warning">
-          竞猜被服务器限流（200400），请 {{ actionCooldown.guess }} 秒后再试；间隔由自适应限流学习得到，连续成功后会自动缩短。
+        <NAlert
+          v-if="actionCooldown.guess > 0"
+          size="small"
+          style="margin-bottom: 12px"
+          type="warning"
+        >
+          竞猜被服务器限流（200400），请
+          {{ actionCooldown.guess }}
+          秒后再试；间隔由自适应限流学习得到，连续成功后会自动缩短。
         </NAlert>
-        <NCard :title="`🎯 ${currentBetTitle}`" size="small" style="margin-bottom: 12px">
+        <NCard
+          :title="`🎯 ${currentBetTitle}`"
+          size="small"
+          style="margin-bottom: 12px"
+        >
           <NEmpty
             v-if="currentBets.length === 0"
             description="当前期暂无淘汰赛竞猜阶段"
@@ -266,10 +361,20 @@
             >
               <template #header>
                 <span class="stage-group-title">🏅 {{ grp.stageName }}</span>
-                <NTag :type="guessStatusTag(grp.state)" size="tiny" round style="margin-left: 8px">
+                <NTag
+                  :type="guessStatusTag(grp.state)"
+                  size="tiny"
+                  round
+                  style="margin-left: 8px"
+                >
                   {{ guessStatusText(grp.state) }}
                 </NTag>
-                <NTag v-if="grp.advanceNum > 0" size="tiny" round style="margin-left: 6px">
+                <NTag
+                  v-if="grp.advanceNum > 0"
+                  size="tiny"
+                  round
+                  style="margin-left: 6px"
+                >
                   已押 {{ grp.myBets.length }}/{{ grp.advanceNum }}
                 </NTag>
               </template>
@@ -289,16 +394,27 @@
                     <div class="team-block">
                       <div class="team-name">
                         {{ b.team1Name }}
-                        <NTag v-if="grp.myBets.includes(b.team1Id)" size="tiny" type="info" round>我押</NTag>
+                        <NTag
+                          v-if="grp.myBets.includes(b.team1Id)"
+                          size="tiny"
+                          type="info"
+                          round
+                          >我押</NTag
+                        >
                       </div>
                       <div class="team-meta">
-                        战力 {{ (b.team1Power / POWER_UNIT).toFixed(1) }}亿 · 助威 {{ formatNumber(b.team1Cheer) }}
+                        战力 {{ (b.team1Power / POWER_UNIT).toFixed(1) }}亿 ·
+                        助威 {{ formatNumber(b.team1Cheer) }}
                       </div>
                       <NButton
                         v-if="!grp.myBets.includes(b.team1Id)"
                         size="tiny"
                         :type="canBetRow(grp, b) ? 'primary' : 'default'"
-                        :disabled="!canBetRow(grp, b) || pendingGuessTeamId !== '' || actionCooldown.guess > 0"
+                        :disabled="
+                          !canBetRow(grp, b) ||
+                          pendingGuessTeamId !== '' ||
+                          actionCooldown.guess > 0
+                        "
                         :loading="pendingGuessTeamId === b.team1Id"
                         style="margin-top: 6px"
                         :title="grp.betTip"
@@ -311,16 +427,27 @@
                     <div class="team-block right">
                       <div class="team-name">
                         {{ b.team2Name }}
-                        <NTag v-if="grp.myBets.includes(b.team2Id)" size="tiny" type="info" round>我押</NTag>
+                        <NTag
+                          v-if="grp.myBets.includes(b.team2Id)"
+                          size="tiny"
+                          type="info"
+                          round
+                          >我押</NTag
+                        >
                       </div>
                       <div class="team-meta">
-                        战力 {{ (b.team2Power / POWER_UNIT).toFixed(1) }}亿 · 助威 {{ formatNumber(b.team2Cheer) }}
+                        战力 {{ (b.team2Power / POWER_UNIT).toFixed(1) }}亿 ·
+                        助威 {{ formatNumber(b.team2Cheer) }}
                       </div>
                       <NButton
                         v-if="!grp.myBets.includes(b.team2Id)"
                         size="tiny"
                         :type="canBetRow(grp, b) ? 'primary' : 'default'"
-                        :disabled="!canBetRow(grp, b) || pendingGuessTeamId !== '' || actionCooldown.guess > 0"
+                        :disabled="
+                          !canBetRow(grp, b) ||
+                          pendingGuessTeamId !== '' ||
+                          actionCooldown.guess > 0
+                        "
                         :loading="pendingGuessTeamId === b.team2Id"
                         style="margin-top: 6px"
                         :title="grp.betTip"
@@ -334,14 +461,22 @@
               </NSpace>
 
               <div
-                v-if="grp.state !== ApexScheduleStatus.None && betTotalPages(grp) > 1"
+                v-if="
+                  grp.state !== ApexScheduleStatus.None &&
+                  betTotalPages(grp) > 1
+                "
                 class="guess-pager"
               >
-                <NButton size="tiny" :disabled="betPage(grp) <= 0" @click="goBetPage(grp, -1)">
+                <NButton
+                  size="tiny"
+                  :disabled="betPage(grp) <= 0"
+                  @click="goBetPage(grp, -1)"
+                >
                   上一页
                 </NButton>
                 <span class="stage-date">
-                  第 {{ betPage(grp) + 1 }}/{{ betTotalPages(grp) }} 页 · 已加载 {{ grp.matches.length }} 场
+                  第 {{ betPage(grp) + 1 }}/{{ betTotalPages(grp) }} 页 · 已加载
+                  {{ grp.matches.length }} 场
                 </span>
                 <NButton
                   size="tiny"
@@ -352,15 +487,24 @@
                   下一页
                 </NButton>
               </div>
-              <div v-else-if="grp.state !== ApexScheduleStatus.None" class="guess-pager">
-                <span class="stage-date">共 {{ grp.matches.length }} 场对阵</span>
+              <div
+                v-else-if="grp.state !== ApexScheduleStatus.None"
+                class="guess-pager"
+              >
+                <span class="stage-date"
+                  >共 {{ grp.matches.length }} 场对阵</span
+                >
               </div>
             </NCard>
           </NSpace>
         </NCard>
 
         <NCard title="📚 历史竞猜记录">
-          <NEmpty v-if="betList.length === 0" description="暂无历史竞猜数据" style="padding: 40px 0" />
+          <NEmpty
+            v-if="betList.length === 0"
+            description="暂无历史竞猜数据"
+            style="padding: 40px 0"
+          />
           <NDataTable
             v-else
             :columns="betColumns"
@@ -370,17 +514,36 @@
             size="small"
           />
         </NCard>
-        <div class="stage-date" style="margin-top: 8px">{{ rateLimitText }}</div>
+        <div class="stage-date" style="margin-top: 8px">
+          {{ rateLimitText }}
+        </div>
       </div>
 
       <!-- ==================== 助威（当前） ==================== -->
       <div v-show="activeSubTab === 'vote'" class="tab-content">
-        <NAlert v-if="actionCooldown.vote > 0" size="small" style="margin-bottom: 12px" type="warning">
-          助威被服务器限流（200400），请 {{ actionCooldown.vote }} 秒后再试；间隔由自适应限流学习得到，连续成功后会自动缩短。
+        <NAlert
+          v-if="actionCooldown.vote > 0"
+          size="small"
+          style="margin-bottom: 12px"
+          type="warning"
+        >
+          助威被服务器限流（200400），请
+          {{ actionCooldown.vote }}
+          秒后再试；间隔由自适应限流学习得到，连续成功后会自动缩短。
         </NAlert>
-        <NCard :title="`📣 ${currentRoundTitle}`" size="small" style="margin-bottom: 12px">
-          <NAlert v-if="!supportOpen" type="warning" size="small" style="margin-bottom: 12px">
-            当前不在助威时间内（仅正式赛段 / 淘汰赛段可助威，且该期不能有已锁定或进行中的场次）。
+        <NCard
+          :title="`📣 ${currentRoundTitle}`"
+          size="small"
+          style="margin-bottom: 12px"
+        >
+          <NAlert
+            v-if="!supportOpen"
+            type="warning"
+            size="small"
+            style="margin-bottom: 12px"
+          >
+            当前不在助威时间内（仅正式赛段 /
+            淘汰赛段可助威，且该期不能有已锁定或进行中的场次）。
           </NAlert>
           <NEmpty
             v-if="currentVoteBoard.length === 0"
@@ -396,17 +559,32 @@
             >
               <div class="vote-rank">#{{ t.rank }}</div>
               <div class="vote-name">{{ t.name }}</div>
-              <div class="vote-meta">战力 {{ (t.power / POWER_UNIT).toFixed(1) }}亿</div>
+              <div class="vote-meta">
+                战力 {{ (t.power / POWER_UNIT).toFixed(1) }}亿
+              </div>
               <div class="vote-cheer">
                 <div class="vote-cheer-bar">
-                  <div class="vote-cheer-fill" :style="{ width: cheerPercent(t.cheerCnt, currentMaxCheer) }"></div>
+                  <div
+                    class="vote-cheer-fill"
+                    :style="{
+                      width: cheerPercent(t.cheerCnt, currentMaxCheer),
+                    }"
+                  ></div>
                 </div>
                 <div class="vote-cheer-num">
                   🔥 {{ formatNumber(t.cheerCnt) }}
-                  <NTag v-if="t.level > 0" size="tiny" type="warning" round style="margin-left: 4px">
+                  <NTag
+                    v-if="t.level > 0"
+                    size="tiny"
+                    type="warning"
+                    round
+                    style="margin-left: 4px"
+                  >
                     Lv.{{ t.level }}
                   </NTag>
-                  <span v-if="t.myCnt > 0" class="my-vote">我助威 {{ t.myCnt }} 次</span>
+                  <span v-if="t.myCnt > 0" class="my-vote"
+                    >我助威 {{ t.myCnt }} 次</span
+                  >
                 </div>
               </div>
               <NButton
@@ -414,7 +592,13 @@
                 type="success"
                 round
                 style="margin-top: 8px"
-                :disabled="t.isOut || !supportOpen || selectedRoundEnded || voteLoading || actionCooldown.vote > 0"
+                :disabled="
+                  t.isOut ||
+                  !supportOpen ||
+                  selectedRoundEnded ||
+                  voteLoading ||
+                  actionCooldown.vote > 0
+                "
                 :loading="voteLoading"
                 @click="openVoteDialog(t.teamId, t.name, selectedRound)"
               >
@@ -447,10 +631,14 @@
             <span class="vote-num">{{ voteCnt }}</span>
             <NButton size="small" @click="voteChangeNum(1)">+1</NButton>
             <NButton size="small" @click="voteChangeNum(10)">+10</NButton>
-            <NButton size="small" @click="voteChangeNum(voteMaxCnt)">MAX</NButton>
+            <NButton size="small" @click="voteChangeNum(voteMaxCnt)"
+              >MAX</NButton
+            >
           </div>
           <NSpace justify="end">
-            <NButton size="small" @click="voteDialogVisible = false">取消</NButton>
+            <NButton size="small" @click="voteDialogVisible = false"
+              >取消</NButton
+            >
             <NButton
               size="small"
               type="primary"
@@ -458,7 +646,11 @@
               :loading="voteLoading"
               @click="doVote"
             >
-              确认助威{{ actionCooldown.vote > 0 ? `（冷却 ${actionCooldown.vote}s）` : "" }}
+              确认助威{{
+                actionCooldown.vote > 0
+                  ? `（冷却 ${actionCooldown.vote}s）`
+                  : ""
+              }}
             </NButton>
           </NSpace>
         </NSpace>
@@ -631,7 +823,9 @@ const createEmptyRoleInfo = () => ({
 const roleInfo = ref(createEmptyRoleInfo());
 
 /** 服务端上报的赛季号 */
-const roleSeason = computed(() => Number(roleInfo.value.resetTime?.season) || 0);
+const roleSeason = computed(
+  () => Number(roleInfo.value.resetTime?.season) || 0,
+);
 
 /** 当前赛季：优先按配置规则计算，缺配置时回退服务端赛季号 */
 const season = computed(() => {
@@ -672,7 +866,12 @@ const supportItemCnt = computed(() => {
   const start = getDateZeroTime(conf.startDate);
   const end = getDateZeroTime(conf.endDate);
   const now = serverNowMs.value;
-  if (!Number.isFinite(start) || !Number.isFinite(end) || now < start || now > end) {
+  if (
+    !Number.isFinite(start) ||
+    !Number.isFinite(end) ||
+    now < start ||
+    now > end
+  ) {
     return 0;
   }
   return Number(roleInfo.value.apexRoleInfo?.voteItemCnt) || 0;
@@ -684,13 +883,17 @@ const selectedRound = ref(null);
 /** 当前期（已开始且末场未结束） */
 const currentRounds = computed(() => {
   void clockTick.value;
-  return season.value > 0 ? getCurrentRounds(season.value, serverNowMs.value) : [];
+  return season.value > 0
+    ? getCurrentRounds(season.value, serverNowMs.value)
+    : [];
 });
 
 /** 历史期（末场已结束） */
 const historyRounds = computed(() => {
   void clockTick.value;
-  return season.value > 0 ? getHistoryRounds(season.value, serverNowMs.value) : [];
+  return season.value > 0
+    ? getHistoryRounds(season.value, serverNowMs.value)
+    : [];
 });
 
 /** 选中期所处阶段（未开始 / 进行中 / 已结束） */
@@ -732,7 +935,11 @@ const roundOptions = computed(() => {
 const stageInfo = computed(() => {
   void clockTick.value;
   if (!selectedRound.value || season.value <= 0) return null;
-  return getStageInfoByRound(selectedRound.value, season.value, serverNowMs.value);
+  return getStageInfoByRound(
+    selectedRound.value,
+    season.value,
+    serverNowMs.value,
+  );
 });
 
 /** 阶段 -> 阶段名（用于「进行中 / 待开始」提示） */
@@ -826,7 +1033,11 @@ const otherCurrentRounds = computed(() =>
 const supportOpen = computed(() => {
   void clockTick.value;
   if (!selectedRound.value || season.value <= 0) return false;
-  return checkSupportInTime(selectedRound.value, season.value, serverNowMs.value);
+  return checkSupportInTime(
+    selectedRound.value,
+    season.value,
+    serverNowMs.value,
+  );
 });
 
 /** 本期阶段进度（真实配置窗口） */
@@ -854,10 +1065,30 @@ const stageTimeline = computed(() => {
 
 /** 重置换算卡片（日 / 周 / 月 / 赛季） */
 const resetCards = computed(() => [
-  { label: "日重置", icon: "📅", color: "sc-blue", value: roleInfo.value.resetTime?.day || "-" },
-  { label: "周重置", icon: "🗓", color: "sc-cyan", value: roleInfo.value.resetTime?.week || "-" },
-  { label: "月重置", icon: "🌙", color: "sc-pink", value: roleInfo.value.resetTime?.month || "-" },
-  { label: "当前赛季", icon: "👑", color: "sc-gold", value: formatSeason(season.value) },
+  {
+    label: "日重置",
+    icon: "📅",
+    color: "sc-blue",
+    value: roleInfo.value.resetTime?.day || "-",
+  },
+  {
+    label: "周重置",
+    icon: "🗓",
+    color: "sc-cyan",
+    value: roleInfo.value.resetTime?.week || "-",
+  },
+  {
+    label: "月重置",
+    icon: "🌙",
+    color: "sc-pink",
+    value: roleInfo.value.resetTime?.month || "-",
+  },
+  {
+    label: "当前赛季",
+    icon: "👑",
+    color: "sc-gold",
+    value: formatSeason(season.value),
+  },
 ]);
 
 const formatRoundTitle = (prefix) =>
@@ -894,7 +1125,9 @@ const currentSchedule = computed(() => {
       isToday: !!todayCmp && st.date === todayCmp,
       dateText: st.date ? st.date.replace(/\//g, "-") : "待定",
     }))
-    .sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : a.stage - b.stage));
+    .sort((a, b) =>
+      a.date < b.date ? -1 : a.date > b.date ? 1 : a.stage - b.stage,
+    );
 });
 
 // 助威对话框状态
@@ -1145,7 +1378,11 @@ const syncSelectedRound = () => {
     return;
   }
   if (rounds.includes(selectedRound.value)) return;
-  selectedRound.value = getInitialRound(rounds, season.value, serverNowMs.value);
+  selectedRound.value = getInitialRound(
+    rounds,
+    season.value,
+    serverNowMs.value,
+  );
 };
 
 /**
@@ -1239,7 +1476,8 @@ const fetchMatchesPage = async (grp) => {
  * @returns {number} 总页数，至少 1
  */
 const betTotalPages = (grp) => {
-  const known = grp.advanceNum > 0 && !grp.exhausted ? grp.advanceNum : grp.matches.length;
+  const known =
+    grp.advanceNum > 0 && !grp.exhausted ? grp.advanceNum : grp.matches.length;
   return Math.max(1, Math.ceil(known / GUESS_PAGE_SIZE));
 };
 
@@ -1286,7 +1524,10 @@ const ensureBetRows = async (grp, need) => {
  * @returns {Promise<void>} 无返回值
  */
 const goBetPage = async (grp, delta) => {
-  const next = Math.min(Math.max(betPage(grp) + delta, 0), betTotalPages(grp) - 1);
+  const next = Math.min(
+    Math.max(betPage(grp) + delta, 0),
+    betTotalPages(grp) - 1,
+  );
   await ensureBetRows(grp, (next + 1) * GUESS_PAGE_SIZE);
   grp.page = Math.min(next, betTotalPages(grp) - 1);
 };
@@ -1302,50 +1543,54 @@ const refreshCurrentBets = () => {
     return;
   }
   const guessMap = roleInfo.value.guessMap || {};
-  currentBets.value = getGuessTabs(round, season.value, serverNowMs.value).map((tab) => {
-    const prev = currentBets.value.find((g) => g.scheduleId === tab.scheduleId);
-    const myBets = guessMap[tab.scheduleId] || [];
-    const advanceNum = getAdvanceNum(round, season.value, tab.stage);
-    const full = advanceNum > 0 && myBets.length >= advanceNum;
-    const betTip =
-      tab.state === ApexScheduleStatus.None
-        ? "该场竞猜尚未开放"
-        : tab.state === ApexScheduleStatus.Fighting
-          ? "比赛进行中，已停止竞猜"
-          : tab.state === ApexScheduleStatus.Completed
-            ? "该场竞猜已结束"
-            : full
-              ? `该阶段最多可押 ${advanceNum} 支队伍，已押满`
-              : "";
-    const grp = {
-      stage: tab.stage,
-      scheduleId: tab.scheduleId,
-      stageName: tab.title,
-      state: tab.state,
-      advanceNum,
-      myBets,
-      canBet: canGuessNow(tab.state) && !full,
-      betTip,
-      openTip: buildOpenTip(tab.scheduleId),
-      // 复用已加载的对阵，避免轮询时清空导致闪烁
-      matches: prev?.matches || [],
-      // 服务端是否还有下一页（false 表示已翻到底，不再续拉）
-      hasMore: prev?.hasMore ?? true,
-      // 已确认拉不到更多数据（区别于服务端 last 标记）
-      exhausted: prev?.exhausted ?? false,
-      // 当前查看的页码（0 起），切换期/阶段时随分组重建归零
-      page: prev?.page ?? 0,
-      loading: false,
-    };
-    if (grp.state === ApexScheduleStatus.None) {
-      // 该阶段尚未解锁：不会有对阵数据，直接标记无更多页，避免后续误触发分页
-      grp.hasMore = false;
-    } else if (grp.matches.length === 0 && grp.hasMore) {
-      // 首屏为该阶段预拉一页
-      fetchMatchesPage(grp);
-    }
-    return grp;
-  });
+  currentBets.value = getGuessTabs(round, season.value, serverNowMs.value).map(
+    (tab) => {
+      const prev = currentBets.value.find(
+        (g) => g.scheduleId === tab.scheduleId,
+      );
+      const myBets = guessMap[tab.scheduleId] || [];
+      const advanceNum = getAdvanceNum(round, season.value, tab.stage);
+      const full = advanceNum > 0 && myBets.length >= advanceNum;
+      const betTip =
+        tab.state === ApexScheduleStatus.None
+          ? "该场竞猜尚未开放"
+          : tab.state === ApexScheduleStatus.Fighting
+            ? "比赛进行中，已停止竞猜"
+            : tab.state === ApexScheduleStatus.Completed
+              ? "该场竞猜已结束"
+              : full
+                ? `该阶段最多可押 ${advanceNum} 支队伍，已押满`
+                : "";
+      const grp = {
+        stage: tab.stage,
+        scheduleId: tab.scheduleId,
+        stageName: tab.title,
+        state: tab.state,
+        advanceNum,
+        myBets,
+        canBet: canGuessNow(tab.state) && !full,
+        betTip,
+        openTip: buildOpenTip(tab.scheduleId),
+        // 复用已加载的对阵，避免轮询时清空导致闪烁
+        matches: prev?.matches || [],
+        // 服务端是否还有下一页（false 表示已翻到底，不再续拉）
+        hasMore: prev?.hasMore ?? true,
+        // 已确认拉不到更多数据（区别于服务端 last 标记）
+        exhausted: prev?.exhausted ?? false,
+        // 当前查看的页码（0 起），切换期/阶段时随分组重建归零
+        page: prev?.page ?? 0,
+        loading: false,
+      };
+      if (grp.state === ApexScheduleStatus.None) {
+        // 该阶段尚未解锁：不会有对阵数据，直接标记无更多页，避免后续误触发分页
+        grp.hasMore = false;
+      } else if (grp.matches.length === 0 && grp.hasMore) {
+        // 首屏为该阶段预拉一页
+        fetchMatchesPage(grp);
+      }
+      return grp;
+    },
+  );
 };
 
 /**
@@ -1443,7 +1688,10 @@ const fetchScheduleHistory = async () => {
               tokenStore.sendMessageWithPromise(
                 tokenStore.selectedToken.id,
                 "apex_get64oppomap",
-                { scheduleId: sid, groupId: Number(roleInfo.value.group?.[String(sid)] ?? 1) },
+                {
+                  scheduleId: sid,
+                  groupId: Number(roleInfo.value.group?.[String(sid)] ?? 1),
+                },
                 TIMEOUT_QUERY + queuedMs,
               ),
             { maxRetry: 1 },
@@ -1485,14 +1733,20 @@ const fetchScheduleHistory = async () => {
       if (!roundMap.has(m.round)) roundMap.set(m.round, new Map());
       const stageMap = roundMap.get(m.round);
       if (!stageMap.has(m.stage)) {
-        stageMap.set(m.stage, { stage: m.stage, stageName: m.stageName, matches: [] });
+        stageMap.set(m.stage, {
+          stage: m.stage,
+          stageName: m.stageName,
+          matches: [],
+        });
       }
       stageMap.get(m.stage).matches.push(m);
     }
     scheduleGroups.value = [...roundMap.keys()]
       .sort((a, b) => a - b)
       .map((r) => {
-        const stages = [...roundMap.get(r).values()].sort((a, b) => a.stage - b.stage);
+        const stages = [...roundMap.get(r).values()].sort(
+          (a, b) => a.stage - b.stage,
+        );
         return {
           round: r,
           total: stages.reduce((s, st) => s + st.matches.length, 0),
@@ -1614,7 +1868,9 @@ const doGuess = async (teamId, row, grp) => {
   } catch (e) {
     if (isApexRateLimited(e)) {
       startActionCooldown("guess", apexCooldownLeft(ApexAction.GUESS));
-      message.warning(`服务器限流（200400），请 ${actionCooldown.guess} 秒后再试`);
+      message.warning(
+        `服务器限流（200400），请 ${actionCooldown.guess} 秒后再试`,
+      );
     } else {
       message.error(`竞猜请求失败: ${e.message}`);
     }
@@ -1675,7 +1931,11 @@ const doVote = async () => {
         tokenStore.sendMessageWithPromise(
           token.id,
           "apex_vote",
-          { teamId: voteTargetTeamId.value, round: voteRound.value, voteCnt: voteCnt.value },
+          {
+            teamId: voteTargetTeamId.value,
+            round: voteRound.value,
+            voteCnt: voteCnt.value,
+          },
           TIMEOUT_ACTION + queuedMs,
         ),
       {
@@ -1691,7 +1951,9 @@ const doVote = async () => {
   } catch (e) {
     if (isApexRateLimited(e)) {
       startActionCooldown("vote", apexCooldownLeft(ApexAction.VOTE));
-      message.warning(`服务器限流（200400），请 ${actionCooldown.vote} 秒后再试`);
+      message.warning(
+        `服务器限流（200400），请 ${actionCooldown.vote} 秒后再试`,
+      );
     } else {
       message.error(`助威请求失败: ${e.message}`);
     }
@@ -1795,10 +2057,28 @@ const betColumns = [
         h("span", {}, [
           name,
           win
-            ? h(NTag, { size: "small", type: "success", round: true, style: "margin-left:4px" }, () => "胜")
+            ? h(
+                NTag,
+                {
+                  size: "small",
+                  type: "success",
+                  round: true,
+                  style: "margin-left:4px",
+                },
+                () => "胜",
+              )
             : null,
           mine
-            ? h(NTag, { size: "small", type: "info", round: true, style: "margin-left:4px" }, () => "我押")
+            ? h(
+                NTag,
+                {
+                  size: "small",
+                  type: "info",
+                  round: true,
+                  style: "margin-left:4px",
+                },
+                () => "我押",
+              )
             : null,
         ]);
       return h(NSpace, { size: 8, align: "center" }, () => [
@@ -1820,14 +2100,26 @@ const betColumns = [
     key: "myWin",
     width: 80,
     render: (row) =>
-      h(NTag, { size: "small", type: row.myWin ? "success" : "error", round: true }, () => (row.myWin ? "猜中" : "猜错")),
+      h(
+        NTag,
+        { size: "small", type: row.myWin ? "success" : "error", round: true },
+        () => (row.myWin ? "猜中" : "猜错"),
+      ),
   },
   {
     title: "结算",
     key: "claimed",
     width: 70,
     render: (row) =>
-      h(NTag, { size: "small", type: row.claimed ? "success" : "warning", round: true }, () => (row.claimed ? "已领" : "未领")),
+      h(
+        NTag,
+        {
+          size: "small",
+          type: row.claimed ? "success" : "warning",
+          round: true,
+        },
+        () => (row.claimed ? "已领" : "未领"),
+      ),
   },
 ];
 
@@ -2055,7 +2347,9 @@ watch(
   border-radius: 12px;
   color: #fff;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 .stat-card:hover {
   transform: translateY(-2px);
@@ -2083,10 +2377,18 @@ watch(
   font-weight: 800;
   font-family: "DIN", "Helvetica Neue", sans-serif;
 }
-.sc-blue { background: linear-gradient(135deg, #54a0ff, #2e86de); }
-.sc-cyan { background: linear-gradient(135deg, #00d2d3, #0abde3); }
-.sc-pink { background: linear-gradient(135deg, #f368e0, #d63031); }
-.sc-gold { background: linear-gradient(135deg, #f6b93b, #e58e26); }
+.sc-blue {
+  background: linear-gradient(135deg, #54a0ff, #2e86de);
+}
+.sc-cyan {
+  background: linear-gradient(135deg, #00d2d3, #0abde3);
+}
+.sc-pink {
+  background: linear-gradient(135deg, #f368e0, #d63031);
+}
+.sc-gold {
+  background: linear-gradient(135deg, #f6b93b, #e58e26);
+}
 
 /* 赛程时间线 */
 .stage-timeline {
@@ -2107,7 +2409,11 @@ watch(
 }
 .stage-node.active {
   border-color: #ff6b6b;
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(255, 165, 2, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 107, 107, 0.12),
+    rgba(255, 165, 2, 0.1)
+  );
   box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.25);
 }
 .stage-node.done {
@@ -2126,8 +2432,13 @@ watch(
   animation: pulse 1.4s infinite;
 }
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.5); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
 }
 .stage-name {
   font-size: 13px;
@@ -2172,7 +2483,9 @@ watch(
   background: linear-gradient(160deg, #fff 50%, #f8f9fa 100%);
   border: 1px solid var(--n-border-color, #e8e8e8);
   position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 .vote-team-card:hover {
   transform: translateY(-3px);

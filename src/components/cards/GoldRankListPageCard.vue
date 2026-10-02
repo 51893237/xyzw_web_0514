@@ -145,8 +145,14 @@
             <div class="table-cell rank">
               <div class="rank-container">
                 <span v-if="memberIndex === 0" class="rank-medal gold"></span>
-                <span v-else-if="memberIndex === 1" class="rank-medal silver"></span>
-                <span v-else-if="memberIndex === 2" class="rank-medal bronze"></span>
+                <span
+                  v-else-if="memberIndex === 1"
+                  class="rank-medal silver"
+                ></span>
+                <span
+                  v-else-if="memberIndex === 2"
+                  class="rank-medal bronze"
+                ></span>
                 <span v-else class="rank-number">{{ memberIndex + 1 }}</span>
               </div>
             </div>
@@ -408,7 +414,8 @@
             <div
               v-for="(battle, battleIndex) in fightResult.resultCount"
               :key="battleIndex"
-              class="battle-result-item" :class="[battle.isWin ? 'win' : 'loss']"
+              class="battle-result-item"
+              :class="[battle.isWin ? 'win' : 'loss']"
             >
               <div class="battle-header">
                 <span class="battle-index">第 {{ battleIndex + 1 }} 场</span>
@@ -600,14 +607,20 @@
             </n-descriptions-item>
             <n-descriptions-item label="鱼灵">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.FishInfo?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.FishInfo?.name
                   : "无"
               }}
             </n-descriptions-item>
             <n-descriptions-item label="鱼珠技能">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.PearlSkill?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.PearlSkill?.name
                   : "无"
               }}
@@ -618,7 +631,7 @@
                   v-for="item in heroModealTemp.PearlInfo.slotMap"
                   :key="item.id"
                   class="ModalEquipment"
-                  :style="`background-color:${  item.value}`"
+                  :style="`background-color:${item.value}`"
                 ></div>
               </div>
               <div v-else>无</div>
@@ -693,11 +706,7 @@
 </template>
 
 <script setup>
-import {
-  Copy,
-  DocumentText,
-  Refresh,
-} from "@vicons/ionicons5";
+import { Copy, DocumentText, Refresh } from "@vicons/ionicons5";
 
 import html2canvas from "html2canvas";
 import {
@@ -710,10 +719,7 @@ import {
 } from "naive-ui";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
-import {
-  formatTimestamp1,
-  getLastSaturday,
-} from "@/utils/clubBattleUtils";
+import { formatTimestamp1, getLastSaturday } from "@/utils/clubBattleUtils";
 import { isSameGameValue } from "@/utils/gameValue.js";
 import {
   allianceincludes,
@@ -733,14 +739,11 @@ defineProps({
   },
 });
 
-
 const exportmethod = ref([""]);
 const exportBatchSize = ref(60);
 const exportDom = ref(null);
 const message = useMessage();
 const tokenStore = useTokenStore();
-
-
 
 const loading1 = ref(false);
 const battleRecords1 = ref(null);
@@ -1105,7 +1108,7 @@ const handleHeroClick = (hero) => {
 // 验证切磋次数
 const validateFightCount = (value) => {
   const num = Number.parseInt(value);
-  isFightCountValid.value = !Number.isNaN(+(num)) && num >= 1 && num <= 100;
+  isFightCountValid.value = !Number.isNaN(+num) && num >= 1 && num <= 100;
 };
 
 // 重置切磋结果
@@ -1330,10 +1333,10 @@ const filteredLegionList = computed(() => {
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
@@ -1346,8 +1349,6 @@ const formatScore = (Score) => {
 const handleImageError = (event) => {
   event.target.style.display = "none";
 };
-
-
 
 // 联盟样式类
 const getAllianceClass = (alliance) => {
@@ -1478,7 +1479,7 @@ const fetchSingleLegionDetail = async (club, tokenId) => {
     const top3Heroes = topHeroes.slice(0, 3);
 
     // 提取红淬数量数组
-    const redQuenchCounts = top3Heroes.map((hero) => `${hero.redQuench  }红`);
+    const redQuenchCounts = top3Heroes.map((hero) => `${hero.redQuench}红`);
     // 提取圣物数量数组
     const HolyBeastNum = top3Heroes.map((hero) => hero.holyBeast);
 
@@ -1532,9 +1533,6 @@ const fetchLegionDetails = async (legionList, tokenId) => {
 const handleRefresh1 = () => {
   fetchBattleRecords1();
 };
-
-
-
 
 // 导出战绩
 const handleExport1 = async () => {
@@ -1705,9 +1703,9 @@ const exportToImage = async () => {
     });
 
     // 6. Canvas转图片链接并下载
-    const filename =
-      `${inputDate1.value.replace("/", "年").replace("/", "月") 
-      }日黄金积分俱乐部信息.png`;
+    const filename = `${inputDate1.value
+      .replace("/", "年")
+      .replace("/", "月")}日黄金积分俱乐部信息.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error("DOM转图片失败：", err);
@@ -1721,7 +1719,6 @@ const exportToImage = async () => {
 };
 
 // 关闭弹窗
-
 
 // 暴露方法给父组件
 defineExpose({

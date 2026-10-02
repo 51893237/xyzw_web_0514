@@ -441,7 +441,6 @@ export class BonEncoder {
           return;
         }
         this.encodeObject(v);
-        
     }
   }
 
@@ -712,7 +711,7 @@ const lx = {
   encrypt: (buf) => {
     const e = lz4.compress(buf);
     const t = 2 + ~~(Math.random() * 248);
-    for (let n = Math.min(e.length, 100); --n >= 0; ) e[n] ^= t;
+    for (let n = Math.min(e.length, 100); --n >= 0;) e[n] ^= t;
 
     // 写入标识与混淆位
     e[0] = 112;
@@ -741,7 +740,7 @@ const lx = {
       (((e[3] >> 4) & 1) << 2) |
       (((e[3] >> 2) & 1) << 1) |
       (e[3] & 1);
-    for (let n = Math.min(100, e.length); --n >= 2; ) e[n] ^= t;
+    for (let n = Math.min(100, e.length); --n >= 2;) e[n] ^= t;
     e[0] = 4;
     e[1] = 34;
     e[2] = 77;
@@ -761,7 +760,7 @@ const x = {
     n[3] = (rnd >>> 24) & 0xff;
     n.set(e, 4);
     const r = 2 + ~~(Math.random() * 248);
-    for (let i = n.length; --i >= 0; ) n[i] ^= r;
+    for (let i = n.length; --i >= 0;) n[i] ^= r;
     n[0] = 112;
     n[1] = 120;
     n[2] =
@@ -788,7 +787,7 @@ const x = {
       (((e[3] >> 4) & 1) << 2) |
       (((e[3] >> 2) & 1) << 1) |
       (e[3] & 1);
-    for (let n = e.length; --n >= 4; ) e[n] ^= t;
+    for (let n = e.length; --n >= 4;) e[n] ^= t;
     return e.subarray(4);
   },
 };
@@ -1001,7 +1000,7 @@ export const bonProtocol = {
   },
   generateSeq: () => Math.floor(Math.random() * 1000000),
   generateMessageId: () =>
-    `msg_${  Date.now()  }_${  Math.random().toString(36).substr(2, 9)}`,
+    `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
 };
 
 // 导出单独的加密器类以兼容测试文件

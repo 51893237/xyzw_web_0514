@@ -66,7 +66,7 @@ import MyCard from "../Common/MyCard.vue";
 const tokenStore = useTokenStore();
 const message = useMessage();
 
-const iconPath = computed(() => `${import.meta.env.BASE_URL  }icons/zml.png`);
+const iconPath = computed(() => `${import.meta.env.BASE_URL}icons/zml.png`);
 
 const roleInfo = computed(() => tokenStore.gameData?.roleInfo || null);
 

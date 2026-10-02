@@ -21,7 +21,9 @@
         <div class="toolbar">
           <NSpace size="small">
             <!-- 申请列表按钮 -->
-            <NButton v-if="canKick" size="small" @click="getApplyList">申请列表</NButton>
+            <NButton v-if="canKick" size="small" @click="getApplyList"
+              >申请列表</NButton
+            >
             <NButton size="small" @click="refreshClub">刷新</NButton>
           </NSpace>
         </div>
@@ -36,7 +38,11 @@
           preset="card"
           :show-footer="false"
           :style="{ width: '700px', maxHeight: '80vh' }"
-          :content-style="{ padding: '0', maxHeight: 'calc(80vh - 60px)', overflow: 'auto' }"
+          :content-style="{
+            padding: '0',
+            maxHeight: 'calc(80vh - 60px)',
+            overflow: 'auto',
+          }"
         >
           <template #header-extra>
             <NSpace size="small">
@@ -127,186 +133,263 @@
             <span class="section-sub">概览 · 成员 · 申请 · 怪异塔</span>
           </div>
           <n-tabs v-model:value="activeTab" type="line" animated>
-          <n-tab-pane name="overview" tab="概览" display-directive="show:lazy">
-            <div class="overview">
-              <NGrid x-gap="12" y-gap="12" cols="2" item-responsive>
-                <!-- 头部信息 -->
-                <NGi span="2">
-                  <NCard embedded :bordered="false" content-style="padding: 16px;">
-                    <NThing>
-                      <template #avatar>
-                        <NAvatar
-                          :size="64"
-                          :src="club.logo || '/icons/xiaoyugan.png'"
-                          style="box-shadow: 0 2px 8px rgba(0,0,0,0.1);"
-                        />
-                      </template>
-                      <template #header>
-                        <span style="font-size: 18px; font-weight: bold;">{{ club.name }}</span>
-                      </template>
-                      <template #description>
-                        <NSpace size="small" style="margin-top: 4px;">
-                          <NTag size="small" :bordered="false" type="warning">ID: {{ club.id }}</NTag>
-                          <NTag size="small" :bordered="false" type="info">服务器: {{ club.serverId - 27 }}</NTag>
-                          <NTag size="small" :bordered="false" type="success">成员: {{ memberCount }}</NTag>
-                        </NSpace>
-                      </template>
-                      <template #header-extra>
-                        <NButton
-                          size="small"
-                          :type="legionSignedIn ? 'success' : 'primary'"
-                          :secondary="legionSignedIn"
-                          @click="signInLegion"
-                          :disabled="legionSignedIn"
-                        >
-                          <template #icon>
-                            <NIcon><ShieldCheckmark /></NIcon>
-                          </template>
-                          {{ legionSignedIn ? "已签到" : "俱乐部签到" }}
-                        </NButton>
-                      </template>
-                    </NThing>
-                  </NCard>
-                </NGi>
+            <n-tab-pane
+              name="overview"
+              tab="概览"
+              display-directive="show:lazy"
+            >
+              <div class="overview">
+                <NGrid x-gap="12" y-gap="12" cols="2" item-responsive>
+                  <!-- 头部信息 -->
+                  <NGi span="2">
+                    <NCard
+                      embedded
+                      :bordered="false"
+                      content-style="padding: 16px;"
+                    >
+                      <NThing>
+                        <template #avatar>
+                          <NAvatar
+                            :size="64"
+                            :src="club.logo || '/icons/xiaoyugan.png'"
+                            style="box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1)"
+                          />
+                        </template>
+                        <template #header>
+                          <span style="font-size: 18px; font-weight: bold">{{
+                            club.name
+                          }}</span>
+                        </template>
+                        <template #description>
+                          <NSpace size="small" style="margin-top: 4px">
+                            <NTag size="small" :bordered="false" type="warning"
+                              >ID: {{ club.id }}</NTag
+                            >
+                            <NTag size="small" :bordered="false" type="info"
+                              >服务器: {{ club.serverId - 27 }}</NTag
+                            >
+                            <NTag size="small" :bordered="false" type="success"
+                              >成员: {{ memberCount }}</NTag
+                            >
+                          </NSpace>
+                        </template>
+                        <template #header-extra>
+                          <NButton
+                            size="small"
+                            :type="legionSignedIn ? 'success' : 'primary'"
+                            :secondary="legionSignedIn"
+                            @click="signInLegion"
+                            :disabled="legionSignedIn"
+                          >
+                            <template #icon>
+                              <NIcon><ShieldCheckmark /></NIcon>
+                            </template>
+                            {{ legionSignedIn ? "已签到" : "俱乐部签到" }}
+                          </NButton>
+                        </template>
+                      </NThing>
+                    </NCard>
+                  </NGi>
 
-                <!-- 统计数据 -->
-                <NGi>
-                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
-                    <NStatistic label="战力">
-                      <template #prefix>
-                        <NIcon color="#18a058"><BarChart /></NIcon>
-                      </template>
-                      {{ formatNumber(clubOverview.power) }}
-                    </NStatistic>
-                  </NCard>
-                </NGi>
-                <NGi>
-                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
-                    <NStatistic label="红粹">
-                      <template #prefix>
-                        <NIcon color="#d03050"><Flame /></NIcon>
-                      </template>
-                      {{ clubOverview.redQuench }}
-                    </NStatistic>
-                  </NCard>
-                </NGi>
-                <NGi>
-                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
-                    <NStatistic label="当前BossId">
-                      <template #prefix>
-                        <NIcon color="#8a2be2"><Skull /></NIcon>
-                      </template>
-                      {{ clubOverview.currentBossId }}
-                    </NStatistic>
-                  </NCard>
-                </NGi>
-                <NGi>
-                  <NCard size="small" embedded :bordered="false" style="height: 100%;">
-                    <NStatistic label="Boss剩余血量">
-                      <template #prefix>
-                        <NIcon color="#f0a020"><Skull /></NIcon>
-                      </template>
-                      {{ clubOverview.currentHP }}
-                    </NStatistic>
-                  </NCard>
-                </NGi>
+                  <!-- 统计数据 -->
+                  <NGi>
+                    <NCard
+                      size="small"
+                      embedded
+                      :bordered="false"
+                      style="height: 100%"
+                    >
+                      <NStatistic label="战力">
+                        <template #prefix>
+                          <NIcon color="#18a058"><BarChart /></NIcon>
+                        </template>
+                        {{ formatNumber(clubOverview.power) }}
+                      </NStatistic>
+                    </NCard>
+                  </NGi>
+                  <NGi>
+                    <NCard
+                      size="small"
+                      embedded
+                      :bordered="false"
+                      style="height: 100%"
+                    >
+                      <NStatistic label="红粹">
+                        <template #prefix>
+                          <NIcon color="#d03050"><Flame /></NIcon>
+                        </template>
+                        {{ clubOverview.redQuench }}
+                      </NStatistic>
+                    </NCard>
+                  </NGi>
+                  <NGi>
+                    <NCard
+                      size="small"
+                      embedded
+                      :bordered="false"
+                      style="height: 100%"
+                    >
+                      <NStatistic label="当前BossId">
+                        <template #prefix>
+                          <NIcon color="#8a2be2"><Skull /></NIcon>
+                        </template>
+                        {{ clubOverview.currentBossId }}
+                      </NStatistic>
+                    </NCard>
+                  </NGi>
+                  <NGi>
+                    <NCard
+                      size="small"
+                      embedded
+                      :bordered="false"
+                      style="height: 100%"
+                    >
+                      <NStatistic label="Boss剩余血量">
+                        <template #prefix>
+                          <NIcon color="#f0a020"><Skull /></NIcon>
+                        </template>
+                        {{ clubOverview.currentHP }}
+                      </NStatistic>
+                    </NCard>
+                  </NGi>
 
-                <!-- Boss 击杀情况 -->
-                <NGi span="2" v-if="clubOverview.unfoughtBosses && clubOverview.unfoughtBosses.length > 0">
-                  <NAlert type="warning" :bordered="false">
-                    <template #icon>
-                      <NIcon><Skull /></NIcon>
-                    </template>
-                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                      <div>
-                        <span style="font-weight: bold;">Boss 击杀情况</span>
-                        <div style="margin-top: 4px; font-size: 12px;">
-                          已击杀: {{ 150 - clubOverview.unfoughtBosses.length }} / 150
-                          <span style="margin-left: 12px; color: #d03050;">遗漏: {{ clubOverview.unfoughtBosses.length }}</span>
+                  <!-- Boss 击杀情况 -->
+                  <NGi
+                    span="2"
+                    v-if="
+                      clubOverview.unfoughtBosses &&
+                      clubOverview.unfoughtBosses.length > 0
+                    "
+                  >
+                    <NAlert type="warning" :bordered="false">
+                      <template #icon>
+                        <NIcon><Skull /></NIcon>
+                      </template>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          justify-content: space-between;
+                          width: 100%;
+                        "
+                      >
+                        <div>
+                          <span style="font-weight: bold">Boss 击杀情况</span>
+                          <div style="margin-top: 4px; font-size: 12px">
+                            已击杀:
+                            {{ 150 - clubOverview.unfoughtBosses.length }} / 150
+                            <span style="margin-left: 12px; color: #d03050"
+                              >遗漏:
+                              {{ clubOverview.unfoughtBosses.length }}</span
+                            >
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <NCollapse arrow-placement="right" style="margin-top: 8px;">
-                      <NCollapseItem title="展开查看遗漏Boss列表" name="1">
-                        <NSpace size="small" style="margin-top: 8px;">
-                          <NTag v-for="boss in clubOverview.unfoughtBosses" :key="boss" type="error" size="small" :bordered="false">
-                            {{ boss }}
-                          </NTag>
-                        </NSpace>
-                      </NCollapseItem>
-                    </NCollapse>
-                  </NAlert>
-                </NGi>
+                      <NCollapse
+                        arrow-placement="right"
+                        style="margin-top: 8px"
+                      >
+                        <NCollapseItem title="展开查看遗漏Boss列表" name="1">
+                          <NSpace size="small" style="margin-top: 8px">
+                            <NTag
+                              v-for="boss in clubOverview.unfoughtBosses"
+                              :key="boss"
+                              type="error"
+                              size="small"
+                              :bordered="false"
+                            >
+                              {{ boss }}
+                            </NTag>
+                          </NSpace>
+                        </NCollapseItem>
+                      </NCollapse>
+                    </NAlert>
+                  </NGi>
 
-                <!-- 公告 -->
-                <NGi span="2" v-if="club.announcement">
-                  <NCard size="small" title="公告" embedded :bordered="false">
-                    <template #header-extra>
-                      <NIcon size="18" color="#f0a020"><Megaphone /></NIcon>
-                    </template>
-                    <div style="white-space: pre-wrap; font-size: 13px; line-height: 1.6; color: #666;">
-                      {{ club.announcement }}
-                    </div>
-                  </NCard>
-                </NGi>
-
-                <!-- 会长 -->
-                <NGi span="2" v-if="leader">
-                  <NCard size="small" title="会长" embedded :bordered="false">
-                    <template #header-extra>
-                      <NIcon size="18" color="#2080f0"><Person /></NIcon>
-                    </template>
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                      <NAvatar
-                        round
-                        :size="40"
-                        :src="leader.headImg || '/icons/xiaoyugan.png'"
-                        style="border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
-                      />
-                      <div>
-                        <div style="font-weight: bold; font-size: 14px;">{{ leader.name }}</div>
-                        <div style="font-size: 12px; color: #999;">ID: {{ leader.roleId }}</div>
+                  <!-- 公告 -->
+                  <NGi span="2" v-if="club.announcement">
+                    <NCard size="small" title="公告" embedded :bordered="false">
+                      <template #header-extra>
+                        <NIcon size="18" color="#f0a020"><Megaphone /></NIcon>
+                      </template>
+                      <div
+                        style="
+                          white-space: pre-wrap;
+                          font-size: 13px;
+                          line-height: 1.6;
+                          color: #666;
+                        "
+                      >
+                        {{ club.announcement }}
                       </div>
-                    </div>
-                  </NCard>
-                </NGi>
-              </NGrid>
-            </div>
-          </n-tab-pane>
+                    </NCard>
+                  </NGi>
 
-          <n-tab-pane name="members" tab="成员" display-directive="show:lazy">
-            <div class="members" ref="exportDom">
-              <NDataTable
-                :columns="memberColumns"
-                :data="topMembers"
-                :bordered="false"
-                size="small"
-                striped
-                :row-key="(row) => row.roleId"
-                flex-height
-                :scroll-x="650"
-                style="height: 600px"
-              />
-            </div>
-          </n-tab-pane>
+                  <!-- 会长 -->
+                  <NGi span="2" v-if="leader">
+                    <NCard size="small" title="会长" embedded :bordered="false">
+                      <template #header-extra>
+                        <NIcon size="18" color="#2080f0"><Person /></NIcon>
+                      </template>
+                      <div
+                        style="display: flex; align-items: center; gap: 12px"
+                      >
+                        <NAvatar
+                          round
+                          :size="40"
+                          :src="leader.headImg || '/icons/xiaoyugan.png'"
+                          style="
+                            border: 2px solid #fff;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                          "
+                        />
+                        <div>
+                          <div style="font-weight: bold; font-size: 14px">
+                            {{ leader.name }}
+                          </div>
+                          <div style="font-size: 12px; color: #999">
+                            ID: {{ leader.roleId }}
+                          </div>
+                        </div>
+                      </div>
+                    </NCard>
+                  </NGi>
+                </NGrid>
+              </div>
+            </n-tab-pane>
 
-          <n-tab-pane
-            name="history"
-            tab="俱乐部历史战绩"
-            display-directive="show:lazy"
-          >
-            <ClubHistoryRecords inline />
-          </n-tab-pane>
+            <n-tab-pane name="members" tab="成员" display-directive="show:lazy">
+              <div class="members" ref="exportDom">
+                <NDataTable
+                  :columns="memberColumns"
+                  :data="topMembers"
+                  :bordered="false"
+                  size="small"
+                  striped
+                  :row-key="(row) => row.roleId"
+                  flex-height
+                  :scroll-x="650"
+                  style="height: 600px"
+                />
+              </div>
+            </n-tab-pane>
 
-          <n-tab-pane
-            name="weirdtower"
-            tab="怪异塔信息"
-            display-directive="show:lazy"
-          >
-            <ClubWeirdTowerInfo inline />
-          </n-tab-pane>
+            <n-tab-pane
+              name="history"
+              tab="俱乐部历史战绩"
+              display-directive="show:lazy"
+            >
+              <ClubHistoryRecords inline />
+            </n-tab-pane>
 
-        </n-tabs>
+            <n-tab-pane
+              name="weirdtower"
+              tab="怪异塔信息"
+              display-directive="show:lazy"
+            >
+              <ClubWeirdTowerInfo inline />
+            </n-tab-pane>
+          </n-tabs>
         </div>
 
         <!-- 右：盐场岛屿信息（所在岛屿 + 岛屿体系 + 实时榜单） -->
@@ -316,8 +399,15 @@
             <span class="section-sub">所在岛屿 · 实时排名</span>
           </div>
           <div class="club-side-body">
-            <NAlert v-if="childError" type="error" :bordered="false" title="盐场面板渲染失败">
-              <div style="font-size: 12px; word-break: break-all;">{{ childError }}</div>
+            <NAlert
+              v-if="childError"
+              type="error"
+              :bordered="false"
+              title="盐场面板渲染失败"
+            >
+              <div style="font-size: 12px; word-break: break-all">
+                {{ childError }}
+              </div>
             </NAlert>
             <ClubIslandPanel v-else />
           </div>
@@ -514,14 +604,20 @@
           </NDescriptionsItem>
           <NDescriptionsItem label="鱼灵">
             {{
-              !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
+              !isSameGameValue(
+                heroModealTemp?.PearlInfo?.FishInfo?.name,
+                undefined,
+              )
                 ? heroModealTemp.PearlInfo?.FishInfo?.name
                 : "无"
             }}
           </NDescriptionsItem>
           <NDescriptionsItem label="鱼珠技能">
             {{
-              !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
+              !isSameGameValue(
+                heroModealTemp?.PearlInfo?.PearlSkill?.name,
+                undefined,
+              )
                 ? heroModealTemp.PearlInfo?.PearlSkill?.name
                 : "无"
             }}
@@ -532,7 +628,7 @@
                 v-for="item in heroModealTemp.PearlInfo.slotMap"
                 :key="item.id"
                 class="ModalEquipment"
-                :style="`background-color:${  item.value}`"
+                :style="`background-color:${item.value}`"
               ></div>
             </div>
             <div v-else>无</div>
@@ -606,14 +702,49 @@
 </template>
 
 <script setup>
-import { BarChart, Copy, Flame, Megaphone, Person, Refresh, ShieldCheckmark, Skull } from "@vicons/ionicons5";
+import {
+  BarChart,
+  Copy,
+  Flame,
+  Megaphone,
+  Person,
+  Refresh,
+  ShieldCheckmark,
+  Skull,
+} from "@vicons/ionicons5";
 
-import html2canvas from 'html2canvas';
-import { NAlert, NAvatar, NButton, NCard, NCollapse, NCollapseItem, NDataTable, NDescriptions, NDescriptionsItem, NGi, NGrid, NIcon, NModal, NSpace, NStatistic, NTag, NThing, useDialog, useMessage } from "naive-ui";
+import html2canvas from "html2canvas";
+import {
+  NAlert,
+  NAvatar,
+  NButton,
+  NCard,
+  NCollapse,
+  NCollapseItem,
+  NDataTable,
+  NDescriptions,
+  NDescriptionsItem,
+  NGi,
+  NGrid,
+  NIcon,
+  NModal,
+  NSpace,
+  NStatistic,
+  NTag,
+  NThing,
+  useDialog,
+  useMessage,
+} from "naive-ui";
 import { computed, h, nextTick, onErrorCaptured, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import { isSameGameValue } from "@/utils/gameValue.js";
-import { getLineupType, HERO_DICT, HeroFillInfo, legacycolor, LINEUP_RULES } from "@/utils/HeroList";
+import {
+  getLineupType,
+  HERO_DICT,
+  HeroFillInfo,
+  legacycolor,
+  LINEUP_RULES,
+} from "@/utils/HeroList";
 import { downloadCanvasAsImage } from "@/utils/imageExport";
 import ClubHistoryRecords from "./ClubHistoryRecords.vue";
 import ClubIslandPanel from "./ClubIslandPanel.vue";
@@ -707,7 +838,7 @@ const getHeroInfo = (heroObj) => {
 
       // 兼容 id 和 heroId
       const id = hero.heroId || hero.id;
-      
+
       const heroInfo = HERO_DICT[id] || {};
       const equipmentInfo = hero.equipment
         ? getEquipment(hero.equipment)
@@ -715,7 +846,8 @@ const getHeroInfo = (heroObj) => {
 
       // 检查英雄基本信息
       const heroId = id || `unknown_${index}`;
-      const heroName = hero.heroName || hero.name || heroInfo.name || `未知武将_${index}`;
+      const heroName =
+        hero.heroName || hero.name || heroInfo.name || `未知武将_${index}`;
 
       const tempObj = {
         heroId, //英雄ID
@@ -729,7 +861,7 @@ const getHeroInfo = (heroObj) => {
         hole: equipmentInfo.holeCount, //英雄开孔数量
         red: equipmentInfo.redCount, //英雄红数
         // 兼容 hB 和 fourBasest
-        HolyBeast: (hero.hB?.active === true) || (hero.fourBasest?.level > 0), //激活四圣
+        HolyBeast: hero.hB?.active === true || hero.fourBasest?.level > 0, //激活四圣
         HBlevel: hero.hB?.order || hero.fourBasest?.level || 0, //四圣等级
         // 添加英雄详情信息
         skillList: hero.skillList || [],
@@ -750,7 +882,7 @@ const getHeroInfo = (heroObj) => {
   }
   // 按站位排序
   heroList.sort((a, b) => a.battleTeamSlot - b.battleTeamSlot);
-  
+
   return { redCount, holeCount, heroList };
 };
 
@@ -814,7 +946,7 @@ const fetchAllMembersLineup = async () => {
               includeHeroDetail: true,
               includePearl: true,
             },
-            5000
+            5000,
           );
 
           if (roleRes && roleRes.roleInfo) {
@@ -823,7 +955,7 @@ const fetchAllMembersLineup = async () => {
               const res = getHeroInfo(roleRes.roleInfo.heroes);
               heroList = res.heroList;
             }
-            
+
             const lineupType = getLineupType(heroList);
 
             if (
@@ -864,22 +996,25 @@ const handleExportImage = async () => {
     await nextTick();
 
     // 获取 table-container
-    const tableContainer = exportDom.value.querySelector('.n-data-table');
-    
+    const tableContainer = exportDom.value.querySelector(".n-data-table");
+
     // 临时调整表格容器高度，确保所有内容可见
     if (tableContainer) {
       // 尝试找到 n-data-table 的滚动容器
-      const scrollContainer = tableContainer.querySelector('.n-data-table-base-table-body');
+      const scrollContainer = tableContainer.querySelector(
+        ".n-data-table-base-table-body",
+      );
       if (scrollContainer) {
         // 保存原始样式
         scrollContainer.dataset.originalHeight = scrollContainer.style.height;
-        scrollContainer.dataset.originalOverflow = scrollContainer.style.overflow;
+        scrollContainer.dataset.originalOverflow =
+          scrollContainer.style.overflow;
 
         // 强制展开
         scrollContainer.style.height = "auto";
         scrollContainer.style.overflow = "visible";
       }
-      
+
       // 保存外层table容器的样式
       tableContainer.dataset.originalHeight = tableContainer.style.height;
       tableContainer.style.height = "auto";
@@ -905,35 +1040,38 @@ const handleExportImage = async () => {
     message.error("导出图片失败，请重试");
   } finally {
     // 恢复原始样式
-    const tableContainer = exportDom.value?.querySelector('.n-data-table');
+    const tableContainer = exportDom.value?.querySelector(".n-data-table");
     if (tableContainer) {
-      const scrollContainer = tableContainer.querySelector('.n-data-table-base-table-body');
+      const scrollContainer = tableContainer.querySelector(
+        ".n-data-table-base-table-body",
+      );
       if (scrollContainer) {
         if (scrollContainer.dataset.originalHeight) {
           scrollContainer.style.height = scrollContainer.dataset.originalHeight;
         } else {
-          scrollContainer.style.removeProperty('height');
+          scrollContainer.style.removeProperty("height");
         }
 
         if (scrollContainer.dataset.originalOverflow) {
-          scrollContainer.style.overflow = scrollContainer.dataset.originalOverflow;
+          scrollContainer.style.overflow =
+            scrollContainer.dataset.originalOverflow;
         } else {
-          scrollContainer.style.removeProperty('overflow');
+          scrollContainer.style.removeProperty("overflow");
         }
 
         delete scrollContainer.dataset.originalHeight;
         delete scrollContainer.dataset.originalOverflow;
       }
-      
+
       // 恢复外层table容器样式
       if (tableContainer.dataset.originalHeight) {
         tableContainer.style.height = tableContainer.dataset.originalHeight;
       } else {
-        tableContainer.style.removeProperty('height');
+        tableContainer.style.removeProperty("height");
       }
       delete tableContainer.dataset.originalHeight;
     }
-    
+
     isExporting.value = false;
   }
 };
@@ -1128,12 +1266,25 @@ const memberColumns = computed(() => {
           [
             h(
               "span",
-              { style: { fontWeight: "500", color: "#1890ff", lineHeight: "1.2" } },
+              {
+                style: {
+                  fontWeight: "500",
+                  color: "#1890ff",
+                  lineHeight: "1.2",
+                },
+              },
               row.name,
             ),
             h(
               "span",
-              { style: { fontSize: "12px", color: "#999", lineHeight: "1.2", marginTop: "2px" } },
+              {
+                style: {
+                  fontSize: "12px",
+                  color: "#999",
+                  lineHeight: "1.2",
+                  marginTop: "2px",
+                },
+              },
               `ID: ${row.roleId}`,
             ),
           ],
@@ -1218,55 +1369,66 @@ const memberColumns = computed(() => {
 
   return [
     {
-      title: () => h(
-        "div",
-        {
-          style: {
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            padding: "0 8px"
+      title: () =>
+        h(
+          "div",
+          {
+            style: {
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              padding: "0 8px",
+            },
           },
-        },
-        [
-            h("span", { style: { fontSize: "16px", fontWeight: "bold", color: "#333" } }, "俱乐部成员详情"),
-            !isExporting.value ? h(
-                'div',
-                { style: { display: 'flex', gap: '8px' } },
-                [
-                    h(
-                        NButton,
-                        {
-                            size: 'tiny',
-                            type: 'primary',
-                            secondary: true,
-                            onClick: (e) => { e.stopPropagation(); fetchAllMembersLineup(); },
-                            disabled: batchLoading.value
-                        },
-                        {
-                            default: () => '获取阵容',
-                            icon: () => h(NIcon, null, { default: () => h(Refresh) })
-                        }
-                    ),
-                    h(
-                        NButton,
-                        {
-                            size: 'tiny',
-                            type: 'info',
-                            secondary: true,
-                            onClick: (e) => { e.stopPropagation(); handleExportImage(); },
-                            disabled: isExporting.value
-                        },
-                        {
-                            default: () => '导出图片',
-                            icon: () => h(NIcon, null, { default: () => h(Copy) })
-                        }
-                    )
-                ]
-            ) : null
-        ]
-      ),
+          [
+            h(
+              "span",
+              {
+                style: { fontSize: "16px", fontWeight: "bold", color: "#333" },
+              },
+              "俱乐部成员详情",
+            ),
+            !isExporting.value
+              ? h("div", { style: { display: "flex", gap: "8px" } }, [
+                  h(
+                    NButton,
+                    {
+                      size: "tiny",
+                      type: "primary",
+                      secondary: true,
+                      onClick: (e) => {
+                        e.stopPropagation();
+                        fetchAllMembersLineup();
+                      },
+                      disabled: batchLoading.value,
+                    },
+                    {
+                      default: () => "获取阵容",
+                      icon: () => h(NIcon, null, { default: () => h(Refresh) }),
+                    },
+                  ),
+                  h(
+                    NButton,
+                    {
+                      size: "tiny",
+                      type: "info",
+                      secondary: true,
+                      onClick: (e) => {
+                        e.stopPropagation();
+                        handleExportImage();
+                      },
+                      disabled: isExporting.value,
+                    },
+                    {
+                      default: () => "导出图片",
+                      icon: () => h(NIcon, null, { default: () => h(Copy) }),
+                    },
+                  ),
+                ])
+              : null,
+          ],
+        ),
       key: "title_group",
       align: "center",
       children: cols,
@@ -1338,14 +1500,14 @@ const getApplyList = async () => {
       token.id,
       "legion_applylist",
       {},
-      10000 // 10秒超时
+      10000, // 10秒超时
     );
-    
+
     // 直接处理响应数据
     handleApplyListResp({ body: responseBody });
   } catch (error) {
     loadingApply.value = false;
-    message.error(`获取申请列表失败: ${  error.message || "未知错误"}`);
+    message.error(`获取申请列表失败: ${error.message || "未知错误"}`);
     console.error("获取申请列表出错:", error);
   }
 };
@@ -1363,7 +1525,7 @@ const approveApply = (roleId) => {
   // 从申请列表中移除该成员
   applyList.value = applyList.value.filter((apply) => apply.roleId !== roleId);
   message.info(`已通过成员 ID: ${roleId} 的申请`);
-  
+
   // 刷新俱乐部信息
   setTimeout(() => {
     refreshClub();
@@ -1403,7 +1565,7 @@ const approveAll = () => {
   // 清空申请列表
   applyList.value = [];
   message.success(`已通过所有 ${count} 个申请`);
-  
+
   // 刷新俱乐部信息
   setTimeout(() => {
     refreshClub();
@@ -1453,7 +1615,7 @@ const handleApplyListResp = (session) => {
       message.info("暂无申请");
       return;
     }
-    
+
     if (typeof responseBody === "object") {
       // 处理对象类型的响应
 
@@ -1618,7 +1780,7 @@ const refreshClub = () => {
   const token = tokenStore.selectedToken;
   if (!token) return;
   tokenStore.sendMessage(token.id, "legion_getinfo");
-  
+
   // 如果当前在成员页，也刷新阵容信息
   if (activeTab.value === "members") {
     fetchAllMembersLineup();
@@ -1632,14 +1794,14 @@ const jobLabel = (job) => {
 };
 
 const redQuenchlabel = (redQuenchl) => {
-  return `${redQuenchl  }红`;
+  return `${redQuenchl}红`;
 };
 
 const formatNumber = (num) => {
   const n = Number(num || 0);
-  if (n >= 1e12) return `${(n / 1e12).toFixed(2)  }兆`;
-  if (n >= 1e8) return `${(n / 1e8).toFixed(2)  }亿`;
-  if (n >= 1e4) return `${(n / 1e4).toFixed(2)  }万`;
+  if (n >= 1e12) return `${(n / 1e12).toFixed(2)}兆`;
+  if (n >= 1e8) return `${(n / 1e8).toFixed(2)}亿`;
+  if (n >= 1e4) return `${(n / 1e4).toFixed(2)}万`;
   return String(n);
 };
 </script>
@@ -1919,15 +2081,24 @@ const formatNumber = (num) => {
   color: var(--text-secondary, #666);
 }
 
-.red-text { color: #ff4d4f; }
-.green-text { color: #52c41a; }
-.blue-text { color: #1890ff; }
-.highlight { color: #1890ff; font-weight: bold; }
+.red-text {
+  color: #ff4d4f;
+}
+.green-text {
+  color: #52c41a;
+}
+.blue-text {
+  color: #1890ff;
+}
+.highlight {
+  color: #1890ff;
+  font-weight: bold;
+}
 
 /* 武将列表样式 */
 .hero-section {
   margin-top: 20px;
-  
+
   h4 {
     margin: 0 0 12px 0;
     font-size: var(--font-size-base, 14px);

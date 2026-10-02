@@ -19,7 +19,8 @@
               <button
                 v-for="type in versionTypes"
                 :key="type.value"
-                class="filter-btn" :class="[{ active: selectedType === type.value }]"
+                class="filter-btn"
+                :class="[{ active: selectedType === type.value }]"
                 @click="selectedType = type.value"
               >
                 {{ type.label }}

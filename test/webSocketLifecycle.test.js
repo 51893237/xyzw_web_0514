@@ -8,23 +8,62 @@ async function createClient(file, exportName) {
   const timers = new Map();
   const intervals = new Map();
   const errors = [];
-  const logger = { info() {}, verbose() {}, wsMessage() {}, warn() {}, error(...args) { errors.push(args); } };
-  const utils = { bon: { encode(value) { return value; } } };
+  const logger = {
+    info() {},
+    verbose() {},
+    wsMessage() {},
+    warn() {},
+    error(...args) {
+      errors.push(args);
+    },
+  };
+  const utils = {
+    bon: {
+      encode(value) {
+        return value;
+      },
+    },
+  };
   const dependencies = {
-    "@/stores/cache": { $CacheManager: { getCache() { return {}; } } },
+    "@/stores/cache": {
+      $CacheManager: {
+        getCache() {
+          return {};
+        },
+      },
+    },
     "./bonProtocol.js": { g_utils: utils },
     "./logger.js": { gameLogger: logger, wsLogger: logger },
     "./helperTaskRunner.js": { sleep: async () => {} },
   };
   const globals = {
     WebSocket: { OPEN: 1 },
-    setTimeout(callback) { const id = ++nextId; timers.set(id, callback); return id; },
-    clearTimeout(id) { timers.delete(id); },
-    setInterval(callback) { const id = ++nextId; intervals.set(id, callback); return id; },
-    clearInterval(id) { intervals.delete(id); },
+    setTimeout(callback) {
+      const id = ++nextId;
+      timers.set(id, callback);
+      return id;
+    },
+    clearTimeout(id) {
+      timers.delete(id);
+    },
+    setInterval(callback) {
+      const id = ++nextId;
+      intervals.set(id, callback);
+      return id;
+    },
+    clearInterval(id) {
+      intervals.delete(id);
+    },
   };
-  const exports = await loadModule(new URL(`../src/utils/${file}`, import.meta.url), dependencies, globals);
-  const client = new exports[exportName]({ url: "ws://example.invalid", utils });
+  const exports = await loadModule(
+    new URL(`../src/utils/${file}`, import.meta.url),
+    dependencies,
+    globals,
+  );
+  const client = new exports[exportName]({
+    url: "ws://example.invalid",
+    utils,
+  });
   client.connected = true;
   client.socket = { readyState: 1, send() {} };
   return { client, timers, intervals, errors };
@@ -42,7 +81,11 @@ for (const [file, name] of [
     assert.equal(await first, "first");
     assert.equal(timers.size, 0);
     const second = client.sendWithPromise("role_getroleinfo");
-    client._handlePromiseResponse({ cmd: "role_getroleinforesp", code: 0, body: "second" });
+    client._handlePromiseResponse({
+      cmd: "role_getroleinforesp",
+      code: 0,
+      body: "second",
+    });
     assert.equal(await second, "second");
     assert.equal(timers.size, 0);
   });

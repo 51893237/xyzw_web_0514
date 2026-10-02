@@ -22,7 +22,9 @@
         <div class="row-title">竞技场进度</div>
         <div class="row-value">
           {{ arenaNum }} / {{ ARENA_TARGET }}（{{ arenaPercent }}%）
-          <span v-if="!isArenaActivityOpen" class="status-indicator closed">(当前未在开放时间)</span>
+          <span v-if="!isArenaActivityOpen" class="status-indicator closed"
+            >(当前未在开放时间)</span
+          >
         </div>
       </div>
       <div class="action-row">
@@ -64,7 +66,10 @@
             trigger="click"
             @select="onArenaMoreSelect"
           >
-            <n-button :disabled="monthLoading || arenaToppingUp || !isArenaActivityOpen">▾</n-button>
+            <n-button
+              :disabled="monthLoading || arenaToppingUp || !isArenaActivityOpen"
+              >▾</n-button
+            >
           </n-dropdown>
         </n-button-group>
       </div>
@@ -285,7 +290,8 @@ const pickArenaTargetId = (targets) => {
 const autoTopUpArena = async (need, shouldBe, target) => {
   if (!tokenStore.selectedToken) return message.warning("请先选择Token");
   if (!isConnected.value) return message.warning("请先建立WS连接");
-  if (!isArenaActivityOpen.value) return message.warning("竞技场活动已关闭，请在 6:00-22:00 时间段内操作");
+  if (!isArenaActivityOpen.value)
+    return message.warning("竞技场活动已关闭，请在 6:00-22:00 时间段内操作");
   arenaToppingUp.value = true;
   try {
     const tokenId = tokenStore.selectedToken.id;

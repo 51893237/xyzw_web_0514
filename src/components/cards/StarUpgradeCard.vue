@@ -145,7 +145,6 @@ const stopRunning = () => {
  * @returns {Promise<void>}
  */
 
-
 /**
  * 仅执行英雄升星
  * @param {{ delay: number }} mod
@@ -302,8 +301,6 @@ const runClaimRewards = async (mod) => {
     state.value.isRunning = false;
   }
 };
-
-
 </script>
 
 <style scoped lang="scss">

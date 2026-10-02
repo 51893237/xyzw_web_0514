@@ -121,7 +121,6 @@ const handleFightHelper = async () => {
   await tokenStore.sendMessage(tokenId, "role_getroleinfo");
   message.success("竞技场战斗完毕");
   state.value.isRunning = false;
-  
 };
 </script>
 

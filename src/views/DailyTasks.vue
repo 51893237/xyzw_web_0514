@@ -347,7 +347,6 @@ const refreshTasks = async () => {
 
 // 生成模拟任务数据
 const generateMockTasks = (roleId) => {
-
   return [
     {
       id: `task_${roleId}_daily_signin`,

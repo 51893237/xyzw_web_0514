@@ -1,4 +1,3 @@
-
 // create by elishell <75950346@qq.com>
 import type { App } from "vue";
 
@@ -113,9 +112,10 @@ class Cache {
     this.content[key] = newItem;
     const waitingItems = [oldItem, newItem].filter(Boolean);
     try {
-      const data = typeof callback === "function"
-        ? await callback(key, conf)
-        : await callback;
+      const data =
+        typeof callback === "function"
+          ? await callback(key, conf)
+          : await callback;
       newItem.val = data;
       for (const item of waitingItems) {
         for (const resolve of item.reslove) resolve(data);
@@ -170,7 +170,7 @@ class CacheManager {
 
 const $CacheManager = new CacheManager();
 
-const install = (vm:App) => {
+const install = (vm: App) => {
   if (vm.version.startsWith("3.")) {
     vm.config.globalProperties.$CacheManager = $CacheManager;
   } else {

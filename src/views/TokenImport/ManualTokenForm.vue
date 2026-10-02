@@ -16,11 +16,7 @@
       />
     </NFormItem>
 
-    <NFormItem
-      label="Token字符串"
-      path="base64Token"
-      :show-label="true"
-    >
+    <NFormItem label="Token字符串" path="base64Token" :show-label="true">
       <NInput
         v-model:value="importForm.base64Token"
         type="textarea"

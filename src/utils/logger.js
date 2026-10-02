@@ -101,7 +101,7 @@ class Logger {
   }
 
   wsDisconnect(tokenId, reason = "") {
-    this.info(`🔌 WebSocket断开: ${tokenId}${reason ? ` - ${  reason}` : ""}`);
+    this.info(`🔌 WebSocket断开: ${tokenId}${reason ? ` - ${reason}` : ""}`);
   }
 
   wsError(tokenId, error) {
@@ -115,7 +115,7 @@ class Logger {
   }
 
   wsStatus(tokenId, status, details = "") {
-    this.info(`📊 [${tokenId}] ${status}${details ? ` - ${  details}` : ""}`);
+    this.info(`📊 [${tokenId}] ${status}${details ? ` - ${details}` : ""}`);
   }
 
   // 连接管理专用日志

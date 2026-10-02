@@ -35,7 +35,9 @@
         答题中...
       </a-button>
       <a-button
-        v-if="!study.thisWeek && isSameGameValue(study.status, 'claiming_rewards')"
+        v-if="
+          !study.thisWeek && isSameGameValue(study.status, 'claiming_rewards')
+        "
         status="warning"
         :disabled="true"
       >
@@ -73,7 +75,11 @@ const study = computed(() => tokenStore.gameData.studyStatus);
 
 const startStudy = async () => {
   if (!tokenStore.selectedToken || study.value.thisWeek) return;
-  if (!isSameGameValue(study.value.status, "") && !isSameGameValue(study.value.status, "idel")) return;
+  if (
+    !isSameGameValue(study.value.status, "") &&
+    !isSameGameValue(study.value.status, "idel")
+  )
+    return;
   console.log("开始答题", study.value);
 
   study.value.status = "starting";
@@ -111,7 +117,7 @@ const startStudy = async () => {
     message.info(`🚀 开始一键答题... (题库包含 ${questionCount} 道题目)`);
   } catch (error) {
     console.error("启动答题失败:", error);
-    message.error(`启动答题失败: ${  error.message}`);
+    message.error(`启动答题失败: ${error.message}`);
   }
 };
 </script>

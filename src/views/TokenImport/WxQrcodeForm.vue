@@ -7,7 +7,8 @@
         <li>点击下方按钮获取微信登录二维码</li>
         <li>使用微信扫码并确认登录</li>
         <li>
-          系统将获取<strong color="red">该微信下所有角色</strong>的Token信息，并保存可用于刷新Token的登录凭据
+          系统将获取<strong color="red">该微信下所有角色</strong
+          >的Token信息，并保存可用于刷新Token的登录凭据
         </li>
       </ol>
       <NCheckbox v-model:checked="saveCombUser">强制下线账号请勾选</NCheckbox>
@@ -15,14 +16,25 @@
 
     <!-- 二维码显示区域 -->
     <div class="qrcode-container">
-      <div v-if="!qrcodeUrl" id="qr-placeholder" class="qr-placeholder" @click="generateQRCode">
+      <div
+        v-if="!qrcodeUrl"
+        id="qr-placeholder"
+        class="qr-placeholder"
+        @click="generateQRCode"
+      >
         <NIcon size="48" color="var(--text-tertiary)">
           <Scan />
           <!-- 使用扫码图标 -->
         </NIcon>
         <p>点击获取微信登录二维码</p>
       </div>
-      <img v-else id="qr-image" :src="qrcodeUrl" alt="微信登录二维码" class="qr-image" />
+      <img
+        v-else
+        id="qr-image"
+        :src="qrcodeUrl"
+        alt="微信登录二维码"
+        class="qr-image"
+      />
 
       <!-- 状态信息 -->
       <div id="qr-status" class="qr-status" :class="statusType">
@@ -32,7 +44,12 @@
 
     <!-- 操作按钮 -->
     <div class="form-actions">
-      <NButton type="primary" block @click="generateQRCode" :loading="isProcessing">
+      <NButton
+        type="primary"
+        block
+        @click="generateQRCode"
+        :loading="isProcessing"
+      >
         <template #icon>
           <NIcon>
             <Refresh />
@@ -43,9 +60,17 @@
     </div>
 
     <!-- 角色命名格式配置 -->
-    <NForm :model="importForm" label-placement="top" :show-label="true" style="margin-top: 16px;">
+    <NForm
+      :model="importForm"
+      label-placement="top"
+      :show-label="true"
+      style="margin-top: 16px"
+    >
       <NFormItem label="角色命名格式" :show-label="true">
-        <NInput v-model:value="importForm.nameTemplate" placeholder="{name}-{index}-{id}" />
+        <NInput
+          v-model:value="importForm.nameTemplate"
+          placeholder="{name}-{index}-{id}"
+        />
         <template #feedback>
           支持变量: {name}角色名, {id}角色ID, {index}角色序号, {server}区服
         </template>
@@ -63,11 +88,19 @@
 
     <a-list>
       <a-list-item v-for="(role, roleIndex) in roleList" :key="roleIndex">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+          "
+        >
           <div>
             <strong>角色名称:</strong> {{ role.name || "未命名角色" }}<br />
             <strong>Token:</strong>
-            <span style="word-break: break-all">{{ role.token }}</span><br />
+            <span style="word-break: break-all">{{ role.token }}</span
+            ><br />
             <strong>服务器:</strong> {{ role.server || "未指定" }}<br />
             <strong>角色序号:</strong> {{ role.roleIndex }}
           </div>
@@ -80,7 +113,13 @@
 
     <!-- 操作按钮 -->
     <div class="form-actions">
-      <NButton type="primary" size="large" block :loading="isImporting" @click="handleImport">
+      <NButton
+        type="primary"
+        size="large"
+        block
+        :loading="isImporting"
+        @click="handleImport"
+      >
         <template #icon>
           <NIcon>
             <CloudUpload />
@@ -103,7 +142,15 @@
 
 <script lang="ts" setup>
 import { Close, CloudUpload, Refresh, Scan } from "@vicons/ionicons5";
-import { NButton, NCheckbox, NForm, NFormItem, NIcon, NInput, useMessage } from "naive-ui";
+import {
+  NButton,
+  NCheckbox,
+  NForm,
+  NFormItem,
+  NIcon,
+  NInput,
+  useMessage,
+} from "naive-ui";
 import { onMounted, onUnmounted, reactive, ref } from "vue";
 import useIndexedDB from "@/hooks/useIndexedDB";
 import { useTokenStore } from "@/stores/tokenStore";
@@ -177,7 +224,7 @@ const handleDownload = (roleInfo: any) => {
     message.success(`已开始下载: ${fileName}`);
   } catch (e: any) {
     console.error("下载失败", e);
-    message.error(`下载失败: ${  e.message}`);
+    message.error(`下载失败: ${e.message}`);
   }
 };
 
@@ -214,11 +261,11 @@ const addSelectedRole = async (roleInfo: any) => {
       .replace(/\{name\}/g, () => roleName)
       .replace(/\{index\}/g, () => String(roleIndex))
       .replace(/\{id\}/g, () => String(roleInfo.roleId))
-      .replace(/\{server\}/g, () => `${String(serverNum)  }服`);
+      .replace(/\{server\}/g, () => `${String(serverNum)}服`);
 
     // 检查是否已存在相同配置 (根据角色名称和roleId)
     const exists = roleList.value.some(
-      (r) => r.roleId === roleInfo.roleId && r.name === finalName
+      (r) => r.roleId === roleInfo.roleId && r.name === finalName,
     );
 
     if (exists) {
@@ -231,7 +278,7 @@ const addSelectedRole = async (roleInfo: any) => {
       roleId: roleInfo.roleId,
       token: roleToken,
       name: finalName,
-      server: `${String(serverNum)  }服`,
+      server: `${String(serverNum)}服`,
       roleIndex,
       wsUrl: importForm.wsUrl || "",
       importMethod: "wxQrcode",
@@ -240,13 +287,11 @@ const addSelectedRole = async (roleInfo: any) => {
     });
 
     message.success(`已添加角色: ${finalName}`);
-
   } catch (e: any) {
     console.error("添加角色失败", e);
-    message.error(`添加角色失败: ${  e.message}`);
+    message.error(`添加角色失败: ${e.message}`);
   }
 };
-
 
 /**
  * 生成微信登录二维码
@@ -266,7 +311,7 @@ const generateQRCode = async () => {
       throw new Error("二维码获取失败");
     }
   } catch (error) {
-    updateStatus(`二维码获取失败：${  error.message}`, "error");
+    updateStatus(`二维码获取失败：${error.message}`, "error");
     console.error("获取二维码失败:", error);
   } finally {
     isProcessing.value = false;
@@ -297,7 +342,7 @@ const tryGetWeixinQR = async () => {
     });
 
     if (response.status !== 200) {
-      throw new Error(`HTTP 状态码：${  response.status}`);
+      throw new Error(`HTTP 状态码：${response.status}`);
     }
 
     const html = response.responseText;
@@ -326,7 +371,7 @@ const tryGetWeixinQR = async () => {
     return true;
   } catch (err) {
     console.error("二维码解析失败:", err);
-    updateStatus(`二维码获取失败：${  err.message}`, "error");
+    updateStatus(`二维码获取失败：${err.message}`, "error");
     return false;
   }
 };
@@ -361,11 +406,9 @@ const checkScanStatus = async () => {
     }
 
     // 使用微信官方推荐的扫码状态轮询路径
-    const url =
-      `/api/weixin/connect/l/qrconnect?uuid=${ 
-      qrcodeUUID.value 
-      }&f=url&_=${ 
-      Date.now()}`;
+    const url = `/api/weixin/connect/l/qrconnect?uuid=${
+      qrcodeUUID.value
+    }&f=url&_=${Date.now()}`;
 
     const res = await new Promise((resolve) => {
       const xhr = new XMLHttpRequest();
@@ -449,7 +492,7 @@ const handleScanSuccess = async (code: string, nickname = "") => {
       await saveAccount(encrypted.buffer, nickname);
     }
   } catch (err: any) {
-    updateStatus(`处理失败：${  err.message}`, "error");
+    updateStatus(`处理失败：${err.message}`, "error");
     console.error("扫码处理失败:", err);
   } finally {
     isProcessing.value = false;
@@ -485,14 +528,12 @@ const getEncryptedData = async (code) => {
   try {
     console.log("加密后的登录 JSON:", encoded);
     console.log("解密:", decodePayload(encoded));
-  } catch (err) { }
+  } catch (err) {}
 
   const loginUrl =
     `/api/hortor/comb-login-server/api/v1/login` +
     `?gameId=xyzwapp` +
-    `&timestamp=${ 
-    Date.now() 
-    }&version=android-4.2.1-cn-release` +
+    `&timestamp=${Date.now()}&version=android-4.2.1-cn-release` +
     `&cryptVersion=1.1.0` +
     `&gameTp=app&system=android` +
     `&deviceUniqueId=DID-0e782e88-2f3b-4f5b-9020-47f5e5a5a026` +
@@ -511,12 +552,12 @@ const getEncryptedData = async (code) => {
   });
 
   if (res.status !== 200) {
-    throw new Error(`HTTP 状态码：${  res.status}`);
+    throw new Error(`HTTP 状态码：${res.status}`);
   }
 
   const json = JSON.parse(res.responseText);
   if (json.meta?.errCode !== 0) {
-    throw new Error(`登录失败：${  json.meta?.errMsg}`);
+    throw new Error(`登录失败：${json.meta?.errMsg}`);
   }
 
   const combUser = json.data?.combUser;
@@ -560,7 +601,7 @@ const encodePayload = (text) => {
 
   console.log("原始文本长度:", text.length);
   const mid = codeBase64(text, cipherTable, shuffleTimes, step, xorShift);
-  console.log("codeBase64:", `${mid?.substring(0, 100)  }...`);
+  console.log("codeBase64:", `${mid?.substring(0, 100)}...`);
   const final = encodeBase64(mid);
   console.log("编码结果长度:", final?.length);
   return final;
@@ -631,7 +672,7 @@ const dealWithString = (src, key, shift) => {
 
   const v = src.split("");
   const w = key.split("");
-  const out = Array.from({length: v.length});
+  const out = Array.from({ length: v.length });
 
   let idx = w.length >> shift;
   for (let i = 0; i < v.length; i++) {
@@ -658,8 +699,10 @@ const saveAccount = async (arrBuf: ArrayBuffer) => {
     const listStr = await getServerList(bin.buffer);
     const parsedList = JSON.parse(listStr);
     // 转换为数组并排序
-    if (parsedList && typeof parsedList === 'object') {
-      serverListData.value = Object.values(parsedList).sort((a: any, b: any) => b.power - a.power);
+    if (parsedList && typeof parsedList === "object") {
+      serverListData.value = Object.values(parsedList).sort(
+        (a: any, b: any) => b.power - a.power,
+      );
     } else {
       serverListData.value = [];
     }
@@ -684,7 +727,7 @@ const saveAccount = async (arrBuf: ArrayBuffer) => {
     originalBinData.value = binData;
   } catch (err: any) {
     console.error("Bin文件解析失败", err);
-    binDecodedResult.value = `Bin文件解析失败: ${  err.message || err}`;
+    binDecodedResult.value = `Bin文件解析失败: ${err.message || err}`;
   }
 };
 
@@ -710,7 +753,7 @@ const handleImport = async () => {
   });
   console.log("当前Token列表:", tokenStore.gameTokens);
   message.success("Token添加成功");
-    roleList.value = [];
+  roleList.value = [];
   emit("ok");
 };
 

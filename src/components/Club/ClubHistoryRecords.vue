@@ -53,17 +53,12 @@
 </template>
 
 <script setup>
-import {
-  Copy,
-  Refresh,
-} from "@vicons/ionicons5";
-import html2canvas from 'html2canvas';
+import { Copy, Refresh } from "@vicons/ionicons5";
+import html2canvas from "html2canvas";
 import { NButton, NDataTable, NIcon, NTag, useMessage } from "naive-ui";
 import { computed, h, nextTick, onMounted, ref } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
-import {
-  getLastSaturday,
-} from "@/utils/clubBattleUtils";
+import { getLastSaturday } from "@/utils/clubBattleUtils";
 import { downloadCanvasAsImage } from "@/utils/imageExport";
 
 const props = defineProps({
@@ -92,17 +87,19 @@ const battleRecords = ref(null);
 const expandedMembers = ref(new Set());
 const queryDate = ref("");
 
-
-
 const pagination = ref({
   pageSize: 10,
 });
 
 const tableData = computed(() => {
-  if (!battleRecords.value || !battleRecords.value.warMap || !battleRecords.value.warRank) {
+  if (
+    !battleRecords.value ||
+    !battleRecords.value.warMap ||
+    !battleRecords.value.warRank
+  ) {
     return [];
   }
-  
+
   return battleRecords.value.warMap.map((member, index) => ({
     key: index,
     legionWarType: member.legionWarType,
@@ -117,55 +114,66 @@ const isExporting = ref(false);
 const columns = computed(() => {
   const cols = [
     {
-      title: () => h(
-        "div",
-        {
-          style: {
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "100%",
-            padding: "0 8px"
+      title: () =>
+        h(
+          "div",
+          {
+            style: {
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              width: "100%",
+              padding: "0 8px",
+            },
           },
-        },
-        [
-            h("span", { style: { fontSize: "16px", fontWeight: "bold", color: "#333" } }, "俱乐部历史盐场战绩"),
-            (props.inline && !isExporting.value) ? h(
-                'div',
-                { style: { display: 'flex', gap: '8px' } },
-                [
-                    h(
-                        NButton,
-                        {
-                            size: 'tiny',
-                            type: 'primary',
-                            secondary: true,
-                            onClick: (e) => { e.stopPropagation(); handleRefresh(); },
-                            disabled: loading.value
-                        },
-                        {
-                            default: () => '刷新',
-                            icon: () => h(NIcon, null, { default: () => h(Refresh) })
-                        }
-                    ),
-                    h(
-                        NButton,
-                        {
-                            size: 'tiny',
-                            type: 'info',
-                            secondary: true,
-                            onClick: (e) => { e.stopPropagation(); handleExportImage(); },
-                            disabled: loading.value
-                        },
-                        {
-                            default: () => '导出图片',
-                            icon: () => h(NIcon, null, { default: () => h(Copy) })
-                        }
-                    )
-                ]
-            ) : null
-        ]
-      ),
+          [
+            h(
+              "span",
+              {
+                style: { fontSize: "16px", fontWeight: "bold", color: "#333" },
+              },
+              "俱乐部历史盐场战绩",
+            ),
+            props.inline && !isExporting.value
+              ? h("div", { style: { display: "flex", gap: "8px" } }, [
+                  h(
+                    NButton,
+                    {
+                      size: "tiny",
+                      type: "primary",
+                      secondary: true,
+                      onClick: (e) => {
+                        e.stopPropagation();
+                        handleRefresh();
+                      },
+                      disabled: loading.value,
+                    },
+                    {
+                      default: () => "刷新",
+                      icon: () => h(NIcon, null, { default: () => h(Refresh) }),
+                    },
+                  ),
+                  h(
+                    NButton,
+                    {
+                      size: "tiny",
+                      type: "info",
+                      secondary: true,
+                      onClick: (e) => {
+                        e.stopPropagation();
+                        handleExportImage();
+                      },
+                      disabled: loading.value,
+                    },
+                    {
+                      default: () => "导出图片",
+                      icon: () => h(NIcon, null, { default: () => h(Copy) }),
+                    },
+                  ),
+                ])
+              : null,
+          ],
+        ),
       align: "center",
       children: [
         {
@@ -185,20 +193,23 @@ const columns = computed(() => {
           align: "center",
           render: (row) => {
             let color = "default";
-            if (row.rank === 1) color = "warning"; // 金色/冠军
-            else if (row.rank === 2) color = "info"; // 银色/亚军
-            else if (row.rank === 3) color = "success"; // 铜色/季军
+            if (row.rank === 1)
+              color = "warning"; // 金色/冠军
+            else if (row.rank === 2)
+              color = "info"; // 银色/亚军
+            else if (row.rank === 3)
+              color = "success"; // 铜色/季军
             else if (row.rank > 20) color = "error"; // 排名靠后
-            
+
             return h(
               NTag,
               { type: color, bordered: false, size: "small" },
-              { default: () => `第 ${row.rank} 名` }
+              { default: () => `第 ${row.rank} 名` },
             );
           },
         },
-      ]
-    }
+      ],
+    },
   ];
 
   // 只有在 Inline 模式下且不在导出时，才添加操作列
@@ -220,7 +231,7 @@ const columns = computed(() => {
   //               onClick: handleRefresh,
   //               disabled: loading.value
   //             },
-  //             { 
+  //             {
   //               default: () => '刷新',
   //               icon: () => h(NIcon, null, { default: () => h(Refresh) })
   //             }
@@ -234,7 +245,7 @@ const columns = computed(() => {
   //               onClick: handleExportImage,
   //               disabled: loading.value
   //             },
-  //             { 
+  //             {
   //               default: () => '图片',
   //               icon: () => h(NIcon, null, { default: () => h(Copy) })
   //             }
@@ -267,22 +278,25 @@ const handleExportImage = async () => {
     await nextTick();
 
     // 获取 table-container
-    const tableContainer = exportDom.value.querySelector('.n-data-table');
-    
+    const tableContainer = exportDom.value.querySelector(".n-data-table");
+
     // 临时调整表格容器高度，确保所有内容可见
     if (tableContainer) {
       // 尝试找到 n-data-table 的滚动容器
-      const scrollContainer = tableContainer.querySelector('.n-data-table-base-table-body');
+      const scrollContainer = tableContainer.querySelector(
+        ".n-data-table-base-table-body",
+      );
       if (scrollContainer) {
         // 保存原始样式
         scrollContainer.dataset.originalHeight = scrollContainer.style.height;
-        scrollContainer.dataset.originalOverflow = scrollContainer.style.overflow;
+        scrollContainer.dataset.originalOverflow =
+          scrollContainer.style.overflow;
 
         // 强制展开
         scrollContainer.style.height = "auto";
         scrollContainer.style.overflow = "visible";
       }
-      
+
       // 保存外层table容器的样式
       tableContainer.dataset.originalHeight = tableContainer.style.height;
       tableContainer.style.height = "auto";
@@ -308,44 +322,45 @@ const handleExportImage = async () => {
     message.error("导出图片失败，请重试");
   } finally {
     // 恢复原始样式
-    const tableContainer = exportDom.value?.querySelector('.n-data-table');
+    const tableContainer = exportDom.value?.querySelector(".n-data-table");
     if (tableContainer) {
-      const scrollContainer = tableContainer.querySelector('.n-data-table-base-table-body');
+      const scrollContainer = tableContainer.querySelector(
+        ".n-data-table-base-table-body",
+      );
       if (scrollContainer) {
         if (scrollContainer.dataset.originalHeight) {
           scrollContainer.style.height = scrollContainer.dataset.originalHeight;
         } else {
-          scrollContainer.style.removeProperty('height');
+          scrollContainer.style.removeProperty("height");
         }
 
         if (scrollContainer.dataset.originalOverflow) {
-          scrollContainer.style.overflow = scrollContainer.dataset.originalOverflow;
+          scrollContainer.style.overflow =
+            scrollContainer.dataset.originalOverflow;
         } else {
-          scrollContainer.style.removeProperty('overflow');
+          scrollContainer.style.removeProperty("overflow");
         }
 
         delete scrollContainer.dataset.originalHeight;
         delete scrollContainer.dataset.originalOverflow;
       }
-      
+
       // 恢复外层table容器样式
       if (tableContainer.dataset.originalHeight) {
         tableContainer.style.height = tableContainer.dataset.originalHeight;
       } else {
-        tableContainer.style.removeProperty('height');
+        tableContainer.style.removeProperty("height");
       }
       delete tableContainer.dataset.originalHeight;
     }
-    
+
     isExporting.value = false;
   }
 };
 
 // 格式化战力
 
-
 // 获取战斗样式类
-
 
 const legionWarTypesw = (legionWarType) => {
   switch (legionWarType) {
@@ -380,9 +395,7 @@ const legionWarTypesw = (legionWarType) => {
 
 // 切换成员详情展开状态
 
-
 // 处理图片加载错误
-
 
 // 查询战绩
 const fetchBattleRecords = async () => {
@@ -436,7 +449,6 @@ const handleRefresh = () => {
 };
 
 // 导出战绩
-
 
 // 关闭弹窗
 const handleClose = () => {

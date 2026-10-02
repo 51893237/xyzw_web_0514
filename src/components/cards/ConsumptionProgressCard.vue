@@ -108,7 +108,7 @@
             <ol>
               <li
                 v-for="step in combo.combo"
-                :key="`${step.id  }-${  step.threshold}`"
+                :key="`${step.id}-${step.threshold}`"
               >
                 {{ step.name }} -> 达到 {{ step.threshold }} (可得
                 {{ step.delta }} 普通道具, 还需消耗 {{ step.cost }})

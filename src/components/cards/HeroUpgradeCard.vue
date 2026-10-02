@@ -50,7 +50,10 @@
             <a-button
               type="primary"
               :disabled="
-                isSameGameValue(judgeLevelupgrade(HeroItem.level, 1, HeroItem.order), false)
+                isSameGameValue(
+                  judgeLevelupgrade(HeroItem.level, 1, HeroItem.order),
+                  false,
+                )
               "
               size="small"
               @click="orderHeroUpgrade"
@@ -78,7 +81,7 @@ const message = useMessage();
 const HeroOptions = computed(() => [
   ...Object.values(tokenStore.gameData.roleInfo.role.heroes).map((item) => {
     return {
-      label: `${HERO_DICT[item.heroId].name  }(${  item.level  }/6000)`,
+      label: `${HERO_DICT[item.heroId].name}(${item.level}/6000)`,
       value: item.heroId,
       disabled: isSameGameValue(item.level, 6000),
     };
@@ -129,7 +132,10 @@ watch(
   () => {
     if (HeroValue.value) {
       if (
-        !isSameGameValue(tokenStore.gameData.roleInfo.role.heroes[HeroValue.value].level, 6000)
+        !isSameGameValue(
+          tokenStore.gameData.roleInfo.role.heroes[HeroValue.value].level,
+          6000,
+        )
       ) {
         HeroItem.value = Object.assign(
           {},
@@ -228,7 +234,7 @@ const levelHeroUpgrade = async () => {
         tokenStore.sendGetRoleInfo(tokenId);
       }
     } else {
-      message.warning(`请手动升级到${  judgement  }级,然后进行进阶`);
+      message.warning(`请手动升级到${judgement}级,然后进行进阶`);
     }
   } catch (error) {
     message.error(`升级失败: ${error.message}`);
@@ -285,8 +291,6 @@ const judgeLevelupgrade = (level, levelNum, order) => {
   }
   return false;
 };
-
-
 </script>
 
 <style scoped lang="scss">

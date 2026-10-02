@@ -31,7 +31,8 @@ declare interface TokenData {
   wsUrl: string | null; // 可选的自定义WebSocket URL
   server: string;
   remark?: string; // 备注信息
-  importMethod?: "manual" | "bin" | "url" | "wxQrcode" | "mobile" | "wxForceLogout";
+  importMethod?:
+    "manual" | "bin" | "url" | "wxQrcode" | "mobile" | "wxForceLogout";
   sourceUrl?: string; // 当importMethod为url时，存储url链接
   avatar?: string; // 用户头像URL
   upgradedToPermanent?: boolean; // 是否升级为长期有效
@@ -598,7 +599,7 @@ export const useTokenStore = defineStore("tokens", () => {
     } catch (error) {
       return {
         success: false,
-        error: `解析失败：${  error.message}`,
+        error: `解析失败：${error.message}`,
       };
     }
   };
@@ -653,7 +654,7 @@ export const useTokenStore = defineStore("tokens", () => {
 
   // 连接管理辅助函数
   const generateSessionId = () =>
-    `session_${  Date.now()  }_${  Math.random().toString(36).substr(2, 9)}`;
+    `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   const currentSessionId = generateSessionId();
 
   // 获取连接锁
@@ -1232,7 +1233,7 @@ export const useTokenStore = defineStore("tokens", () => {
         return { success: false, message: "导入数据格式错误" };
       }
     } catch (error) {
-      return { success: false, message: `导入失败：${  error.message}` };
+      return { success: false, message: `导入失败：${error.message}` };
     }
   };
 
@@ -1394,7 +1395,7 @@ export const useTokenStore = defineStore("tokens", () => {
       // 统计连接状态
       const tokenCounts = new Map();
       Object.values(wsConnections.value).forEach((connection) => {
-        stats[`${connection.status  }Count`]++;
+        stats[`${connection.status}Count`]++;
 
         // 检测重复token
         const count = tokenCounts.get(connection.tokenId) || 0;
@@ -1526,7 +1527,7 @@ export const useTokenStore = defineStore("tokens", () => {
    */
   const createTokenGroup = (name: string, color: string = "#1677ff") => {
     const group: TokenGroup = {
-      id: `group_${  Date.now()  }${Math.random().toString(36).slice(2)}`,
+      id: `group_${Date.now()}${Math.random().toString(36).slice(2)}`,
       name,
       color,
       tokenIds: [],
@@ -1722,7 +1723,7 @@ export const useTokenStore = defineStore("tokens", () => {
         const token = gameTokens.value.find((t) => t.id === tokenId);
         if (token) {
           // 故意创建第二个连接进行测试
-          createWebSocketConnection(`${tokenId  }_test`, token.token);
+          createWebSocketConnection(`${tokenId}_test`, token.token);
         }
       },
     },

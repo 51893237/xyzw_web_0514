@@ -3,7 +3,7 @@
  * 基于 HuskyHappy/xyzw_web_helper 的 bonProtocol.js
  * 改动：import→require, export→module.exports
  */
-import lz4 from "lz4js"; 
+import lz4 from "lz4js";
 
 // -----------------------------
 // BON 编解码器核心实现
@@ -441,7 +441,6 @@ class BonEncoder {
           return;
         }
         this.encodeObject(v);
-        
     }
   }
 
@@ -614,7 +613,7 @@ const lx = {
   encrypt: (buf) => {
     const e = lz4.compress(buf);
     const t = 2 + ~~(Math.random() * 248);
-    for (let n = Math.min(e.length, 100); --n >= 0; ) e[n] ^= t;
+    for (let n = Math.min(e.length, 100); --n >= 0;) e[n] ^= t;
     e[0] = 112;
     e[1] = 108;
     e[2] =
@@ -641,7 +640,7 @@ const lx = {
       (((e[3] >> 4) & 1) << 2) |
       (((e[3] >> 2) & 1) << 1) |
       (e[3] & 1);
-    for (let n = Math.min(100, e.length); --n >= 2; ) e[n] ^= t;
+    for (let n = Math.min(100, e.length); --n >= 2;) e[n] ^= t;
     e[0] = 4;
     e[1] = 34;
     e[2] = 77;
@@ -661,7 +660,7 @@ const x = {
     n[3] = (rnd >>> 24) & 0xff;
     n.set(e, 4);
     const r = 2 + ~~(Math.random() * 248);
-    for (let i = n.length; --i >= 0; ) n[i] ^= r;
+    for (let i = n.length; --i >= 0;) n[i] ^= r;
     n[0] = 112;
     n[1] = 120;
     n[2] =
@@ -688,7 +687,7 @@ const x = {
       (((e[3] >> 4) & 1) << 2) |
       (((e[3] >> 2) & 1) << 1) |
       (e[3] & 1);
-    for (let n = e.length; --n >= 4; ) e[n] ^= t;
+    for (let n = e.length; --n >= 4;) e[n] ^= t;
     return e.subarray(4);
   },
 };
@@ -753,17 +752,15 @@ const g_utils = {
 };
 
 export {
- bon,
- BonDecoder,
- BonEncoder,
- DataReader,
- DataWriter,
- encode,
- g_utils,
- getEnc,
- Int64,
- parse,
- ProtoMsg,
+  bon,
+  BonDecoder,
+  BonEncoder,
+  DataReader,
+  DataWriter,
+  encode,
+  g_utils,
+  getEnc,
+  Int64,
+  parse,
+  ProtoMsg,
 };
-
-

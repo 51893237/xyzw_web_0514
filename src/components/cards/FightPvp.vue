@@ -293,7 +293,8 @@
             <div
               v-for="(battle, battleIndex) in fightResult.resultCount"
               :key="battleIndex"
-              class="battle-result-item" :class="[battle.isWin ? 'win' : 'loss']"
+              class="battle-result-item"
+              :class="[battle.isWin ? 'win' : 'loss']"
             >
               <div class="battle-header">
                 <span class="battle-index">第 {{ battleIndex + 1 }} 场</span>
@@ -419,14 +420,20 @@
             </n-descriptions-item>
             <n-descriptions-item label="鱼灵">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.FishInfo?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.FishInfo?.name
                   : "无"
               }}
             </n-descriptions-item>
             <n-descriptions-item label="鱼珠技能">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.PearlSkill?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.PearlSkill?.name
                   : "无"
               }}
@@ -437,7 +444,7 @@
                   v-for="item in heroModealTemp.PearlInfo.slotMap"
                   :key="item.id"
                   class="ModalEquipment"
-                  :style="`background-color:${  item.value}`"
+                  :style="`background-color:${item.value}`"
                 ></div>
               </div>
               <div v-else>无</div>
@@ -516,11 +523,7 @@
 </template>
 
 <script setup>
-import {
-  Copy,
-  Refresh,
-  Trophy,
-} from "@vicons/ionicons5";
+import { Copy, Refresh, Trophy } from "@vicons/ionicons5";
 
 import html2canvas from "html2canvas";
 import { useMessage } from "naive-ui";
@@ -528,10 +531,7 @@ import { onMounted, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
 import { isSameGameValue } from "@/utils/gameValue.js";
 
-
-import {
-  gettoday,
-} from "@/utils/goldWarrankUtils";
+import { gettoday } from "@/utils/goldWarrankUtils";
 import {
   formatWeapon,
   HERO_DICT,
@@ -551,21 +551,16 @@ defineProps({
   },
 });
 
-
-
 // 确保legacycolor在模板中可用
 const legacyColorMap = legacycolor;
 
 const message = useMessage();
 const tokenStore = useTokenStore();
 
-
-
 const exportDom = ref(null);
 const loading1 = ref(false);
 const loadingText = ref("正在查询对手信息...");
 const topranklist = ref(null);
-
 
 const queryDate = ref("");
 const targetId = ref("");
@@ -606,13 +601,11 @@ const options = [
   },
 ];
 
-
 // 分页状态
 
- // 每页20条，共5页
+// 每页20条，共5页
 
 // 计算总页数
-
 
 const selectHeroInfo = (heroInfo) => {
   showHeroModal.value = true;
@@ -625,23 +618,17 @@ const selectHeroInfo = (heroInfo) => {
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
 
 // 获取战斗样式类
 
-
-
-
-
-
 // 处理图片加载错误
-
 
 // 切磋
 const fetchfightPVP = async () => {
@@ -862,7 +849,7 @@ const getHeroInfo = (heroObj) => {
 const getEquipment = (equipment) => {
   let redCount = 0;
   let holeCount = 0;
-  
+
   //此处遍历4件装备
   Object.values(equipment).forEach((equ) => {
     //遍历每件装备的属性
@@ -890,7 +877,7 @@ const handleFightNumChange = (value) => {
     // 如果是字符串，转换为数字
     const num = Number.parseInt(value, 10);
     // 确保数字有效且大于0,尽量限制最大次数,万一谁请求打多了,可不是什么好事情
-    if (!Number.isNaN(+(num)) && num > 0 && num <= 50) {
+    if (!Number.isNaN(+num) && num > 0 && num <= 50) {
       fightNum.value = num;
     } else {
       // 否则重置为默认值1
@@ -966,7 +953,6 @@ const handleExport1 = async () => {
 };
 
 // 关闭弹窗
-
 
 // 暴露方法给父组件
 defineExpose({

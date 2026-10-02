@@ -136,7 +136,7 @@
                     <span class="group-count">({{ group.length }})</span>
                   </div>
                   <div
-                    v-for="(legion) in group"
+                    v-for="legion in group"
                     :key="legion.id"
                     class="legion-item"
                     :style="{ borderLeftColor: legion.color }"
@@ -203,7 +203,7 @@ const legionWarMapDom = ref(null);
 let ctx = null;
 let resizeHandler = null;
 
- // alias for compatibility if needed, but we use isEntireBattlefield in template
+// alias for compatibility if needed, but we use isEntireBattlefield in template
 
 const exporting = ref(false);
 
@@ -536,7 +536,7 @@ const drawCanvasContent = () => {
     const col = Number.parseInt(colStr);
     const row = Number.parseInt(rowStr);
 
-    if (!Number.isNaN(+(col)) && !Number.isNaN(+(row))) {
+    if (!Number.isNaN(+col) && !Number.isNaN(+row)) {
       const x = col * (hexWidth * 0.75) + hexSize + gap * col;
       const y =
         row * hexHeight + (col % 2 === 1 ? hexHeight / 2 : 0) + gap * row;
@@ -581,7 +581,7 @@ const drawCanvasContent = () => {
         const col = Number.parseInt(colStr);
         const row = Number.parseInt(rowStr);
 
-        if (!Number.isNaN(+(col)) && !Number.isNaN(+(row))) {
+        if (!Number.isNaN(+col) && !Number.isNaN(+row)) {
           const x = col * (hexWidth * 0.75) + hexSize + gap * col;
           const y =
             row * hexHeight + (col % 2 === 1 ? hexHeight / 2 : 0) + gap * row;

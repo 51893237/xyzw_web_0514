@@ -27,11 +27,17 @@
     <!-- 购买小鱼干弹窗：Teleport 到 body，脱离 n-tabs animated 的 transform 包含块，
          否则 position: fixed 会失效导致弹窗跟随鼠标移动 -->
     <Teleport to="body">
-      <div v-if="showBuyEnergyDialog" class="buy-energy-mask" @click.self="closeBuyEnergyDialog">
+      <div
+        v-if="showBuyEnergyDialog"
+        class="buy-energy-mask"
+        @click.self="closeBuyEnergyDialog"
+      >
         <div class="buy-energy-dialog" @click.stop>
           <div class="dialog-header">
             <h3>购买小鱼干</h3>
-            <button class="dialog-close" @click="closeBuyEnergyDialog">×</button>
+            <button class="dialog-close" @click="closeBuyEnergyDialog">
+              ×
+            </button>
           </div>
           <div class="dialog-body">
             <div class="dialog-row">
@@ -52,7 +58,14 @@
             <div class="dialog-row">
               <span class="row-label">快捷选择</span>
               <div class="quick-btns">
-                <button v-for="n in [1, 10, 50, 100]" :key="n" class="quick-btn" @click="buyEnergyNum = n">{{ n }}</button>
+                <button
+                  v-for="n in [1, 10, 50, 100]"
+                  :key="n"
+                  class="quick-btn"
+                  @click="buyEnergyNum = n"
+                >
+                  {{ n }}
+                </button>
               </div>
             </div>
             <div class="dialog-hint">
@@ -65,15 +78,35 @@
                     <stop offset="100%" stop-color="#E6A117" />
                   </linearGradient>
                 </defs>
-                <path d="M12 1.6 22 6.2 12 10.8 2 6.2Z" fill="url(#goldFace)" stroke="#B07600" stroke-width="1.1" stroke-linejoin="round" />
-                <path d="M2 6.2V17.8L12 22.4V10.8Z" fill="#F9A825" stroke="#B07600" stroke-width="1.1" stroke-linejoin="round" />
-                <path d="M22 6.2V17.8L12 22.4V10.8Z" fill="#EFB218" stroke="#B07600" stroke-width="1.1" stroke-linejoin="round" />
+                <path
+                  d="M12 1.6 22 6.2 12 10.8 2 6.2Z"
+                  fill="url(#goldFace)"
+                  stroke="#B07600"
+                  stroke-width="1.1"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M2 6.2V17.8L12 22.4V10.8Z"
+                  fill="#F9A825"
+                  stroke="#B07600"
+                  stroke-width="1.1"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M22 6.2V17.8L12 22.4V10.8Z"
+                  fill="#EFB218"
+                  stroke="#B07600"
+                  stroke-width="1.1"
+                  stroke-linejoin="round"
+                />
               </svg>
               金砖，每次购买 1-100 份小鱼干
             </div>
           </div>
           <div class="dialog-footer">
-            <button class="btn-cancel" @click="closeBuyEnergyDialog">取消</button>
+            <button class="btn-cancel" @click="closeBuyEnergyDialog">
+              取消
+            </button>
             <button
               class="btn-confirm"
               :class="{ disabled: buyEnergyNum < 1 || buyEnergyNum > 100 }"
@@ -96,7 +129,8 @@
 
     <div class="card-actions">
       <button
-        class="climb-button" :class="[
+        class="climb-button"
+        :class="[
           {
             active: canClimb,
             disabled: !canClimb,
@@ -144,7 +178,7 @@ const isBuying = ref(false); // 购买小鱼干状态
 const showBuyEnergyDialog = ref(false); // 购买弹窗显示
 const buyEnergyNum = ref(1); // 购买数量（1-100）
 const climbTimeout = ref(null); // 用于超时重置状态
- // 最后一次爬塔结果
+// 最后一次爬塔结果
 
 // 计算属性 - 从gameData中获取塔相关信息
 const roleInfo = computed(() => {
@@ -316,7 +350,7 @@ const startTowerClimb = async () => {
     }
     message.success(`已自动爬塔${climbCount}次，体力已耗尽或达到上限。`);
   } catch (error) {
-    message.error(`批量爬塔失败: ${  error.message || "未知错误"}`);
+    message.error(`批量爬塔失败: ${error.message || "未知错误"}`);
   }
 
   // 清除超时并重置状态
@@ -512,7 +546,9 @@ onMounted(() => {
   border: none;
   border-radius: var(--border-radius-small, 6px);
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
+  transition:
+    opacity 0.2s,
+    transform 0.15s;
   white-space: nowrap;
   line-height: 20px;
 }
@@ -577,7 +613,9 @@ onMounted(() => {
   border: none;
   border-radius: var(--border-radius-small, 6px);
   cursor: pointer;
-  transition: background 0.2s, color 0.2s;
+  transition:
+    background 0.2s,
+    color 0.2s;
 }
 
 .buy-energy-dialog .dialog-close:hover {
@@ -702,7 +740,9 @@ onMounted(() => {
   font-weight: var(--font-weight-medium);
   border-radius: var(--border-radius-small, 6px);
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.15s;
+  transition:
+    opacity 0.2s,
+    transform 0.15s;
 }
 
 .btn-cancel {

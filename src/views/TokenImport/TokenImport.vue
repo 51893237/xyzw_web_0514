@@ -92,11 +92,11 @@
         <div class="section-header">
           <div class="section-main">
             <div class="section-title-row">
-            <h2>我的Token列表 ({{ tokenStore.gameTokens.length }}个)</h2>
-            <n-radio-group v-model:value="viewMode" size="small">
-              <n-radio-button value="list">列表</n-radio-button>
-              <n-radio-button value="card">卡片</n-radio-button>
-            </n-radio-group>
+              <h2>我的Token列表 ({{ tokenStore.gameTokens.length }}个)</h2>
+              <n-radio-group v-model:value="viewMode" size="small">
+                <n-radio-button value="list">列表</n-radio-button>
+                <n-radio-button value="card">卡片</n-radio-button>
+              </n-radio-group>
             </div>
             <n-button-group size="small" class="sort-buttons">
               <n-button
@@ -139,7 +139,9 @@
             </n-button>
             <n-button
               size="small"
-              :disabled="multiGameSelectedTokenIds.size === 0 || isOpeningMultiGame"
+              :disabled="
+                multiGameSelectedTokenIds.size === 0 || isOpeningMultiGame
+              "
               @click="clearMultiGameTokenSelection"
             >
               清空
@@ -218,7 +220,8 @@
             @dragstart="handleDragStart(tokenIndex, $event)"
             @dragover="handleDragOver($event)"
             @drop="handleDrop(tokenIndex, $event)"
-            class="token-card" :class="{
+            class="token-card"
+            :class="{
               active: selectedTokenId === gameToken.id,
             }"
             @click="selectToken(gameToken)"
@@ -237,7 +240,8 @@
                     :aria-label="`选择 ${gameToken.name} 批量进入游戏`"
                     @click.stop
                     @update:checked="
-                      (checked) => setMultiGameTokenSelected(gameToken.id, checked)
+                      (checked) =>
+                        setMultiGameTokenSelected(gameToken.id, checked)
                     "
                   />
                 </span>
@@ -283,7 +287,9 @@
             <template #default>
               <div class="token-display">
                 <span class="token-label">Token:</span>
-                <code class="token-value">{{ maskToken(gameToken.token) }}</code>
+                <code class="token-value">{{
+                  maskToken(gameToken.token)
+                }}</code>
               </div>
 
               <!-- 备注信息 -->
@@ -454,7 +460,8 @@
                     :aria-label="`选择 ${gameToken.name} 批量进入游戏`"
                     @click.stop
                     @update:checked="
-                      (checked) => setMultiGameTokenSelected(gameToken.id, checked)
+                      (checked) =>
+                        setMultiGameTokenSelected(gameToken.id, checked)
                     "
                   />
                 </span>
@@ -767,8 +774,7 @@ const props = defineProps({
   api: String,
   auto: Boolean,
 });
-const { getArrayBuffer, storeArrayBuffer, deleteArrayBuffer } =
-  useIndexedDB();
+const { getArrayBuffer, storeArrayBuffer, deleteArrayBuffer } = useIndexedDB();
 const router = useRouter();
 const message = useMessage();
 const dialog = useDialog();
@@ -782,7 +788,6 @@ const rateLimitMessage = ref("");
 const showImportForm = ref(false);
 const isImporting = ref(false);
 const showEditModal = ref(false);
-
 
 const editFormRef = ref(null);
 const editingToken = ref(null);
@@ -1527,7 +1532,7 @@ const refreshAllTokens = async () => {
           message.info(`${manualTokens.length} 个手动导入的Token需要手动刷新`);
         }
       } catch (error) {
-        message.error(`批量刷新过程中发生错误: ${  error.message}`);
+        message.error(`批量刷新过程中发生错误: ${error.message}`);
       }
     },
   });
@@ -1700,7 +1705,7 @@ const updateAllTokenInfo = async () => {
           );
         }
       } catch (error) {
-        message.error(`更新过程中发生错误: ${  error.message}`);
+        message.error(`更新过程中发生错误: ${error.message}`);
       }
     },
   });
@@ -1710,7 +1715,7 @@ const maskToken = (token) => {
   if (!token) return "";
   const len = token.length;
   if (len <= 8) return token;
-  return `${token.substring(0, 4)  }***${  token.substring(len - 4)}`;
+  return `${token.substring(0, 4)}***${token.substring(len - 4)}`;
 };
 
 const formatTime = (timestamp) => {
@@ -1759,7 +1764,7 @@ function xDecrypt(buf) {
   const e = new Uint8Array(buf);
   const t = extractKey(e);
   const out = new Uint8Array(e);
-  for (let n = out.length; --n >= 4; ) out[n] ^= t;
+  for (let n = out.length; --n >= 4;) out[n] ^= t;
   return out.subarray(4);
 }
 
@@ -1768,7 +1773,7 @@ function lxEncrypt(plain) {
   const out = new Uint8Array(compressed.length);
   out.set(compressed);
   const r = 2 + ~~(Math.random() * 248);
-  for (let n = Math.min(out.length, 100); --n >= 0; ) out[n] ^= r;
+  for (let n = Math.min(out.length, 100); --n >= 0;) out[n] ^= r;
   out[0] = 112; // 'p'
   out[1] = 108; // 'l'
   encodeKey(out, r);
@@ -1789,7 +1794,8 @@ function convertBinToLx(buf) {
 }
 
 async function openSelectedGames() {
-  if (selectedMultiGameTokens.value.length === 0 || isOpeningMultiGame.value) return;
+  if (selectedMultiGameTokens.value.length === 0 || isOpeningMultiGame.value)
+    return;
   const tokensToOpen = [...selectedMultiGameTokens.value];
   isOpeningMultiGame.value = true;
   try {
@@ -1834,7 +1840,7 @@ const openGame = async () => {
   const hex = Array.from(converted)
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
-  localStorage.setItem(`bin_data_${  token.id}`, hex);
+  localStorage.setItem(`bin_data_${token.id}`, hex);
   localStorage.setItem("current_bin_id", token.id);
   let binList = [];
   try {
@@ -1845,7 +1851,7 @@ const openGame = async () => {
       id: token.id,
       name: token.name || "Token",
       byteLength: binData.byteLength,
-      size: `${(binData.byteLength / 1024).toFixed(1)  } KB`,
+      size: `${(binData.byteLength / 1024).toFixed(1)} KB`,
       order: binList.length,
     });
     localStorage.setItem("bin_file_list", JSON.stringify(binList));

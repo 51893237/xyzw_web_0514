@@ -90,7 +90,11 @@
                 {{ merchantConfig[merchantId].name }}
               </div>
               <div class="items-list">
-                <div class="item" v-for="(item, itemIndex) in items" :key="itemIndex">
+                <div
+                  class="item"
+                  v-for="(item, itemIndex) in items"
+                  :key="itemIndex"
+                >
                   <div
                     class="item-name"
                     :style="{ color: getItemColor(parseInt(merchantId), item) }"
@@ -134,7 +138,7 @@ const tokenStore = useTokenStore();
 const message = useMessage();
 
 const iconPath = computed(
-  () => `${import.meta.env.BASE_URL  }174061875626614.png`,
+  () => `${import.meta.env.BASE_URL}174061875626614.png`,
 );
 
 // 状态管理
@@ -144,7 +148,6 @@ const isLoading = ref(false);
 const hasDefaultInfo = ref(false);
 const teamHeroes = ref([]);
 const continuousBattles = ref({});
-
 
 // 购买模块状态
 const merchantData = ref({ 1: [], 2: [], 3: [] });
@@ -516,7 +519,6 @@ async function buyItem(merchantId, index, pos) {
 }
 
 // 批量购买选中的商品
-
 
 // 一键购买所有金币商品
 async function buyAllGoldItems() {

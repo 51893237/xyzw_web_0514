@@ -42,7 +42,8 @@ const READ_MAX_RETRY = 1;
  * @param {number} [maxRetry] 200400 自动重试次数
  * @returns {Promise<*>} 命令响应
  */
-const sendApex = (action, task, maxRetry) => runApexAction(action, task, { maxRetry });
+const sendApex = (action, task, maxRetry) =>
+  runApexAction(action, task, { maxRetry });
 
 /**
  * 解析当前赛季「竞猜开放中」的阶段页签。
@@ -224,7 +225,10 @@ export function createTasksApex(deps) {
             if (!team0 || !team1) continue;
 
             // 两队都已竞猜则跳过
-            if (guessedTeamIds.has(team0.teamId) && guessedTeamIds.has(team1.teamId)) {
+            if (
+              guessedTeamIds.has(team0.teamId) &&
+              guessedTeamIds.has(team1.teamId)
+            ) {
               skipCount++;
               continue;
             }

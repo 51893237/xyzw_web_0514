@@ -51,7 +51,7 @@ const tokenStore = useTokenStore();
 const message = useMessage();
 
 const iconPath = computed(() => {
-  return `${import.meta.env.BASE_URL  }fish/hjyg.png`;
+  return `${import.meta.env.BASE_URL}fish/hjyg.png`;
 });
 
 const roleInfo = computed(() => tokenStore.gameData?.roleInfo || null);
@@ -106,29 +106,24 @@ const handleHelper = async () => {
     const batches = Math.floor(number.value / 10);
     const remainder = number.value % 10;
     for (let i = 0; i < batches; i++) {
-      await tokenStore.sendMessageWithPromise(
-        tokenId,
-        "artifact_lottery",
-        { type: type.value, lotteryNumber: 10, newFree: true },
-      );
+      await tokenStore.sendMessageWithPromise(tokenId, "artifact_lottery", {
+        type: type.value,
+        lotteryNumber: 10,
+        newFree: true,
+      });
     }
     if (remainder > 0) {
-      await tokenStore.sendMessageWithPromise(
-        tokenId,
-        "artifact_lottery",
-        {
-          type: type.value,
-          lotteryNumber: remainder,
-          newFree: true,
-        },
-      );
+      await tokenStore.sendMessageWithPromise(tokenId, "artifact_lottery", {
+        type: type.value,
+        lotteryNumber: remainder,
+        newFree: true,
+      });
     }
     await tokenStore.sendMessage(tokenId, "role_getroleinfo");
     // 更新活动进度
     tokenStore.sendMessage(tokenId, "activity_get");
     message.success("钓鱼完毕");
     state.value.isRunning = false;
-    
   }
 };
 </script>

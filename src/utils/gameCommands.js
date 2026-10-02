@@ -7,7 +7,6 @@ import { g_utils } from "./bonProtocol.js";
 
 // 生成随机数工具函数
 
-
 /**
  * 游戏命令构造器类
  * 每个命令方法返回标准的WebSocket消息格式

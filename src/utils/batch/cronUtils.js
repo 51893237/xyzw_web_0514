@@ -36,7 +36,7 @@ export const validateCronField = (field, min, max, fieldName) => {
     }
     const [range, stepStr] = parts;
     const step = Number.parseInt(stepStr);
-    if (Number.isNaN(+(step)) || step <= 0) {
+    if (Number.isNaN(+step) || step <= 0) {
       return { valid: false, message: `${fieldName}字段步长必须是正整数` };
     }
 
@@ -55,8 +55,8 @@ export const validateCronField = (field, min, max, fieldName) => {
       }
       const [start, end] = rangeParts.map(Number);
       if (
-        Number.isNaN(+(start)) ||
-        Number.isNaN(+(end)) ||
+        Number.isNaN(+start) ||
+        Number.isNaN(+end) ||
         start < min ||
         end > max ||
         start > end
@@ -70,7 +70,7 @@ export const validateCronField = (field, min, max, fieldName) => {
     } else {
       // 单个数字作为起始值
       const num = Number.parseInt(range);
-      if (Number.isNaN(+(num)) || num < min || num > max) {
+      if (Number.isNaN(+num) || num < min || num > max) {
         return {
           valid: false,
           message: `${fieldName}字段起始值必须在${min}-${max}之间`,
@@ -93,8 +93,8 @@ export const validateCronField = (field, min, max, fieldName) => {
     }
     const [start, end] = rangeParts.map(Number);
     if (
-      Number.isNaN(+(start)) ||
-      Number.isNaN(+(end)) ||
+      Number.isNaN(+start) ||
+      Number.isNaN(+end) ||
       start < min ||
       end > max ||
       start > end
@@ -118,7 +118,7 @@ export const validateCronField = (field, min, max, fieldName) => {
   if (field.endsWith("W")) {
     const dayStr = field.slice(0, -1);
     const day = Number.parseInt(dayStr);
-    if (Number.isNaN(+(day)) || day < min || day > max) {
+    if (Number.isNaN(+day) || day < min || day > max) {
       return {
         valid: false,
         message: `${fieldName}字段工作日格式错误`,
@@ -135,10 +135,10 @@ export const validateCronField = (field, min, max, fieldName) => {
     }
     const [dayOfWeek, nth] = parts.map(Number);
     if (
-      Number.isNaN(+(dayOfWeek)) ||
+      Number.isNaN(+dayOfWeek) ||
       dayOfWeek < 0 ||
       dayOfWeek > 7 ||
-      Number.isNaN(+(nth)) ||
+      Number.isNaN(+nth) ||
       nth < 1 ||
       nth > 5
     ) {
@@ -151,7 +151,7 @@ export const validateCronField = (field, min, max, fieldName) => {
   if (field.endsWith("L") && fieldName === "星期") {
     const dayStr = field.slice(0, -1);
     const day = Number.parseInt(dayStr);
-    if (Number.isNaN(+(day)) || day < 0 || day > 7) {
+    if (Number.isNaN(+day) || day < 0 || day > 7) {
       return {
         valid: false,
         message: `${fieldName}字段格式错误`,
@@ -161,7 +161,7 @@ export const validateCronField = (field, min, max, fieldName) => {
   }
 
   const num = Number.parseInt(field);
-  if (Number.isNaN(+(num)) || num < min || num > max) {
+  if (Number.isNaN(+num) || num < min || num > max) {
     return {
       valid: false,
       message: `${fieldName}字段必须在${min}-${max}之间`,
@@ -309,7 +309,7 @@ export const parseCronField = (field, min, max) => {
 
   // 处理单个数字
   const num = Number.parseInt(field);
-  if (!Number.isNaN(+(num))) {
+  if (!Number.isNaN(+num)) {
     values.add(num);
   }
   return Array.from(values);
@@ -325,7 +325,7 @@ export const parseCronField = (field, min, max) => {
 const getNearestWeekday = (year, month, targetDay) => {
   const lastDayOfMonth = new Date(year, month, 0).getDate();
   const day = Math.min(targetDay, lastDayOfMonth);
-  
+
   const date = new Date(year, month - 1, day);
   const dayOfWeek = date.getDay();
 
@@ -333,9 +333,9 @@ const getNearestWeekday = (year, month, targetDay) => {
   if (dayOfWeek === 6) {
     if (day > 1) return day - 1;
     // 如果是1号周六，只能往后推到3号周一
-    return day + 2; 
+    return day + 2;
   }
-  
+
   // 如果是周日 (0)，尝试后一天 (周一)
   if (dayOfWeek === 0) {
     if (day < lastDayOfMonth) return day + 1;
@@ -355,9 +355,13 @@ const getNearestWeekday = (year, month, targetDay) => {
 const matchesWeekday = (date, field) => {
   if (!field.endsWith("W")) return false;
   const targetDay = Number.parseInt(field.slice(0, -1));
-  if (Number.isNaN(+(targetDay))) return false;
+  if (Number.isNaN(+targetDay)) return false;
 
-  const nearestWeekday = getNearestWeekday(date.getFullYear(), date.getMonth() + 1, targetDay);
+  const nearestWeekday = getNearestWeekday(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    targetDay,
+  );
   return date.getDate() === nearestWeekday;
 };
 
@@ -370,19 +374,19 @@ const matchesWeekday = (date, field) => {
 const matchesNthWeekday = (date, field) => {
   if (!field.includes("#")) return false;
   const [targetDayOfWeek, nth] = field.split("#").map(Number);
-  
+
   // 检查是否是目标周几
   const currentDayOfWeek = date.getDay();
   // 0和7都表示周日
   const normalizedTarget = targetDayOfWeek === 7 ? 0 : targetDayOfWeek;
   const normalizedCurrent = currentDayOfWeek === 7 ? 0 : currentDayOfWeek;
-  
+
   if (normalizedCurrent !== normalizedTarget) return false;
 
   // 计算当前是第几个
   const day = date.getDate();
   const currentNth = Math.ceil(day / 7);
-  
+
   return currentNth === nth;
 };
 
@@ -395,18 +399,18 @@ const matchesNthWeekday = (date, field) => {
 const matchesLastWeekday = (date, field) => {
   if (!field.endsWith("L")) return false;
   const targetDayOfWeek = Number.parseInt(field.slice(0, -1));
-  
+
   // 检查是否是目标周几
   const currentDayOfWeek = date.getDay();
   const normalizedTarget = targetDayOfWeek === 7 ? 0 : targetDayOfWeek;
   const normalizedCurrent = currentDayOfWeek === 7 ? 0 : currentDayOfWeek;
-  
+
   if (normalizedCurrent !== normalizedTarget) return false;
 
   // 检查是否是最后一个
   const nextWeekDate = new Date(date);
   nextWeekDate.setDate(date.getDate() + 7);
-  
+
   // 如果下周同日期的月份不同，说明当前是当月最后一个
   return nextWeekDate.getMonth() !== date.getMonth();
 };
@@ -427,7 +431,7 @@ export const calculateNextRuns = (
   dayOfMonthField,
   monthField,
   dayOfWeekField,
-  count = 5
+  count = 5,
 ) => {
   const now = new Date();
   const nextRuns = [];
@@ -453,17 +457,21 @@ export const calculateNextRuns = (
     const matchesHour = possibleHours.includes(current.getHours());
     const matchesMonth = possibleMonths.includes(current.getMonth() + 1); // months are 0-based in JS
     // const matchesDayOfWeek = possibleDaysOfWeek.includes(current.getDay()); // 0 is Sunday
-    
+
     // Check day of month (including 'L' and 'W' logic)
     let matchesDayOfMonth = possibleDaysOfMonth.includes(current.getDate());
-    
+
     // Check 'L'
     if (!matchesDayOfMonth && dayOfMonthField.includes("L")) {
-      const lastDay = new Date(current.getFullYear(), current.getMonth() + 1, 0).getDate();
+      const lastDay = new Date(
+        current.getFullYear(),
+        current.getMonth() + 1,
+        0,
+      ).getDate();
       if (dayOfMonthField === "L") {
-        matchesDayOfMonth = (current.getDate() === lastDay);
+        matchesDayOfMonth = current.getDate() === lastDay;
       } else if (dayOfMonthField.split(",").includes("L")) {
-        matchesDayOfMonth = (current.getDate() === lastDay);
+        matchesDayOfMonth = current.getDate() === lastDay;
       }
     }
 
@@ -474,13 +482,16 @@ export const calculateNextRuns = (
         matchesDayOfMonth = matchesWeekday(current, dayOfMonthField);
       } else {
         // List with 'W' (e.g. "15W,20W")
-        const wFields = dayOfMonthField.split(",").map(f => f.trim()).filter(f => f.endsWith("W"));
+        const wFields = dayOfMonthField
+          .split(",")
+          .map((f) => f.trim())
+          .filter((f) => f.endsWith("W"));
         if (wFields.length > 0) {
-          matchesDayOfMonth = wFields.some(f => matchesWeekday(current, f));
+          matchesDayOfMonth = wFields.some((f) => matchesWeekday(current, f));
         }
       }
     }
-    
+
     // Check '?' for dayOfMonth (treated as match all)
     if (!matchesDayOfMonth && dayOfMonthField === "?") {
       matchesDayOfMonth = true;
@@ -488,12 +499,12 @@ export const calculateNextRuns = (
 
     // Check day of week (including '#', 'L' logic)
     let matchesDayOfWeek = possibleDaysOfWeek.includes(current.getDay());
-    
+
     // Check '#'
     if (!matchesDayOfWeek && dayOfWeekField.includes("#")) {
-       matchesDayOfWeek = matchesNthWeekday(current, dayOfWeekField);
+      matchesDayOfWeek = matchesNthWeekday(current, dayOfWeekField);
     }
-    
+
     // Check 'L' for dayOfWeek
     if (!matchesDayOfWeek && dayOfWeekField.includes("L")) {
       if (dayOfWeekField.endsWith("L")) {
@@ -507,8 +518,10 @@ export const calculateNextRuns = (
     }
 
     // Special handling: if both dayOfMonth and dayOfWeek are specified, they are OR'ed
-    const isDayOfWeekSpecified = dayOfWeekField !== "*" && dayOfWeekField !== "?";
-    const isDayOfMonthSpecified = dayOfMonthField !== "*" && dayOfMonthField !== "?";
+    const isDayOfWeekSpecified =
+      dayOfWeekField !== "*" && dayOfWeekField !== "?";
+    const isDayOfMonthSpecified =
+      dayOfMonthField !== "*" && dayOfMonthField !== "?";
 
     let matchesDay;
     if (isDayOfWeekSpecified && isDayOfMonthSpecified) {
@@ -606,27 +619,34 @@ export const calculateNextExecutionTime = (task) => {
 
       let matchesDayOfMonth = possibleDaysOfMonth.includes(dayOfMonth);
       if (!matchesDayOfMonth && dayOfMonthField.includes("L")) {
-        const lastDay = new Date(nextRun.getFullYear(), nextRun.getMonth() + 1, 0).getDate();
+        const lastDay = new Date(
+          nextRun.getFullYear(),
+          nextRun.getMonth() + 1,
+          0,
+        ).getDate();
         if (dayOfMonthField === "L") {
-          matchesDayOfMonth = (dayOfMonth === lastDay);
+          matchesDayOfMonth = dayOfMonth === lastDay;
         } else if (dayOfMonthField.split(",").includes("L")) {
-          matchesDayOfMonth = (dayOfMonth === lastDay);
+          matchesDayOfMonth = dayOfMonth === lastDay;
         }
       }
 
       // Check 'W'
-    if (!matchesDayOfMonth && dayOfMonthField.includes("W")) {
-      if (dayOfMonthField.endsWith("W")) {
-        // Single 'W' field (e.g. "15W")
-        matchesDayOfMonth = matchesWeekday(nextRun, dayOfMonthField);
-      } else {
-        // List with 'W' (e.g. "15W,20W")
-        const wFields = dayOfMonthField.split(",").map(f => f.trim()).filter(f => f.endsWith("W"));
-        if (wFields.length > 0) {
-          matchesDayOfMonth = wFields.some(f => matchesWeekday(nextRun, f));
+      if (!matchesDayOfMonth && dayOfMonthField.includes("W")) {
+        if (dayOfMonthField.endsWith("W")) {
+          // Single 'W' field (e.g. "15W")
+          matchesDayOfMonth = matchesWeekday(nextRun, dayOfMonthField);
+        } else {
+          // List with 'W' (e.g. "15W,20W")
+          const wFields = dayOfMonthField
+            .split(",")
+            .map((f) => f.trim())
+            .filter((f) => f.endsWith("W"));
+          if (wFields.length > 0) {
+            matchesDayOfMonth = wFields.some((f) => matchesWeekday(nextRun, f));
+          }
         }
       }
-    }
 
       // Check '?' for dayOfMonth (treated as match all)
       if (!matchesDayOfMonth && dayOfMonthField === "?") {
@@ -653,8 +673,10 @@ export const calculateNextExecutionTime = (task) => {
       }
 
       // Special handling: if both dayOfMonth and dayOfWeek are specified, they are OR'ed
-      const isDayOfWeekSpecified = dayOfWeekField !== "*" && dayOfWeekField !== "?";
-      const isDayOfMonthSpecified = dayOfMonthField !== "*" && dayOfMonthField !== "?";
+      const isDayOfWeekSpecified =
+        dayOfWeekField !== "*" && dayOfWeekField !== "?";
+      const isDayOfMonthSpecified =
+        dayOfMonthField !== "*" && dayOfMonthField !== "?";
 
       let matchesDay;
       if (isDayOfWeekSpecified && isDayOfMonthSpecified) {
@@ -730,11 +752,15 @@ export const matchesCronExpression = (cronExpression, now = new Date()) => {
 
   let matchesDayOfMonth = possibleDaysOfMonth.includes(now.getDate());
   if (!matchesDayOfMonth && dayOfMonthField.includes("L")) {
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const lastDay = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+    ).getDate();
     if (dayOfMonthField === "L") {
-      matchesDayOfMonth = (now.getDate() === lastDay);
+      matchesDayOfMonth = now.getDate() === lastDay;
     } else if (dayOfMonthField.split(",").includes("L")) {
-      matchesDayOfMonth = (now.getDate() === lastDay);
+      matchesDayOfMonth = now.getDate() === lastDay;
     }
   }
 
@@ -743,13 +769,13 @@ export const matchesCronExpression = (cronExpression, now = new Date()) => {
     if (dayOfMonthField.endsWith("W")) {
       // Single 'W' field (e.g. "15W")
       matchesDayOfMonth = matchesWeekday(now, dayOfMonthField);
-    } else if (dayOfMonthField.split(",").some(f => f.endsWith("W"))) {
+    } else if (dayOfMonthField.split(",").some((f) => f.endsWith("W"))) {
       // List with 'W' (e.g. "15W,20W")
-      const wFields = dayOfMonthField.split(",").filter(f => f.endsWith("W"));
-      matchesDayOfMonth = wFields.some(f => matchesWeekday(now, f));
+      const wFields = dayOfMonthField.split(",").filter((f) => f.endsWith("W"));
+      matchesDayOfMonth = wFields.some((f) => matchesWeekday(now, f));
     }
   }
-  
+
   // Check '?' for dayOfMonth (treated as match all)
   if (!matchesDayOfMonth && dayOfMonthField === "?") {
     matchesDayOfMonth = true;
@@ -759,9 +785,9 @@ export const matchesCronExpression = (cronExpression, now = new Date()) => {
 
   // Check '#'
   if (!matchesDayOfWeek && dayOfWeekField.includes("#")) {
-     matchesDayOfWeek = matchesNthWeekday(now, dayOfWeekField);
+    matchesDayOfWeek = matchesNthWeekday(now, dayOfWeekField);
   }
-  
+
   // Check 'L' for dayOfWeek
   if (!matchesDayOfWeek && dayOfWeekField.includes("L")) {
     if (dayOfWeekField.endsWith("L")) {
@@ -775,7 +801,8 @@ export const matchesCronExpression = (cronExpression, now = new Date()) => {
   }
 
   const isDayOfWeekSpecified = dayOfWeekField !== "*" && dayOfWeekField !== "?";
-  const isDayOfMonthSpecified = dayOfMonthField !== "*" && dayOfMonthField !== "?";
+  const isDayOfMonthSpecified =
+    dayOfMonthField !== "*" && dayOfMonthField !== "?";
 
   let matchesDay;
   if (isDayOfWeekSpecified && isDayOfMonthSpecified) {

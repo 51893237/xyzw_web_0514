@@ -1,13 +1,29 @@
 <template>
   <!-- 手动输入表单 -->
-  <NForm :model="importForm" label-placement="top" size="large" :show-label="true">
+  <NForm
+    :model="importForm"
+    label-placement="top"
+    size="large"
+    :show-label="true"
+  >
     <NFormItem label="游戏角色名称" :show-label="true">
-      <NInput v-model:value="importForm.name" placeholder="例如：主号战士" clearable />
+      <NInput
+        v-model:value="importForm.name"
+        placeholder="例如：主号战士"
+        clearable
+      />
     </NFormItem>
 
     <NFormItem label="bin文件" :show-label="true">
-      <a-upload multiple accept="*.bin,*.dmp" @before-upload="uploadBin" draggable dropzone placeholder="粘贴Token字符串..."
-        clearable>
+      <a-upload
+        multiple
+        accept="*.bin,*.dmp"
+        @before-upload="uploadBin"
+        draggable
+        dropzone
+        placeholder="粘贴Token字符串..."
+        clearable
+      >
         <!-- <div class="dropzone-content">
           请点击上传或将bind文件拖拽到此处
         </div> -->
@@ -18,7 +34,8 @@
         <div>
           <strong>角色名称:</strong> {{ role.name || "未命名角色" }}<br />
           <strong>Token:</strong>
-          <span style="word-break: break-all">{{ role.token }}</span><br />
+          <span style="word-break: break-all">{{ role.token }}</span
+          ><br />
           <strong>服务器:</strong> {{ role.server || "未指定" }}
         </div>
       </a-list-item>
@@ -29,18 +46,30 @@
       <NCollapseItem title="角色详情 (可选)" name="optional">
         <div class="optional-fields">
           <NFormItem label="服务器">
-            <NInput v-model:value="importForm.server" placeholder="服务器名称" />
+            <NInput
+              v-model:value="importForm.server"
+              placeholder="服务器名称"
+            />
           </NFormItem>
 
           <NFormItem label="自定义连接地址">
-            <NInput v-model:value="importForm.wsUrl" placeholder="留空使用默认连接" />
+            <NInput
+              v-model:value="importForm.wsUrl"
+              placeholder="留空使用默认连接"
+            />
           </NFormItem>
         </div>
       </NCollapseItem>
     </NCollapse>
 
     <div class="form-actions">
-      <NButton type="primary" size="large" block :loading="isImporting" @click="handleImport">
+      <NButton
+        type="primary"
+        size="large"
+        block
+        :loading="isImporting"
+        @click="handleImport"
+      >
         <template #icon>
           <NIcon>
             <CloudUpload />
@@ -146,16 +175,14 @@ const uploadBin = (binFile: File) => {
         message.error("保存BIN数据到IndexedDB失败");
         return;
       }
-      
+
       // 上传列表中发现已存在的重复名称，提示消息
       if (roleList.value.some((role) => role.id === tokenId)) {
         message.error("上传列表中已存在同名角色! ");
         return;
       }
       // 检查待上传的角色是否已在tokenStore中存在
-      const existingToken = tokenStore.gameTokens.find(
-        (t) => t.id === tokenId,
-      );
+      const existingToken = tokenStore.gameTokens.find((t) => t.id === tokenId);
       if (existingToken) {
         message.warning(`角色"${roleName}"已存在，将更新该角色的Token`);
       }
@@ -164,7 +191,7 @@ const uploadBin = (binFile: File) => {
         id: tokenId,
         token: roleToken,
         name: roleName,
-        server: `${roleMeta.server  }${  roleMeta.roleIndex}` || "",
+        server: `${roleMeta.server}${roleMeta.roleIndex}` || "",
         wsUrl: importForm.wsUrl || "",
         importMethod: "bin",
       });

@@ -164,7 +164,7 @@ const maskToken = (token) => {
   if (!token) return "";
   const len = token.length;
   if (len <= 8) return token;
-  return `${token.substring(0, 8)  }***${  token.substring(len - 8)}`;
+  return `${token.substring(0, 8)}***${token.substring(len - 8)}`;
 };
 
 const formatTime = (timestamp) => {
@@ -489,7 +489,7 @@ const refreshTokenFromUrl = async (roleId, tokenData) => {
         message.success("Token刷新成功");
       } catch (error) {
         console.error("URL刷新Token失败:", error);
-        message.error(`刷新失败: ${  error.message}`);
+        message.error(`刷新失败: ${error.message}`);
       }
     },
   });
@@ -508,7 +508,7 @@ const exportTokens = () => {
 
     message.success("Token数据已导出");
   } catch (error) {
-    message.error(`导出失败: ${  error.message}`);
+    message.error(`导出失败: ${error.message}`);
   }
 };
 

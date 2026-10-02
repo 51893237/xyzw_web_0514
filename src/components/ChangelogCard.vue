@@ -79,7 +79,6 @@
 </template>
 
 <script setup>
-
 defineProps({
   entry: {
     type: Object,

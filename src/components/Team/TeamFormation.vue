@@ -15,7 +15,8 @@
           v-for="teamId in availableTeams"
           :key="teamId"
           :disabled="loading || switching"
-          class="team-button" :class="[{ active: currentTeam === teamId }]"
+          class="team-button"
+          :class="[{ active: currentTeam === teamId }]"
           @click="selectTeam(teamId)"
         >
           {{ teamId }}
@@ -122,8 +123,6 @@ const loading = ref(false);
 const switching = ref(false);
 const currentTeam = ref(1);
 const availableTeams = ref<number[]>([1, 2, 3, 4]);
-
-
 
 const wsStatus = computed(() => {
   if (!tokenStore.selectedToken) return "disconnected";

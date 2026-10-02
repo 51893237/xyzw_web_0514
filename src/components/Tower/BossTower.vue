@@ -55,7 +55,11 @@ const extendbosstower = async () => {
   const tokenId = tokenStore.selectedToken.id;
   state.value.isRunning = true;
   if (!isSameGameValue(dayOfWeek, 1) && !isSameGameValue(dayOfWeek, 2)) {
-    if (currentTower.value === 1 || currentTower.value === 2 || currentTower.value === 3) {
+    if (
+      currentTower.value === 1 ||
+      currentTower.value === 2 ||
+      currentTower.value === 3
+    ) {
       try {
         state.value.isExtending = true;
         message.info("正在战斗...");
@@ -73,7 +77,7 @@ const extendbosstower = async () => {
         );
         message.success("战斗已完成，请上线手动领取奖励");
       } catch (e) {
-        message.error(`战斗失败: ${  e?.message || "未知错误"}`);
+        message.error(`战斗失败: ${e?.message || "未知错误"}`);
       }
     } else if (currentTower.value === 4 || currentTower.value === 5) {
       try {
@@ -90,7 +94,7 @@ const extendbosstower = async () => {
         );
         message.success("战斗已完成");
       } catch (e) {
-        message.error(`战斗失败: ${  e?.message || "未知错误"}`);
+        message.error(`战斗失败: ${e?.message || "未知错误"}`);
       }
     } else {
       message.error("当前层数暂不支持");

@@ -297,7 +297,7 @@ export const HeroFillInfo = (obj) => {
   if (obj && obj.heroes && typeof obj.heroes === "object") {
     Object.values(obj.heroes).forEach((hero) => {
       temp[hero.artifactId] = {
-        FishInfo: FishMap[(`${hero.artifactId  }`).substring(0, 4)],
+        FishInfo: FishMap[`${hero.artifactId}`.substring(0, 4)],
         artifactId: hero.artifactId,
       };
       // 获取鱼珠技能信息，先检查 appendSkill 是否存在

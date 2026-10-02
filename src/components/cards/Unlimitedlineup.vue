@@ -71,8 +71,8 @@
           </h4>
           <div class="heroes-grid">
             <div
-              v-for="(hero) in editingHeroes"
-              :key="`${hero.heroId  }-${  hero.position}`"
+              v-for="hero in editingHeroes"
+              :key="`${hero.heroId}-${hero.position}`"
               class="hero-item"
               :class="{
                 dragging: draggedHeroId === hero.heroId,
@@ -210,7 +210,9 @@
           </div>
           <div class="lineups-list">
             <div
-              v-for="(lineup, lineupIndex) in getLineupsByTeamId(selectedTeamTab)"
+              v-for="(lineup, lineupIndex) in getLineupsByTeamId(
+                selectedTeamTab,
+              )"
               :key="lineupIndex"
               class="lineup-card"
             >
@@ -606,10 +608,10 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
@@ -698,8 +700,6 @@ const syncLegionResearch = async (tokenId, targetResearch) => {
   if (typesToResetResearch.size === 0 && typesToReset.size === 0) {
     return { success: true, message: "科技配置已匹配，无需调整" };
   }
-
-  
 
   for (const type of typesToResetResearch) {
     try {
@@ -824,8 +824,6 @@ const getFishInfo = (artifactId) => {
   }
   return null;
 };
-
-
 
 const getFishNameById = (fishId) => {
   if (!fishId) return null;
@@ -995,8 +993,6 @@ const toggleLineupExpand = (lineup) => {
     expandedLineup.value = lineup;
   }
 };
-
-
 
 const getHeroName = (heroId) => {
   if (!heroId) return null;
@@ -1756,8 +1752,6 @@ const applyLineup = async (lineup) => {
       artifactBooks: artifactBooksData,
     };
   };
-
-  
 
   try {
     const targetHeroes = [...lineup.heroes];

@@ -37,7 +37,7 @@
         <div class="progress-bar">
           <div
             class="progress-fill"
-            :style="{ width: `${progressPercentage  }%` }"
+            :style="{ width: `${progressPercentage}%` }"
             :class="rankInfo.class"
           ></div>
         </div>

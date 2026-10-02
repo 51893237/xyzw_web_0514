@@ -249,7 +249,10 @@
                 :y-gap="8"
                 :cols="batchSettings.tokenListColumns"
               >
-                <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
+                <n-grid-item
+                  v-for="gameToken in sortedTokens"
+                  :key="gameToken.id"
+                >
                   <div class="token-row">
                     <n-checkbox
                       :value="gameToken.id"
@@ -267,7 +270,9 @@
                         </n-tag>
                         <!-- 显示token所属的分组 -->
                         <div
-                          v-if="tokenStore.getTokenGroups(gameToken.id).length > 0"
+                          v-if="
+                            tokenStore.getTokenGroups(gameToken.id).length > 0
+                          "
                           style="
                             margin-left: 8px;
                             display: inline-flex;
@@ -276,7 +281,9 @@
                           "
                         >
                           <n-tag
-                            v-for="group in tokenStore.getTokenGroups(gameToken.id)"
+                            v-for="group in tokenStore.getTokenGroups(
+                              gameToken.id,
+                            )"
                             :key="group.id"
                             size="small"
                             :color="{ color: group.color, textColor: 'white' }"
@@ -464,7 +471,7 @@
                   "
                 >
                   一键购买梦境商品
-                </n-button>              
+                </n-button>
                 <n-popselect
                   :value="footballPick"
                   :options="footballPickOptions"
@@ -1010,8 +1017,13 @@
               style="margin-top: 8px"
             >
               <n-grid :cols="2" :x-gap="12" :y-gap="8">
-                <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
-                  <n-checkbox :value="gameToken.id">{{ gameToken.name }}</n-checkbox>
+                <n-grid-item
+                  v-for="gameToken in sortedTokens"
+                  :key="gameToken.id"
+                >
+                  <n-checkbox :value="gameToken.id">{{
+                    gameToken.name
+                  }}</n-checkbox>
                 </n-grid-item>
               </n-grid>
             </n-checkbox-group>
@@ -1641,7 +1653,10 @@
               {{ merchant.name }}
             </div>
             <n-grid :cols="3" :x-gap="12" :y-gap="8">
-              <n-grid-item v-for="(item, itemIndex) in merchant.items" :key="itemIndex">
+              <n-grid-item
+                v-for="(item, itemIndex) in merchant.items"
+                :key="itemIndex"
+              >
                 <n-checkbox
                   :value="`${id}-${itemIndex}`"
                   :checked="dreamBuyList.includes(`${id}-${itemIndex}`)"
@@ -1678,11 +1693,16 @@
       <div class="settings-content">
         <n-alert type="info" show-icon style="margin-bottom: 12px">
           这里保存的是要下发到游戏服务器的黑市采购清单。每条填写 `itemId`
-          和折扣，折扣范围 1-10；保存后需手动执行“一键配置黑市清单”才会真正写入服务器。
+          和折扣，折扣范围
+          1-10；保存后需手动执行“一键配置黑市清单”才会真正写入服务器。
         </n-alert>
 
         <div style="display: flex; gap: 12px; margin-bottom: 12px">
-          <n-button size="small" type="primary" @click="addBlackMarketPurchaseItem">
+          <n-button
+            size="small"
+            type="primary"
+            @click="addBlackMarketPurchaseItem"
+          >
             新增条目
           </n-button>
           <n-button size="small" @click="resetBlackMarketPurchaseList">
@@ -1691,7 +1711,8 @@
         </div>
 
         <n-alert type="warning" show-icon style="margin-bottom: 12px">
-          优先从下拉框选择常用物品，系统会自动填入 `itemId`、备注和推荐折扣；如果下拉里没有，再手动填写 `itemId`。
+          优先从下拉框选择常用物品，系统会自动填入
+          `itemId`、备注和推荐折扣；如果下拉里没有，再手动填写 `itemId`。
         </n-alert>
 
         <div
@@ -1711,7 +1732,9 @@
             placeholder="选择常用物品"
             clearable
             filterable
-            @update:value="(value) => applyBlackMarketCatalogItem(itemIndex, value)"
+            @update:value="
+              (value) => applyBlackMarketCatalogItem(itemIndex, value)
+            "
           />
           <n-input-number
             v-model:value="item.itemId"
@@ -1726,7 +1749,11 @@
             :max="10"
           />
           <n-input v-model:value="item.note" placeholder="备注（可选）" />
-          <n-button type="error" secondary @click="removeBlackMarketPurchaseItem(itemIndex)">
+          <n-button
+            type="error"
+            secondary
+            @click="removeBlackMarketPurchaseItem(itemIndex)"
+          >
             删除
           </n-button>
         </div>
@@ -1996,8 +2023,13 @@
 
             <n-checkbox-group v-model:value="taskForm.selectedTokens">
               <n-grid :cols="2" :x-gap="12" :y-gap="8">
-                <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
-                  <n-checkbox :value="gameToken.id">{{ gameToken.name }}</n-checkbox>
+                <n-grid-item
+                  v-for="gameToken in sortedTokens"
+                  :key="gameToken.id"
+                >
+                  <n-checkbox :value="gameToken.id">{{
+                    gameToken.name
+                  }}</n-checkbox>
                 </n-grid-item>
               </n-grid>
             </n-checkbox-group>
@@ -2688,7 +2720,9 @@
                 </div>
                 <n-tag type="info">ID: {{ applyLegionPreview.id }}</n-tag>
               </div>
-              <div style="display: flex; gap: 16px; flex-wrap: wrap; color: #666">
+              <div
+                style="display: flex; gap: 16px; flex-wrap: wrap; color: #666"
+              >
                 <span>等级: {{ applyLegionPreview.level || 0 }}</span>
                 <span>成员数: {{ applyLegionPreview.memberCount || 0 }}</span>
                 <span v-if="applyLegionPreview.chairmanName">
@@ -2796,8 +2830,13 @@
             <div style="max-height: 150px; overflow-y: auto">
               <n-checkbox-group v-model:value="newGroupSelectedTokens">
                 <n-grid :cols="3" :x-gap="12" :y-gap="8">
-                  <n-grid-item v-for="gameToken in sortedTokens" :key="gameToken.id">
-                    <n-checkbox :value="gameToken.id">{{ gameToken.name }}</n-checkbox>
+                  <n-grid-item
+                    v-for="gameToken in sortedTokens"
+                    :key="gameToken.id"
+                  >
+                    <n-checkbox :value="gameToken.id">{{
+                      gameToken.name
+                    }}</n-checkbox>
                   </n-grid-item>
                 </n-grid>
               </n-checkbox-group>
@@ -3083,13 +3122,6 @@ const sortConfig = ref(
 
 // 计算属性 - 从gameData中获取塔相关信息
 
-
-
-
-
-
-
-
 // 排序后的游戏角色Token列表
 const sortedTokens = computed(() => {
   return [...tokenStore.gameTokens].sort((tokenA, tokenB) => {
@@ -3293,14 +3325,13 @@ const warGuessLoading = ref(false);
 const warGuessCoin = ref(20);
 const selectedWarGuessLegionId = ref(null);
 
-
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
@@ -3414,7 +3445,7 @@ const fetchWarGuessRank = async () => {
     }
   } catch (error) {
     console.error("Fetch rank error:", error);
-    message.error(`获取月赛助威数据失败: ${  error.message}`);
+    message.error(`获取月赛助威数据失败: ${error.message}`);
     addLog({
       time: new Date().toLocaleTimeString(),
       message: `获取月赛助威数据失败: ${error.message}`,
@@ -3827,7 +3858,6 @@ const groupedAvailableTasks = computed(() => {
 const cronValidation = ref({ valid: true, message: "" });
 const cronNextRuns = ref([]);
 
-
 // ======================
 // Scheduled Tasks Storage
 // ======================
@@ -4030,7 +4060,7 @@ const saveTask = () => {
   }
 
   const taskData = {
-    id: editingTask.value?.id || `task_${  Date.now()}`,
+    id: editingTask.value?.id || `task_${Date.now()}`,
     name: taskForm.name,
     runType: taskForm.runType,
     runTime: formattedRunTime,
@@ -4216,7 +4246,7 @@ const exportConfig = () => {
     );
   } catch (error) {
     console.error("Export failed:", error);
-    message.error(`导出失败: ${  error.message}`);
+    message.error(`导出失败: ${error.message}`);
   }
 };
 
@@ -4253,7 +4283,7 @@ const importConfig = async ({ file }) => {
               gameTokens.value.push({
                 id:
                   token.id ||
-                  `token_${  Date.now()  }${Math.random().toString(36).slice(2)}`,
+                  `token_${Date.now()}${Math.random().toString(36).slice(2)}`,
                 name: token.name || "",
                 token: token.token,
                 server: token.server || "",
@@ -4320,7 +4350,7 @@ const importConfig = async ({ file }) => {
     reader.readAsText(file.file);
   } catch (error) {
     console.error("Import failed:", error);
-    message.error(`导入失败: ${  error.message}`);
+    message.error(`导入失败: ${error.message}`);
   }
 };
 
@@ -4512,7 +4542,6 @@ const startScheduler = () => {
 
       tasksToRun.forEach((task) => {
         let shouldRun = false;
-        
 
         if (task.runType === "daily") {
           // Check if current time matches the scheduled time
@@ -4523,7 +4552,6 @@ const startScheduler = () => {
             minute: "2-digit",
           });
           shouldRun = nowTime === taskTime;
-          
         } else if (task.runType === "cron") {
           // Improved cron expression parsing using shared utility
           try {
@@ -4866,7 +4894,6 @@ const executeScheduledTask = async (task) => {
         return;
       }
 
-
       if (
         ["batchTopUpArena", "batcharenafight"].includes(taskName) &&
         !isarenaActivityOpen.value
@@ -4963,8 +4990,6 @@ const openHelperModal = (type) => {
 const clearRecipientError = () => {
   recipientIdError.value = "";
 };
-
-
 
 // 头像处理方法
 const handleAvatarLoad = () => {
@@ -5375,7 +5400,6 @@ const saveSettings = () => {
 };
 
 // Task Template Functions
-
 
 const loadTaskTemplates = () => {
   const templates = localStorage.getItem("task-templates");
@@ -5843,7 +5867,6 @@ const getValidGroupTokenIds = (groupId) => {
  * 获取分组中的token列表
  */
 
-
 // 注: pickArenaTargetId, FISH_TARGET, ARENA_TARGET, getTodayStartSec, isTodayAvailable, calculateMonthProgress 已从 @/utils/batch 导入
 
 const addLog = (log) => {
@@ -5907,7 +5930,7 @@ const copyLogs = () => {
       message.success("日志已复制到剪贴板");
     })
     .catch((err) => {
-      message.error(`复制日志失败: ${  err.message}`);
+      message.error(`复制日志失败: ${err.message}`);
     });
 };
 
@@ -6108,7 +6131,6 @@ const {
   batchMergeItems,
 } = tasksTower;
 
-
 const tasksItem = createTasksItem(createTaskDeps());
 const {
   batchOpenBox,
@@ -6150,7 +6172,8 @@ const tasksApex = createTasksApex(createTaskDeps());
 const { batchApexGuess } = tasksApex;
 
 const tasksCampChallenge = createTasksCampChallenge(createTaskDeps());
-const { batchCampChallenge, batchCampChallengePet, batchCampClaimTasks } = tasksCampChallenge;
+const { batchCampChallenge, batchCampChallengePet, batchCampClaimTasks } =
+  tasksCampChallenge;
 const tasksXuanwuBlessing = createTasksXuanwuBlessing(createTaskDeps());
 const { batchXuanwuBlessing } = tasksXuanwuBlessing;
 
@@ -6162,7 +6185,10 @@ const campChallengeModeOptions = [
   { label: "领取任务奖励", value: "claim" },
 ];
 const campChallengeModeLabel = computed(() => {
-  return campChallengeModeOptions.find((o) => o.value === campChallengeMode.value)?.label || "";
+  return (
+    campChallengeModeOptions.find((o) => o.value === campChallengeMode.value)
+      ?.label || ""
+  );
 });
 const onCampChallengeModeChange = async (val) => {
   campChallengeMode.value = val;
@@ -6183,7 +6209,9 @@ const footballPickOptions = [
   { label: "客胜", value: 3 },
 ];
 const footballPickLabel = computed(() => {
-  return footballPickOptions.find((o) => o.value === footballPick.value)?.label || "";
+  return (
+    footballPickOptions.find((o) => o.value === footballPick.value)?.label || ""
+  );
 });
 const onFootballPickChange = async (val) => {
   footballPick.value = val;

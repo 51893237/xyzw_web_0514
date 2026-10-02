@@ -20,24 +20,38 @@
           <div class="stat-item">
             <span class="stat-label">查询日期:</span>
             <div class="stat-date-dropdown">
-              <n-tag type="info" class="stat-date-tag" @click="toggleStatCalendar">
+              <n-tag
+                type="info"
+                class="stat-date-tag"
+                @click="toggleStatCalendar"
+              >
                 {{ formatTimestamp1(inputDate1) }}
               </n-tag>
               <div v-if="statCalendarOpen" class="stat-calendar-panel">
                 <div class="stat-calendar-header">
-                  <button type="button" @click="changeStatCalendarMonth(-1)">&lt;</button>
+                  <button type="button" @click="changeStatCalendarMonth(-1)">
+                    &lt;
+                  </button>
                   <span>{{ statCalendarTitle }}</span>
-                  <button type="button" @click="changeStatCalendarMonth(1)">&gt;</button>
+                  <button type="button" @click="changeStatCalendarMonth(1)">
+                    &gt;
+                  </button>
                 </div>
                 <div class="stat-calendar-weekdays">
-                  <span v-for="day in statCalendarWeekdays" :key="day">{{ day }}</span>
+                  <span v-for="day in statCalendarWeekdays" :key="day">{{
+                    day
+                  }}</span>
                 </div>
                 <div class="stat-calendar-grid">
                   <button
                     v-for="day in statCalendarDays"
                     :key="day.key"
                     type="button"
-                    :class="{ selected: day.value === inputDate1, disabled: day.disabled, outside: day.outside }"
+                    :class="{
+                      selected: day.value === inputDate1,
+                      disabled: day.disabled,
+                      outside: day.outside,
+                    }"
                     :disabled="day.disabled"
                     @click="selectStatCalendarDate(day.value)"
                   >
@@ -49,7 +63,9 @@
           </div>
           <div class="stat-item">
             <span class="stat-label">总俱乐部数:</span>
-            <n-tag type="success">{{ battleRecords1?.legionRankList?.length || 0 }}</n-tag>
+            <n-tag type="success">{{
+              battleRecords1?.legionRankList?.length || 0
+            }}</n-tag>
           </div>
         </div>
       </div>
@@ -436,7 +452,8 @@
             <div
               v-for="(battle, battleIndex) in fightResult.resultCount"
               :key="battleIndex"
-              class="battle-result-item" :class="[battle.isWin ? 'win' : 'loss']"
+              class="battle-result-item"
+              :class="[battle.isWin ? 'win' : 'loss']"
             >
               <div class="battle-header">
                 <span class="battle-index">第 {{ battleIndex + 1 }} 场</span>
@@ -458,9 +475,9 @@
                       battle.leftName || "未知"
                     }}</span>
                     <span class="side-power">战力: {{ battle.leftpower }}</span>
-                    <span class="side-die">掉将: {{ battle.leftDieHero }} 个</span>
-
-
+                    <span class="side-die"
+                      >掉将: {{ battle.leftDieHero }} 个</span
+                    >
                   </div>
                 </div>
 
@@ -480,9 +497,9 @@
                     <span class="side-power"
                       >战力: {{ battle.rightpower }}</span
                     >
-                    <span class="side-die">掉将: {{ battle.rightDieHero }} 个</span>
-
-
+                    <span class="side-die"
+                      >掉将: {{ battle.rightDieHero }} 个</span
+                    >
                   </div>
                 </div>
               </div>
@@ -628,14 +645,20 @@
             </n-descriptions-item>
             <n-descriptions-item label="鱼灵">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.FishInfo?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.FishInfo?.name
                   : "无"
               }}
             </n-descriptions-item>
             <n-descriptions-item label="鱼珠技能">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.PearlSkill?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.PearlSkill?.name
                   : "无"
               }}
@@ -646,7 +669,7 @@
                   v-for="item in heroModealTemp.PearlInfo.slotMap"
                   :key="item.id"
                   class="ModalEquipment"
-                  :style="`background-color:${  item.value}`"
+                  :style="`background-color:${item.value}`"
                 ></div>
               </div>
               <div v-else>无</div>
@@ -721,12 +744,7 @@
 </template>
 
 <script setup>
-import {
-  Copy,
-  CreateOutline,
-  DocumentText,
-  Refresh,
-} from "@vicons/ionicons5";
+import { Copy, CreateOutline, DocumentText, Refresh } from "@vicons/ionicons5";
 
 import html2canvas from "html2canvas";
 import {
@@ -741,17 +759,20 @@ import {
 } from "naive-ui";
 import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useTokenStore } from "@/stores/tokenStore";
-import {
-  formatTimestamp1,
-  getLastSaturday,
-} from "@/utils/clubBattleUtils";
+import { formatTimestamp1, getLastSaturday } from "@/utils/clubBattleUtils";
 import {
   allianceincludes,
   formatWarrankRecordsForExport,
   gettoday,
 } from "@/utils/clubWarrankUtils";
 import { isSameGameValue } from "@/utils/gameValue.js";
-import { getLineupType, HERO_DICT, HeroFillInfo, legacycolor, LINEUP_RULES } from "@/utils/HeroList";
+import {
+  getLineupType,
+  HERO_DICT,
+  HeroFillInfo,
+  legacycolor,
+  LINEUP_RULES,
+} from "@/utils/HeroList";
 import { downloadCanvasAsImage } from "@/utils/imageExport";
 
 defineProps({
@@ -765,8 +786,6 @@ defineProps({
   },
 });
 
-
-
 const ScoreShow = ref(1);
 
 const exportmethod = ref(["2"]);
@@ -776,8 +795,6 @@ const tokenStore = useTokenStore();
 const selectedTokenId = computed(() => tokenStore.selectedToken?.id || "");
 const currentClubInfo = ref(null);
 const currentLegionInfo = computed(() => currentClubInfo.value?.info || null);
-
-
 
 const loading1 = ref(false);
 const battleRecords1 = ref(null);
@@ -911,11 +928,15 @@ const getSaltTableRowClassName = (row) => {
     return "salt-fetch-time-footer-row";
   }
   if (row.__isGroupHeader) {
-    const index = allianceOptions.findIndex((option) => option.value === row.alliance);
+    const index = allianceOptions.findIndex(
+      (option) => option.value === row.alliance,
+    );
     return `salt-alliance-group-row salt-alliance-group-row-${index === -1 ? 5 : index}`;
   }
   const alliance = getMemberAlliance(row);
-  const index = allianceOptions.findIndex((option) => option.value === alliance);
+  const index = allianceOptions.findIndex(
+    (option) => option.value === alliance,
+  );
   return `salt-alliance-row salt-alliance-row-${index === -1 ? 5 : index}`;
 };
 
@@ -998,15 +1019,17 @@ const getEquipment = (equipment) => {
 };
 
 // 盐场表格列定义
-const getMergedTableRowColSpan = (row) => (row.__isGroupHeader || row.__isFetchTimeFooter) ? 9 : 1;
-const getHiddenMergedTableCellColSpan = (row) => (row.__isGroupHeader || row.__isFetchTimeFooter) ? 0 : 1;
+const getMergedTableRowColSpan = (row) =>
+  row.__isGroupHeader || row.__isFetchTimeFooter ? 9 : 1;
+const getHiddenMergedTableCellColSpan = (row) =>
+  row.__isGroupHeader || row.__isFetchTimeFooter ? 0 : 1;
 const formatDateTime = (date) => {
   const pad = (value) => String(value).padStart(2, "0");
   return `${[
     date.getFullYear(),
     pad(date.getMonth() + 1),
     pad(date.getDate()),
-  ].join("-")  } ${  [
+  ].join("-")} ${[
     pad(date.getHours()),
     pad(date.getMinutes()),
     pad(date.getSeconds()),
@@ -1018,7 +1041,9 @@ const getSaltFetchTimeText = () => {
 };
 
 const parseDateText = (value) => {
-  const [year, month, day] = String(value || getLastSaturday()).split("/").map(Number);
+  const [year, month, day] = String(value || getLastSaturday())
+    .split("/")
+    .map(Number);
   return new Date(year, month - 1, day || 1);
 };
 
@@ -1087,7 +1112,11 @@ const isCurrentAccountClub = (row) => {
 
   const currentId = clubInfo.id ?? clubInfo.legionId;
   const rowId = row.id ?? row.legionId;
-  if (!isSameGameValue(currentId, null) && !isSameGameValue(rowId, null) && String(currentId) === String(rowId)) {
+  if (
+    !isSameGameValue(currentId, null) &&
+    !isSameGameValue(rowId, null) &&
+    String(currentId) === String(rowId)
+  ) {
     return true;
   }
 
@@ -1096,135 +1125,374 @@ const isCurrentAccountClub = (row) => {
 
 const saltTableColumns = [
   {
-    title: '红淬排名',
-    key: 'rank',
+    title: "红淬排名",
+    key: "rank",
     width: 72,
-    align: 'center',
+    align: "center",
     colSpan: getMergedTableRowColSpan,
     render: (row) => {
       if (row.__isGroupHeader) {
         const redQuenchLabel = row.count > 1 ? "平均红淬" : "红淬";
-        return h('div', { class: 'salt-alliance-group-title' }, [
-          h('span', { class: 'salt-alliance-group-line' }, '|'),
-          h('span', { class: 'salt-alliance-group-label' }, `${row.alliance}（${row.count}家） ${redQuenchLabel} ${row.avgRedQuench}红`)
+        return h("div", { class: "salt-alliance-group-title" }, [
+          h("span", { class: "salt-alliance-group-line" }, "|"),
+          h(
+            "span",
+            { class: "salt-alliance-group-label" },
+            `${row.alliance}（${row.count}家） ${redQuenchLabel} ${row.avgRedQuench}红`,
+          ),
         ]);
       }
       if (row.__isFetchTimeFooter) {
-        return h('div', { class: 'salt-fetch-time-footer' }, row.fetchTimeText);
+        return h("div", { class: "salt-fetch-time-footer" }, row.fetchTimeText);
       }
       if (isEditMode.value) {
         return h(NInputNumber, {
-          'v-model:value': manualRankings.value[row.id],
-          size: 'small',
+          "v-model:value": manualRankings.value[row.id],
+          size: "small",
           min: 1,
           max: 20,
-          style: { width: '70px' },
+          style: { width: "70px" },
           showButton: false,
           onFocus: () => handleRankFocus(row),
           onBlur: () => handleRankBlur(row),
-          onKeydownenter: (e) => e.target.blur()
+          onKeydownenter: (e) => e.target.blur(),
         });
       }
       const rank = getMemberRank(row);
-      return h('span', { class: 'rank-badge' }, rank);
-    }
+      return h("span", { class: "rank-badge" }, rank);
+    },
   },
   {
-    title: '俱乐部名称',
-    key: 'name',
+    title: "俱乐部名称",
+    key: "name",
     width: 180,
     colSpan: getHiddenMergedTableCellColSpan,
     render: (row) => {
       if (row.__isGroupHeader || row.__isFetchTimeFooter) return null;
       const isCurrentClub = isCurrentAccountClub(row);
-      return h('div', {
-        class: ['salt-club-name-cell', isCurrentClub ? 'is-current-club' : ''],
-      }, [
-        h('div', { class: 'salt-club-main-row' }, [
-        row.logo
-          ? h('img', {
-              src: row.logo,
-              alt: row.name,
-              style: { width: '42px', height: '42px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb' }
-            })
-          : h('div', { style: { width: '42px', height: '42px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: 'bold', color: 'white', background: 'linear-gradient(135deg, #1677ff 0%, #4096ff 100%)', border: '2px solid #e5e7eb' } }, row.name?.charAt(0) || '?'),
-        h('span', { class: 'salt-club-name-text' }, row.name),
-        ]),
-        isCurrentClub
-          ? h('div', { class: 'current-club-badge-row' }, [
-              h('span', { class: 'current-club-badge' }, '本俱乐部')
-            ])
-          : null
-      ]);
-    }
+      return h(
+        "div",
+        {
+          class: [
+            "salt-club-name-cell",
+            isCurrentClub ? "is-current-club" : "",
+          ],
+        },
+        [
+          h("div", { class: "salt-club-main-row" }, [
+            row.logo
+              ? h("img", {
+                  src: row.logo,
+                  alt: row.name,
+                  style: {
+                    width: "42px",
+                    height: "42px",
+                    borderRadius: "50%",
+                    objectFit: "cover",
+                    border: "2px solid #e5e7eb",
+                  },
+                })
+              : h(
+                  "div",
+                  {
+                    style: {
+                      width: "42px",
+                      height: "42px",
+                      borderRadius: "50%",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: "16px",
+                      fontWeight: "bold",
+                      color: "white",
+                      background:
+                        "linear-gradient(135deg, #1677ff 0%, #4096ff 100%)",
+                      border: "2px solid #e5e7eb",
+                    },
+                  },
+                  row.name?.charAt(0) || "?",
+                ),
+            h("span", { class: "salt-club-name-text" }, row.name),
+          ]),
+          isCurrentClub
+            ? h("div", { class: "current-club-badge-row" }, [
+                h("span", { class: "current-club-badge" }, "本俱乐部"),
+              ])
+            : null,
+        ],
+      );
+    },
   },
-  { title: '服务器', key: 'serverId', width: 56, align: 'center', colSpan: getHiddenMergedTableCellColSpan },
   {
-    title: '战力',
-    key: 'power',
-    width: 80,
-    align: 'center',
+    title: "服务器",
+    key: "serverId",
+    width: 56,
+    align: "center",
     colSpan: getHiddenMergedTableCellColSpan,
-    render: (row) => (row.__isGroupHeader || row.__isFetchTimeFooter) ? null : formatPower(row.power) || 0
   },
-  { title: '红淬', key: 'redQuench', width: 52, align: 'center', colSpan: getHiddenMergedTableCellColSpan },
   {
-    title: '联盟',
-    key: 'alliance',
+    title: "战力",
+    key: "power",
+    width: 80,
+    align: "center",
+    colSpan: getHiddenMergedTableCellColSpan,
+    render: (row) =>
+      row.__isGroupHeader || row.__isFetchTimeFooter
+        ? null
+        : formatPower(row.power) || 0,
+  },
+  {
+    title: "红淬",
+    key: "redQuench",
+    width: 52,
+    align: "center",
+    colSpan: getHiddenMergedTableCellColSpan,
+  },
+  {
+    title: "联盟",
+    key: "alliance",
     width: 72,
-    align: 'center',
+    align: "center",
     colSpan: getHiddenMergedTableCellColSpan,
     render: (row) => {
       if (row.__isGroupHeader || row.__isFetchTimeFooter) return null;
       if (isEditMode.value) {
         return h(NSelect, {
-          'v-model:value': manualAlliances.value[row.id],
+          "v-model:value": manualAlliances.value[row.id],
           options: allianceOptions.value,
-          size: 'small',
-          style: { width: '90px' }
+          size: "small",
+          style: { width: "90px" },
         });
       }
       const alliance = getMemberAlliance(row);
-      return h('span', { class: ['salt-alliance-tag', getAllianceTagClass(alliance)] }, alliance);
-    }
+      return h(
+        "span",
+        { class: ["salt-alliance-tag", getAllianceTagClass(alliance)] },
+        alliance,
+      );
+    },
   },
   {
-    title: '前三车头',
-    key: 'topHeroes',
+    title: "前三车头",
+    key: "topHeroes",
     width: 528,
     colSpan: getHiddenMergedTableCellColSpan,
     render: (row) => {
       if (row.__isGroupHeader || row.__isFetchTimeFooter) return null;
-      return h('div', { style: { display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', gap: '9px', justifyContent: 'center', alignItems: 'flex-start', width: 'calc(100% + 8px)', minWidth: '528px', margin: '0 -4px' } },
+      return h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "nowrap",
+            gap: "9px",
+            justifyContent: "center",
+            alignItems: "flex-start",
+            width: "calc(100% + 8px)",
+            minWidth: "528px",
+            margin: "0 -4px",
+          },
+        },
         row.topHeroes.map((hero) =>
-          h('div', { style: { display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '6px', width: '170px', padding: '5px 5px 5px 5px', background: '#ffffff', borderRadius: '8px', border: '1px solid #e5e7eb', flexShrink: '0' } }, [
-            h('div', { style: { width: '36px', height: '36px', minWidth: '36px', minHeight: '36px', flexShrink: '0', cursor: 'pointer' }, onClick: () => handleHeroClick(hero) }, [
-              hero.headImg
-                ? h('img', {
-                    src: hero.headImg,
-                    alt: hero.name,
-                    style: { width: '36px', height: '36px', minWidth: '36px', minHeight: '36px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #e5e7eb', display: 'block', flexShrink: '0' }
-                  })
-                : h('div', { style: { width: '36px', height: '36px', minWidth: '36px', minHeight: '36px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 'bold', color: 'white', background: 'linear-gradient(135deg, #1677ff 0%, #4096ff 100%)', border: '2px solid #e5e7eb', flexShrink: '0' } }, hero.name?.charAt(0) || '?')
-            ]),
-            h('div', { style: { display: 'flex', flexDirection: 'column', gap: '2px', flex: '1 1 auto', minWidth: '0' } }, [
-              h('div', { style: { display: 'flex', alignItems: 'center', gap: '3px', width: '100%', minWidth: '0', whiteSpace: 'nowrap' } }, [
-                h('span', { style: { fontSize: '11px', fontWeight: '500', color: '#1f2937', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: '0' } }, hero.name || '未知'),
-                h('span', { style: { fontSize: '9px', color: 'white', background: 'linear-gradient(135deg, #ff6b6b, #ee5a24)', padding: '1px 3px', borderRadius: '8px', fontWeight: 'bold', marginLeft: 'auto', flexShrink: '0' } }, `圣${  hero.holyBeast}`)
-              ]),
-              h('div', { style: { display: 'flex', alignItems: 'center', gap: '4px', width: '100%', minWidth: '0', whiteSpace: 'nowrap' } }, [
-                h('span', { style: { fontSize: '11px', color: '#6b7280', whiteSpace: 'nowrap', minWidth: '50px', flexShrink: '0' } }, formatPower(hero.power)),
-                h('span', { style: getLineupTagStyle(hero.lineupType) }, hero.lineupType || '其他'),
-                h('span', { style: { fontSize: '11px', fontWeight: '500', marginLeft: 'auto', flexShrink: '0', color: '#ef4444' } }, `${hero.redQuench  }红`)
-              ])
-            ])
-          ])
-        )
+          h(
+            "div",
+            {
+              style: {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: "6px",
+                width: "170px",
+                padding: "5px 5px 5px 5px",
+                background: "#ffffff",
+                borderRadius: "8px",
+                border: "1px solid #e5e7eb",
+                flexShrink: "0",
+              },
+            },
+            [
+              h(
+                "div",
+                {
+                  style: {
+                    width: "36px",
+                    height: "36px",
+                    minWidth: "36px",
+                    minHeight: "36px",
+                    flexShrink: "0",
+                    cursor: "pointer",
+                  },
+                  onClick: () => handleHeroClick(hero),
+                },
+                [
+                  hero.headImg
+                    ? h("img", {
+                        src: hero.headImg,
+                        alt: hero.name,
+                        style: {
+                          width: "36px",
+                          height: "36px",
+                          minWidth: "36px",
+                          minHeight: "36px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                          border: "2px solid #e5e7eb",
+                          display: "block",
+                          flexShrink: "0",
+                        },
+                      })
+                    : h(
+                        "div",
+                        {
+                          style: {
+                            width: "36px",
+                            height: "36px",
+                            minWidth: "36px",
+                            minHeight: "36px",
+                            borderRadius: "50%",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "12px",
+                            fontWeight: "bold",
+                            color: "white",
+                            background:
+                              "linear-gradient(135deg, #1677ff 0%, #4096ff 100%)",
+                            border: "2px solid #e5e7eb",
+                            flexShrink: "0",
+                          },
+                        },
+                        hero.name?.charAt(0) || "?",
+                      ),
+                ],
+              ),
+              h(
+                "div",
+                {
+                  style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "2px",
+                    flex: "1 1 auto",
+                    minWidth: "0",
+                  },
+                },
+                [
+                  h(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "3px",
+                        width: "100%",
+                        minWidth: "0",
+                        whiteSpace: "nowrap",
+                      },
+                    },
+                    [
+                      h(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "11px",
+                            fontWeight: "500",
+                            color: "#1f2937",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                            minWidth: "0",
+                          },
+                        },
+                        hero.name || "未知",
+                      ),
+                      h(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "9px",
+                            color: "white",
+                            background:
+                              "linear-gradient(135deg, #ff6b6b, #ee5a24)",
+                            padding: "1px 3px",
+                            borderRadius: "8px",
+                            fontWeight: "bold",
+                            marginLeft: "auto",
+                            flexShrink: "0",
+                          },
+                        },
+                        `圣${hero.holyBeast}`,
+                      ),
+                    ],
+                  ),
+                  h(
+                    "div",
+                    {
+                      style: {
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        width: "100%",
+                        minWidth: "0",
+                        whiteSpace: "nowrap",
+                      },
+                    },
+                    [
+                      h(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "11px",
+                            color: "#6b7280",
+                            whiteSpace: "nowrap",
+                            minWidth: "50px",
+                            flexShrink: "0",
+                          },
+                        },
+                        formatPower(hero.power),
+                      ),
+                      h(
+                        "span",
+                        { style: getLineupTagStyle(hero.lineupType) },
+                        hero.lineupType || "其他",
+                      ),
+                      h(
+                        "span",
+                        {
+                          style: {
+                            fontSize: "11px",
+                            fontWeight: "500",
+                            marginLeft: "auto",
+                            flexShrink: "0",
+                            color: "#ef4444",
+                          },
+                        },
+                        `${hero.redQuench}红`,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       );
-    }
+    },
   },
-  { title: '等级', key: 'level', width: 40, align: 'center', colSpan: getHiddenMergedTableCellColSpan },
-  { title: '公告', key: 'announcement', width: 300, colSpan: getHiddenMergedTableCellColSpan }
+  {
+    title: "等级",
+    key: "level",
+    width: 40,
+    align: "center",
+    colSpan: getHiddenMergedTableCellColSpan,
+  },
+  {
+    title: "公告",
+    key: "announcement",
+    width: 300,
+    colSpan: getHiddenMergedTableCellColSpan,
+  },
 ];
 
 // 提取英雄信息
@@ -1498,7 +1766,7 @@ const handleHeroClick = (hero) => {
 // 验证切磋次数
 const validateFightCount = (value) => {
   const num = Number.parseInt(value);
-  isFightCountValid.value = !Number.isNaN(+(num)) && num >= 1 && num <= 100;
+  isFightCountValid.value = !Number.isNaN(+num) && num >= 1 && num <= 100;
 };
 
 // 重置切磋结果
@@ -1772,7 +2040,9 @@ const groupedSaltTableData = computed(() => {
 
   const orderedAlliances = [
     ...allianceOrder.filter((alliance) => groups.has(alliance)),
-    ...Array.from(groups.keys()).filter((alliance) => !allianceOrder.includes(alliance)),
+    ...Array.from(groups.keys()).filter(
+      (alliance) => !allianceOrder.includes(alliance),
+    ),
   ];
 
   const groupedRows = orderedAlliances.flatMap((alliance) => {
@@ -1780,7 +2050,9 @@ const groupedSaltTableData = computed(() => {
     const totalRedQuench = members.reduce((sum, member) => {
       return sum + (Number(member.redQuench) || 0);
     }, 0);
-    const avgRedQuench = members.length ? Math.round(totalRedQuench / members.length) : 0;
+    const avgRedQuench = members.length
+      ? Math.round(totalRedQuench / members.length)
+      : 0;
 
     return [
       {
@@ -1807,7 +2079,10 @@ const groupedSaltTableData = computed(() => {
 
 const saltAverageRedQuench = computed(() => {
   const list = battleRecords1.value?.legionRankList || [];
-  const total = list.reduce((sum, member) => sum + Number(member.redQuench || 0), 0);
+  const total = list.reduce(
+    (sum, member) => sum + Number(member.redQuench || 0),
+    0,
+  );
   return Math.round(total / 20);
 });
 
@@ -1864,21 +2139,21 @@ const getActiveAllianceCount = (alliance) => {
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
 
-
-
 // 处理图片加载错误
 
-
 const disabledDate = (current) => {
-  const date = typeof current?.toDate === "function" ? current.toDate() : new Date(current);
+  const date =
+    typeof current?.toDate === "function"
+      ? current.toDate()
+      : new Date(current);
   const day = date.getDay();
   return day !== 6 && day !== 0;
 };
@@ -1901,9 +2176,7 @@ const selectStatCalendarDate = (value) => {
 
 // 联盟样式�?
 
-
 // 红淬样式�?
-
 
 //日期选择时调用查询战绩方�?
 const fetchBattleRecordsByDate = (val) => {
@@ -1952,7 +2225,10 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
   await fetchCurrentClubInfo(tokenId);
   if (selectedTokenId.value !== tokenId) return;
 
-  if (isSameGameValue(gettoday(), queryDate.value) && new Date().getHours() < 21) {
+  if (
+    isSameGameValue(gettoday(), queryDate.value) &&
+    new Date().getHours() < 21
+  ) {
     let getbattlefield;
     try {
       getbattlefield = await tokenStore.sendMessageWithPromise(
@@ -2051,7 +2327,8 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
               redQuench: memberData.custom?.red_quench_cnt || 0,
               holyBeast,
               lineupType: getLineupType(
-                getHeroInfo(tempRoleInfo?.roleInfo?.heroes || {}).heroList || [],
+                getHeroInfo(tempRoleInfo?.roleInfo?.heroes || {}).heroList ||
+                  [],
               ),
             });
           }
@@ -2062,7 +2339,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
 
           // 提取红淬数量数组
           const redQuenchCounts = top3Heroes.map(
-            (hero) => `${hero.redQuench  }红`,
+            (hero) => `${hero.redQuench}红`,
           );
           // 提取圣物数量数组
           const HolyBeastNum = top3Heroes.map((hero) => hero.holyBeast);
@@ -2252,7 +2529,8 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
               redQuench: memberData.custom?.red_quench_cnt || 0,
               holyBeast,
               lineupType: getLineupType(
-                getHeroInfo(tempRoleInfo?.roleInfo?.heroes || {}).heroList || [],
+                getHeroInfo(tempRoleInfo?.roleInfo?.heroes || {}).heroList ||
+                  [],
               ),
             });
           }
@@ -2263,7 +2541,7 @@ const fetchBattleRecords1 = async (requestTokenId = selectedTokenId.value) => {
 
           // 提取红淬数量数组
           const redQuenchCounts = top3Heroes.map(
-            (hero) => `${hero.redQuench  }红`,
+            (hero) => `${hero.redQuench}红`,
           );
           // 提取圣物数量数组
           const HolyBeastNum = top3Heroes.map((hero) => hero.holyBeast);
@@ -2536,9 +2814,9 @@ const exportToImage = async () => {
     });
 
     // 6. Canvas转图片链接并下载
-    const filename =
-      `${queryDate.value.replace("/", "年").replace("/", "月") 
-      }日盐场匹配信息.png`;
+    const filename = `${queryDate.value
+      .replace("/", "年")
+      .replace("/", "月")}日盐场匹配信息.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error("DOM转图片失败：", err);
@@ -2593,7 +2871,6 @@ const getAllianceTagClass = (alliance) => {
 };
 
 // 关闭弹窗
-
 
 // 暴露方法给父组件
 defineExpose({
@@ -3972,8 +4249,6 @@ watch(selectedTokenId, (newTokenId, oldTokenId) => {
         }
       }
 
-
-
       &.score {
         width: 80px;
         min-width: 80px;
@@ -4073,7 +4348,11 @@ watch(selectedTokenId, (newTokenId, oldTokenId) => {
           }
 
           .hero-avatar-placeholder {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+            background: linear-gradient(
+              135deg,
+              var(--primary-color) 0%,
+              var(--primary-color-light) 100%
+            );
             color: white;
             display: flex;
             align-items: center;
@@ -5085,7 +5364,11 @@ watch(selectedTokenId, (newTokenId, oldTokenId) => {
     }
 
     .table-header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+      background: linear-gradient(
+        135deg,
+        var(--primary-color) 0%,
+        var(--primary-color-light) 100%
+      );
       color: white;
 
       .table-cell {
@@ -5152,7 +5435,11 @@ watch(selectedTokenId, (newTokenId, oldTokenId) => {
             }
 
             .member-avatar-placeholder {
-              background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-light) 100%);
+              background: linear-gradient(
+                135deg,
+                var(--primary-color) 0%,
+                var(--primary-color-light) 100%
+              );
               color: white;
               display: flex;
               align-items: center;
@@ -5365,4 +5652,3 @@ watch(selectedTokenId, (newTokenId, oldTokenId) => {
   }
 }
 </style>
-

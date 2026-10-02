@@ -13,7 +13,7 @@
             <h2>巅峰榜</h2>
           </div>
         </div>
-        
+
         <!-- 数据统计区 -->
         <div class="stats-section" v-if="topranklist">
           <div class="stat-item">
@@ -101,34 +101,36 @@
               </div>
               <div class="table-cell server">{{ memberData.serverId }}</div>
               <div class="table-cell avatar">
-              <img
-                v-if="memberData.headImg"
-                :src="memberData.headImg"
-                :alt="memberData.name"
-                class="member-avatar"
-                @error="handleImageError"
-              />
-              <div v-else class="member-avatar-placeholder">  
-                {{ memberData.name?.charAt(0) || "?" }}
+                <img
+                  v-if="memberData.headImg"
+                  :src="memberData.headImg"
+                  :alt="memberData.name"
+                  class="member-avatar"
+                  @error="handleImageError"
+                />
+                <div v-else class="member-avatar-placeholder">
+                  {{ memberData.name?.charAt(0) || "?" }}
+                </div>
               </div>
-            </div>
-              <div class="table-cell role-id clickable" @click="fetchTargetInfo(memberData.roleId)">
+              <div
+                class="table-cell role-id clickable"
+                @click="fetchTargetInfo(memberData.roleId)"
+              >
                 {{ memberData.roleId }}
               </div>
               <div class="table-cell name">
                 {{ memberData.name }}
-                      <NTag
-                        v-if="memberData.legacy > 0"
-                        :style="{
-                          color: '#fff',
-                          backgroundColor:
-                            legacycolor[memberData.legacy]?.value,
-                        }"
-                        size="small"
-                        style="margin-left: 8px"
-                      >
-                        {{ legacycolor[memberData.legacy]?.name || "未知" }}
-                      </NTag>
+                <NTag
+                  v-if="memberData.legacy > 0"
+                  :style="{
+                    color: '#fff',
+                    backgroundColor: legacycolor[memberData.legacy]?.value,
+                  }"
+                  size="small"
+                  style="margin-left: 8px"
+                >
+                  {{ legacycolor[memberData.legacy]?.name || "未知" }}
+                </NTag>
               </div>
               <div class="table-cell power">{{ memberData.power }}</div>
               <div class="table-cell score">{{ memberData.score }}</div>
@@ -325,7 +327,8 @@
             <div
               v-for="(battle, battleIndex) in fightResult.resultCount"
               :key="battleIndex"
-              class="battle-result-item" :class="[battle.isWin ? 'win' : 'loss']"
+              class="battle-result-item"
+              :class="[battle.isWin ? 'win' : 'loss']"
             >
               <div class="battle-header">
                 <span class="battle-index">第 {{ battleIndex + 1 }} 场</span>
@@ -379,9 +382,7 @@
           </div>
 
           <div class="result-actions">
-            <NButton type="primary" @click="resetFightResult"
-              >重新切磋</NButton
-            >
+            <NButton type="primary" @click="resetFightResult">重新切磋</NButton>
             <NButton @click="fightResult.visible = false">关闭结果</NButton>
           </div>
         </div>
@@ -491,22 +492,25 @@
             <NDescriptionsItem label="四圣状态">
               {{ heroModealTemp.HolyBeast ? "已激活" : "未激活" }}
             </NDescriptionsItem>
-            <NDescriptionsItem
-              label="四圣等级"
-              v-if="heroModealTemp.HolyBeast"
-            >
+            <NDescriptionsItem label="四圣等级" v-if="heroModealTemp.HolyBeast">
               {{ heroModealTemp.HBlevel }}
             </NDescriptionsItem>
             <NDescriptionsItem label="鱼灵">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.FishInfo?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.FishInfo?.name
                   : "无"
               }}
             </NDescriptionsItem>
             <NDescriptionsItem label="鱼珠技能">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.PearlSkill?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.PearlSkill?.name
                   : "无"
               }}
@@ -517,7 +521,7 @@
                   v-for="item in heroModealTemp.PearlInfo.slotMap"
                   :key="item.id"
                   class="ModalEquipment"
-                  :style="`background-color:${  item.value}`"
+                  :style="`background-color:${item.value}`"
                 ></div>
               </div>
               <div v-else>无</div>
@@ -626,12 +630,8 @@ const props = defineProps({
   },
 });
 
-
-
 const message = useMessage();
 const tokenStore = useTokenStore();
-
-
 
 const loading1 = ref(false);
 const topranklist = ref(null);
@@ -692,7 +692,6 @@ const heroModealTemp = ref(null);
 
 // 计算总页数
 
-
 // 获取当前页的数据
 const currentPageData = computed(() => {
   if (!topranklist.value) return {};
@@ -710,10 +709,10 @@ const currentPageData = computed(() => {
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
@@ -819,7 +818,7 @@ const getHeroInfo = (heroObj) => {
 // 验证切磋次数
 const validateFightCount = (value) => {
   const num = Number.parseInt(value);
-  isFightCountValid.value = !Number.isNaN(+(num)) && num >= 1 && num <= 100;
+  isFightCountValid.value = !Number.isNaN(+num) && num >= 1 && num <= 100;
 };
 
 // 重置切磋结果
@@ -1237,22 +1236,21 @@ const exportToImage = async () => {
     });
 
     // 6. Canvas转图片链接并下载
-    const filename = `${queryDate.value.replace("/", "年").replace("/", "月")  }日巅峰榜信息.png`;
+    const filename = `${queryDate.value.replace("/", "年").replace("/", "月")}日巅峰榜信息.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error("DOM转图片失败：", err);
     // eslint-disable-next-line no-alert -- Preserve the existing native notification or confirmation flow.
     alert("导出图片失败，请重试");
   } finally {
-     if (exportDom.value) {
-        exportDom.value.style.height = originalHeight;
-        exportDom.value.style.overflow = originalOverflow;
-     }
+    if (exportDom.value) {
+      exportDom.value.style.height = originalHeight;
+      exportDom.value.style.overflow = originalOverflow;
+    }
   }
 };
 
 // 处理分页大小改变
-
 
 // 暴露方法给父组件
 defineExpose({
@@ -1605,12 +1603,12 @@ onMounted(() => {
       &.role-id {
         width: 120px;
         min-width: 120px;
-        
+
         &.clickable {
           cursor: pointer;
           color: var(--primary-color);
           text-decoration: underline;
-          
+
           &:hover {
             color: var(--primary-color-hover);
           }
@@ -2009,146 +2007,146 @@ onMounted(() => {
 }
 
 .battle-result-item.win {
-    border-left-color: var(--success-color);
-    background: rgba(var(--success-color-rgb), 0.03);
+  border-left-color: var(--success-color);
+  background: rgba(var(--success-color-rgb), 0.03);
+}
+
+/* 武将详情模态框样式 */
+.hero-detail-modal {
+  .hero-modal-content {
+    padding: 20px 0;
   }
-  
-  /* 武将详情模态框样式 */
-  .hero-detail-modal {
-    .hero-modal-content {
-      padding: 20px 0;
+
+  .hero-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .hero-modal-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 2px solid var(--border-light);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
-  
-    .hero-modal-header {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      margin-bottom: 20px;
+
+    .hero-placeholder {
+      font-size: 36px;
+      font-weight: var(--font-weight-bold);
+      color: var(--text-secondary);
     }
-  
-    .hero-modal-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
+  }
+
+  .hero-modal-basic {
+    flex: 1;
+  }
+
+  .hero-modal-name {
+    margin: 0 0 10px 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .hero-modal-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+
+    .stat-item {
+      padding: 4px 8px;
       background: var(--bg-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      border: 2px solid var(--border-light);
-  
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+      border-radius: var(--border-radius-sm);
+      border: 1px solid var(--border-light);
+    }
+  }
+
+  .hero-modal-details {
+    margin-bottom: 20px;
+
+    :deep(.n-descriptions) {
+      font-size: var(--font-size-sm);
+
+      .n-descriptions-item-label {
+        font-weight: var(--font-weight-medium);
+        color: var(--text-primary);
       }
-  
-      .hero-placeholder {
-        font-size: 36px;
-        font-weight: var(--font-weight-bold);
+
+      .n-descriptions-item-content {
         color: var(--text-secondary);
       }
     }
-  
-    .hero-modal-basic {
-      flex: 1;
-    }
-  
-    .hero-modal-name {
-      margin: 0 0 10px 0;
-      font-size: var(--font-size-lg);
-      font-weight: var(--font-weight-bold);
-    }
-  
-    .hero-modal-stats {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      font-size: var(--font-size-sm);
-      color: var(--text-secondary);
-  
-      .stat-item {
-        padding: 4px 8px;
-        background: var(--bg-secondary);
-        border-radius: var(--border-radius-sm);
-        border: 1px solid var(--border-light);
-      }
-    }
-  
-    .hero-modal-details {
-      margin-bottom: 20px;
-  
-      :deep(.n-descriptions) {
-        font-size: var(--font-size-sm);
-  
-        .n-descriptions-item-label {
-          font-weight: var(--font-weight-medium);
-          color: var(--text-primary);
-        }
-  
-        .n-descriptions-item-content {
-          color: var(--text-secondary);
-        }
-      }
-    }
-  
-    .hero-modal-equipment {
-      margin-top: 20px;
-    }
-  
-    .section-title {
-      margin: 0 0 15px 0;
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-bold);
-    }
-  
-    .equipment-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
-  
-    .equipment-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-  
-    .equipment-label {
-      font-size: var(--font-size-sm);
-      color: var(--text-primary);
-      font-weight: var(--font-weight-medium);
-      width: 60px;
-    }
-  
-    .equipment-slots {
-      display: flex;
-      gap: 6px;
-    }
-  
-    .equipment-slot {
-      width: 20px;
-      height: 20px;
-      border: 1px solid var(--border-light);
-      border-radius: var(--border-radius-sm);
-      background: var(--bg-secondary);
-    }
-  
-    .equipment-slot.red-slot {
-      background: var(--error-color);
-      border-color: var(--error-color);
-    }
-  
-    /* 鱼灵洗练颜色块 */
-    .ModalEquipment {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      margin-right: 4px;
-      display: inline-block;
-      vertical-align: middle;
-    }
   }
+
+  .hero-modal-equipment {
+    margin-top: 20px;
+  }
+
+  .section-title {
+    margin: 0 0 15px 0;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+  }
+
+  .equipment-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .equipment-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .equipment-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-medium);
+    width: 60px;
+  }
+
+  .equipment-slots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .equipment-slot {
+    width: 20px;
+    height: 20px;
+    border: 1px solid var(--border-light);
+    border-radius: var(--border-radius-sm);
+    background: var(--bg-secondary);
+  }
+
+  .equipment-slot.red-slot {
+    background: var(--error-color);
+    border-color: var(--error-color);
+  }
+
+  /* 鱼灵洗练颜色块 */
+  .ModalEquipment {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    margin-right: 4px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+}
 
 .battle-result-item.loss {
   border-left-color: var(--error-color);

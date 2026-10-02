@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-  import vue from "@vitejs/plugin-vue";
+import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -117,7 +117,7 @@ export default defineConfig(async () => {
             fs.copyFileSync(src, dest);
             console.log("\n[copy-worker] worker.js copied to dist/_worker.js");
           } else {
-            console.warn(`\n[copy-worker] worker.js not found at ${  src}`);
+            console.warn(`\n[copy-worker] worker.js not found at ${src}`);
           }
         } catch (e) {
           console.error("\n[copy-worker] Error copying worker.js:", e);

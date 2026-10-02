@@ -223,9 +223,11 @@
 
             <div v-if="historyMessage.cmd" class="text-sm mb-2">
               <strong>命令:</strong>
-              <n-tag size="small" :type="getCommandTagType(historyMessage.cmd)">{{
-                historyMessage.cmd
-              }}</n-tag>
+              <n-tag
+                size="small"
+                :type="getCommandTagType(historyMessage.cmd)"
+                >{{ historyMessage.cmd }}</n-tag
+              >
             </div>
 
             <!-- 消息预览 -->
@@ -483,7 +485,7 @@ const connectWebSocket = () => {
       message.success("正在建立WebSocket连接...");
     } catch (error) {
       console.error("❌ MessageTester: WebSocket连接失败", error);
-      message.error(`WebSocket连接失败: ${  error.message}`);
+      message.error(`WebSocket连接失败: ${error.message}`);
     }
   } else {
     message.error("找不到选中的token");
@@ -572,7 +574,7 @@ const testBONDecoding = async () => {
     }
   } catch (error) {
     console.error("❌ BON解码测试失败:", error);
-    message.error(`BON解码测试失败: ${  error.message}`);
+    message.error(`BON解码测试失败: ${error.message}`);
 
     // 添加错误结果到历史
     addToHistory(
@@ -722,7 +724,7 @@ const sendCustomMessage = () => {
       message.error("自定义消息发送失败");
     }
   } catch (error) {
-    message.error(`消息体JSON格式错误: ${  error.message}`);
+    message.error(`消息体JSON格式错误: ${error.message}`);
   }
 };
 
@@ -787,7 +789,7 @@ const getMessagePreview = (data) => {
     }
 
     const preview = JSON.stringify(previewData);
-    return preview.length > 150 ? `${preview.substring(0, 150)  }...` : preview;
+    return preview.length > 150 ? `${preview.substring(0, 150)}...` : preview;
   } catch {
     return "数据解析失败";
   }
@@ -823,7 +825,7 @@ const exportHistory = () => {
 
     message.success("消息历史已导出");
   } catch (error) {
-    message.error(`导出失败: ${  error.message}`);
+    message.error(`导出失败: ${error.message}`);
   }
 };
 
@@ -872,7 +874,7 @@ const formatBodyDescription = (body) => {
   if (body instanceof Uint8Array) return `[Uint8Array: ${body.length} bytes]`;
   if (typeof body === "object" && body.constructor === Object) {
     const keys = Object.keys(body);
-    if (keys.every((key) => !Number.isNaN(+(Number.parseInt(key))))) {
+    if (keys.every((key) => !Number.isNaN(+Number.parseInt(key)))) {
       return `[NumericObject: ${keys.length} entries]`;
     }
   }
@@ -886,7 +888,10 @@ const isRawBodyData = (body) => {
   if (body instanceof Uint8Array) return true;
   if (typeof body === "object" && body.constructor === Object) {
     const keys = Object.keys(body);
-    return keys.length > 0 && keys.every((key) => !Number.isNaN(+(Number.parseInt(key))));
+    return (
+      keys.length > 0 &&
+      keys.every((key) => !Number.isNaN(+Number.parseInt(key)))
+    );
   }
   return false;
 };
@@ -996,7 +1001,6 @@ const formatJSONSmart = (data, maxDepth = 10, currentDepth = 0) => {
 };
 
 // 保留原来的formatJSON作为兼容
-
 
 // 监听WebSocket消息
 watch(

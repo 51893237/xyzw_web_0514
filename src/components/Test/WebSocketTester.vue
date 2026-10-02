@@ -281,7 +281,7 @@ const connectWebSocket = async () => {
     message.success("WebSocket连接已启动");
   } catch (error) {
     console.error("WebSocket连接失败:", error);
-    message.error(`WebSocket连接失败: ${  error.message}`);
+    message.error(`WebSocket连接失败: ${error.message}`);
   } finally {
     setTimeout(updateStatus, 1000); // 延迟更新状态以等待连接建立
   }
@@ -327,7 +327,7 @@ const sendCommand = async () => {
     }
   } catch (error) {
     console.error("发送命令失败:", error);
-    message.error(`发送命令失败: ${  error.message}`);
+    message.error(`发送命令失败: ${error.message}`);
   } finally {
     sendingCommand.value = false;
   }
@@ -363,7 +363,7 @@ const sendCommandWithPromise = async () => {
     message.success("命令执行成功，已收到响应");
   } catch (error) {
     console.error("发送命令失败:", error);
-    message.error(`发送命令失败: ${  error.message}`);
+    message.error(`发送命令失败: ${error.message}`);
   } finally {
     waitingResponse.value = false;
   }
@@ -447,7 +447,7 @@ const testConcurrentRequests = async () => {
     }
   } catch (error) {
     console.error("并发测试失败:", error);
-    message.error(`并发测试失败: ${  error.message}`);
+    message.error(`并发测试失败: ${error.message}`);
     addToLog("received", {
       message: "并发测试异常",
       error: error.message,

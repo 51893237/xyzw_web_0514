@@ -313,7 +313,8 @@
             <div
               v-for="(battle, battleIndex) in fightResult.resultCount"
               :key="battleIndex"
-              class="battle-result-item" :class="[battle.isWin ? 'win' : 'loss']"
+              class="battle-result-item"
+              :class="[battle.isWin ? 'win' : 'loss']"
             >
               <div class="battle-header">
                 <span class="battle-index">第 {{ battleIndex + 1 }} 场</span>
@@ -367,9 +368,7 @@
           </div>
 
           <div class="result-actions">
-            <NButton type="primary" @click="resetFightResult"
-              >重新切磋</NButton
-            >
+            <NButton type="primary" @click="resetFightResult">重新切磋</NButton>
             <NButton @click="fightResult.visible = false">关闭结果</NButton>
           </div>
         </div>
@@ -479,22 +478,25 @@
             <NDescriptionsItem label="四圣状态">
               {{ heroModealTemp.HolyBeast ? "已激活" : "未激活" }}
             </NDescriptionsItem>
-            <NDescriptionsItem
-              label="四圣等级"
-              v-if="heroModealTemp.HolyBeast"
-            >
+            <NDescriptionsItem label="四圣等级" v-if="heroModealTemp.HolyBeast">
               {{ heroModealTemp.HBlevel }}
             </NDescriptionsItem>
             <NDescriptionsItem label="鱼灵">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.FishInfo?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.FishInfo?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.FishInfo?.name
                   : "无"
               }}
             </NDescriptionsItem>
             <NDescriptionsItem label="鱼珠技能">
               {{
-                !isSameGameValue(heroModealTemp?.PearlInfo?.PearlSkill?.name, undefined)
+                !isSameGameValue(
+                  heroModealTemp?.PearlInfo?.PearlSkill?.name,
+                  undefined,
+                )
                   ? heroModealTemp.PearlInfo?.PearlSkill?.name
                   : "无"
               }}
@@ -505,7 +507,7 @@
                   v-for="item in heroModealTemp.PearlInfo.slotMap"
                   :key="item.id"
                   class="ModalEquipment"
-                  :style="`background-color:${  item.value}`"
+                  :style="`background-color:${item.value}`"
                 ></div>
               </div>
               <div v-else>无</div>
@@ -614,12 +616,8 @@ const props = defineProps({
   },
 });
 
-
-
 const message = useMessage();
 const tokenStore = useTokenStore();
-
-
 
 const loading1 = ref(false);
 const topranklist = ref(null);
@@ -680,7 +678,6 @@ const heroModealTemp = ref(null);
 
 // 计算总页数
 
-
 // 获取当前页的数据
 const currentPageData = computed(() => {
   if (!topranklist.value) return {};
@@ -698,10 +695,10 @@ const currentPageData = computed(() => {
 const formatPower = (power) => {
   if (!power) return "0";
   if (power >= 100000000) {
-    return `${(power / 100000000).toFixed(2)  }亿`;
+    return `${(power / 100000000).toFixed(2)}亿`;
   }
   if (power >= 10000) {
-    return `${(power / 10000).toFixed(2)  }万`;
+    return `${(power / 10000).toFixed(2)}万`;
   }
   return power.toString();
 };
@@ -807,7 +804,7 @@ const getHeroInfo = (heroObj) => {
 // 验证切磋次数
 const validateFightCount = (value) => {
   const num = Number.parseInt(value);
-  isFightCountValid.value = !Number.isNaN(+(num)) && num >= 1 && num <= 100;
+  isFightCountValid.value = !Number.isNaN(+num) && num >= 1 && num <= 100;
 };
 
 // 重置切磋结果
@@ -1225,7 +1222,7 @@ const exportToImage = async () => {
     });
 
     // 6. Canvas转图片链接并下载
-    const filename = `${queryDate.value.replace("/", "年").replace("/", "月")  }日区服榜信息.png`;
+    const filename = `${queryDate.value.replace("/", "年").replace("/", "月")}日区服榜信息.png`;
     downloadCanvasAsImage(canvas, filename);
   } catch (err) {
     console.error("DOM转图片失败：", err);
@@ -1240,7 +1237,6 @@ const exportToImage = async () => {
 };
 
 // 处理分页大小改变
-
 
 // 暴露方法给父组件
 defineExpose({

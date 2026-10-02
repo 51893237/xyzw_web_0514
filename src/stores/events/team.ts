@@ -1,10 +1,7 @@
 import type { EVM, XyzwSession } from ".";
 import { gameLogger } from "@/utils/logger";
 
-export const TeamPlugin = ({
-  onSome
-}: EVM) => {
-
+export const TeamPlugin = ({ onSome }: EVM) => {
   onSome(
     [
       "team_getteaminfo",
@@ -58,5 +55,4 @@ export const TeamPlugin = ({
       });
     },
   );
-
-}
+};

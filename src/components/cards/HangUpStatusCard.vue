@@ -135,7 +135,7 @@ const extendHangUp = async () => {
       hangUp.value.isExtending = false;
     }, 2500);
   } catch (e) {
-    message.error(`加钟操作失败: ${  e?.message || "未知错误"}`);
+    message.error(`加钟操作失败: ${e?.message || "未知错误"}`);
     hangUp.value.isExtending = false;
   }
 };
@@ -165,7 +165,7 @@ const claimHangUpReward = async () => {
       hangUp.value.isClaiming = false;
     }, 1200);
   } catch (e) {
-    message.error(`领取挂机奖励失败: ${  e?.message || "未知错误"}`);
+    message.error(`领取挂机奖励失败: ${e?.message || "未知错误"}`);
     hangUp.value.isClaiming = false;
   }
 };

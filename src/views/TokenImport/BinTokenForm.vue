@@ -1,11 +1,21 @@
 <template>
   <!-- 手动输入表单 -->
-  <NForm :model="importForm" label-placement="top" size="large" :show-label="true">
-
-
+  <NForm
+    :model="importForm"
+    label-placement="top"
+    size="large"
+    :show-label="true"
+  >
     <NFormItem label="bin文件" :show-label="true">
-      <a-upload multiple accept="*.bin,*.dmp" @before-upload="uploadBin" draggable dropzone placeholder="粘贴Token字符串..."
-        clearable>
+      <a-upload
+        multiple
+        accept="*.bin,*.dmp"
+        @before-upload="uploadBin"
+        draggable
+        dropzone
+        placeholder="粘贴Token字符串..."
+        clearable
+      >
         <!-- <div class="dropzone-content">
           请点击上传或将bind文件拖拽到此处
         </div> -->
@@ -13,7 +23,10 @@
     </NFormItem>
 
     <NFormItem label="角色命名格式" :show-label="true">
-      <NInput v-model:value="importForm.nameTemplate" placeholder="{name}-{index}-{id}" />
+      <NInput
+        v-model:value="importForm.nameTemplate"
+        placeholder="{name}-{index}-{id}"
+      />
       <template #feedback>
         支持变量: {name}角色名, {id}角色ID, {index}角色序号, {server}区服
       </template>
@@ -28,11 +41,19 @@
 
     <a-list>
       <a-list-item v-for="(role, roleIndex) in roleList" :key="roleIndex">
-        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+          "
+        >
           <div>
             <strong>角色名称:</strong> {{ role.name || "未命名角色" }}<br />
             <strong>Token:</strong>
-            <span style="word-break: break-all">{{ role.token }}</span><br />
+            <span style="word-break: break-all">{{ role.token }}</span
+            ><br />
             <strong>服务器:</strong> {{ role.server || "未指定" }}<br />
             <strong>角色序号:</strong> {{ role.roleIndex }}
           </div>
@@ -44,7 +65,13 @@
     </a-list>
 
     <div class="form-actions">
-      <NButton type="primary" size="large" block :loading="isImporting" @click="handleImport">
+      <NButton
+        type="primary"
+        size="large"
+        block
+        :loading="isImporting"
+        @click="handleImport"
+      >
         <template #icon>
           <NIcon>
             <CloudUpload />
@@ -62,14 +89,7 @@
 
 <script lang="ts" setup>
 import { CloudUpload } from "@vicons/ionicons5";
-import {
-  NButton,
-  NForm,
-  NFormItem,
-  NIcon,
-  NInput,
-  useMessage,
-} from "naive-ui";
+import { NButton, NForm, NFormItem, NIcon, NInput, useMessage } from "naive-ui";
 import PQueue from "p-queue";
 
 import { reactive, ref } from "vue";
@@ -126,8 +146,6 @@ const originalBinData = ref<any>(null);
 
 const tQueue = new PQueue({ concurrency: 1, interval: 1000 });
 
-
-
 const handleDownload = (roleInfo: any) => {
   if (!originalBinData.value) {
     message.error("Bin数据丢失，请重新上传");
@@ -140,7 +158,7 @@ const handleDownload = (roleInfo: any) => {
     message.success(`已开始下载: ${fileName}`);
   } catch (e: any) {
     console.error("下载失败", e);
-    message.error(`下载失败: ${  e.message}`);
+    message.error(`下载失败: ${e.message}`);
   }
 };
 
@@ -178,11 +196,11 @@ const addSelectedRole = async (roleInfo: any) => {
       .replace(/\{name\}/g, () => roleName)
       .replace(/\{index\}/g, () => String(roleIndex))
       .replace(/\{id\}/g, () => String(roleInfo.roleId))
-      .replace(/\{server\}/g, () => `${String(serverNum)  }服`);
+      .replace(/\{server\}/g, () => `${String(serverNum)}服`);
 
     // 检查是否已存在相同配置 (根据角色名称和roleId)
     const exists = roleList.value.some(
-      (r) => r.roleId === roleInfo.roleId && r.name === finalName
+      (r) => r.roleId === roleInfo.roleId && r.name === finalName,
     );
 
     if (exists) {
@@ -195,17 +213,16 @@ const addSelectedRole = async (roleInfo: any) => {
       roleId: roleInfo.roleId,
       token: roleToken,
       name: finalName,
-      server: `${String(serverNum)  }服`,
+      server: `${String(serverNum)}服`,
       roleIndex,
       wsUrl: importForm.wsUrl || "",
       importMethod: "bin",
     });
 
     message.success(`已添加角色: ${finalName}`);
-
   } catch (e: any) {
     console.error("添加角色失败", e);
-    message.error(`添加角色失败: ${  e.message}`);
+    message.error(`添加角色失败: ${e.message}`);
   }
 };
 
@@ -222,8 +239,10 @@ const uploadBin = (binFile: File) => {
         const listStr = await getServerList(userToken);
         const parsedList = JSON.parse(listStr);
         // 转换为数组
-        if (parsedList && typeof parsedList === 'object') {
-          serverListData.value = Object.values(parsedList).sort((a: any, b: any) => b.power - a.power);
+        if (parsedList && typeof parsedList === "object") {
+          serverListData.value = Object.values(parsedList).sort(
+            (a: any, b: any) => b.power - a.power,
+          );
         } else {
           serverListData.value = [];
         }
@@ -249,7 +268,7 @@ const uploadBin = (binFile: File) => {
         originalBinData.value = binData;
       } catch (err: any) {
         console.error("Bin文件解析失败", err);
-        binDecodedResult.value = `Bin文件解析失败: ${  err.message || err}`;
+        binDecodedResult.value = `Bin文件解析失败: ${err.message || err}`;
       }
     };
     reader.onerror = () => {
@@ -285,7 +304,6 @@ const handleImport = async () => {
   roleList.value = [];
   $emit("ok");
 };
-
 </script>
 
 <style scoped lang="scss">

@@ -101,10 +101,7 @@ const isConnected = computed(() => {
   return connectionStatus.value === "connected";
 });
 
-
-
 // 方法
-
 
 // 已移除 sendWebSocketMessage，使用 tokenStore.sendMessage 代替
 

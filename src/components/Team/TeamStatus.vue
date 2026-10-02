@@ -16,7 +16,8 @@
           v-for="teamId in availableTeams"
           :key="teamId"
           :disabled="loading || switching"
-          class="team-button" :class="[{ active: currentTeam === teamId }]"
+          class="team-button"
+          :class="[{ active: currentTeam === teamId }]"
           @click="selectTeam(teamId)"
         >
           {{ teamId }}
@@ -286,9 +287,7 @@ const rankInfo = computed(() => {
 
 // 计算下一个段位门槛
 
-
 // 计算当前段位的进度百分比
-
 
 // —— 缓存优先的 presetTeam 原始数据 ——
 const presetTeamRaw = computed(() => tokenStore.gameData?.presetTeam ?? null);

@@ -727,7 +727,10 @@ export class XyzwWebSocketClient {
     if (typeof body === "object" && body.constructor === Object) {
       // 检查是否是数字键的对象（例如 {"0": 8, "1": 2, ...}）
       const keys = Object.keys(body);
-      return keys.length > 0 && keys.every((key) => !Number.isNaN(+(Number.parseInt(key))));
+      return (
+        keys.length > 0 &&
+        keys.every((key) => !Number.isNaN(+Number.parseInt(key)))
+      );
     }
 
     return false;
@@ -755,7 +758,7 @@ export class XyzwWebSocketClient {
         const arr = Array.from({ length: maxIndex + 1 }, () => 0);
         for (const [key, value] of Object.entries(body)) {
           const index = Number.parseInt(key);
-          if (!Number.isNaN(+(index)) && typeof value === "number") {
+          if (!Number.isNaN(+index) && typeof value === "number") {
             arr[index] = value;
           }
         }

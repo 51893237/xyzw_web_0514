@@ -297,9 +297,10 @@ test("runInventoryVerifiedGameCommand sends the remaining deficit after a verifi
   const tokenStore = {
     async sendMessageWithPromise(_tokenId, _cmd, params) {
       events.push({ type: "send", amount: params.recruitNumber });
-      inventory -= events.filter((event) => event.type === "send").length === 1
-        ? 6
-        : params.recruitNumber;
+      inventory -=
+        events.filter((event) => event.type === "send").length === 1
+          ? 6
+          : params.recruitNumber;
       return { ok: true };
     },
   };

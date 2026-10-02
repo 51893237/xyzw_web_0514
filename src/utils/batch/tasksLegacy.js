@@ -283,16 +283,13 @@ export function createTasksLegacy(deps) {
           console.error(`赠送失败: ${error.message}`);
 
           let errorMsg = error.message || "未知错误";
-          
 
           if (errorMsg.includes("200160")) {
             errorMsg = "模块未开启";
           } else if (errorMsg.includes("timeout")) {
             errorMsg = "请求超时";
-            
           } else if (errorMsg.includes("网络")) {
             errorMsg = "网络错误";
-            
           }
 
           if (consecutiveErrors <= maxRetries && !shouldStop.value) {

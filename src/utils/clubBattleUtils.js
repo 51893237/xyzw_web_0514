@@ -1,4 +1,3 @@
-
 /**
  * 获取最近的周六日期
  * 如果今天是周六，返回今天的日期；否则返回上周六的日期
@@ -81,7 +80,10 @@ export function isNowInLegionWarTime() {
     const sundayArr = [];
     for (let d = 0; d < 31; d++) {
       const temp = new Date(year, month, d);
-      if (isSameGameValue(temp.getMonth(), month) && isSameGameValue(temp.getDay(), 0)) {
+      if (
+        isSameGameValue(temp.getMonth(), month) &&
+        isSameGameValue(temp.getDay(), 0)
+      ) {
         sundayArr.push(d);
       }
     }
@@ -90,7 +92,11 @@ export function isNowInLegionWarTime() {
 
   //当前时间是20.00~21.00,周日月赛则是20.00~21.30
   //前提是周六或第四周周日 1200=20*60   1260=21*60
-  if (isSameGameValue(dayOfWeek, 6) && minutesCount >= 1195 && minutesCount <= 1260) {
+  if (
+    isSameGameValue(dayOfWeek, 6) &&
+    minutesCount >= 1195 &&
+    minutesCount <= 1260
+  ) {
     return true;
   }
   const sundayArr = getSundayOfMonths(today.getFullYear(), today.getMonth());
@@ -281,7 +287,6 @@ export function getRankParams(warType) {
 }
 
 // 获取战斗情况
-
 
 // 获取进攻防守方情况
 

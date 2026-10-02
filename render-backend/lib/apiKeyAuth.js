@@ -7,7 +7,9 @@ import process from "node:process";
  */
 export function createApiKeyMiddleware(getApiKey = () => process.env.API_KEY) {
   return (req, res, next) => {
-    const provided = req.header("x-api-key") || req.header("authorization")?.replace(/^Bearer\s+/i, "");
+    const provided =
+      req.header("x-api-key") ||
+      req.header("authorization")?.replace(/^Bearer\s+/i, "");
     const expected = getApiKey();
     if (!expected || provided !== expected) {
       return res.status(401).json({ error: "Unauthorized" });
