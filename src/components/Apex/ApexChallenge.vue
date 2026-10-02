@@ -1278,7 +1278,7 @@ const rateLimitText = computed(() => {
  * @param {number} [opt.startIdx] 起始 idx
  * @param {number} [opt.maxPages] 最大页数
  * @param {number} [opt.maxRows] 最大行数
- * @returns {Promise<{rows: Array, last: boolean}>} 分页结果；请求失败时为空列表
+ * @returns {Promise<{rows: Array, last: boolean, complete: boolean, interrupted: boolean}>} 完整性与限流中断标记；其他请求错误向调用方抛出
  */
 const fetchPagedList = async ({
   cmd,
@@ -1290,7 +1290,8 @@ const fetchPagedList = async ({
   maxRows = Infinity,
 }) => {
   const token = tokenStore.selectedToken;
-  if (!token) return { rows: [], last: true };
+  if (!token)
+    return { rows: [], last: false, complete: false, interrupted: false };
   const rows = [];
   let last = false;
   // 是否因被限流而提前退出：此时数据是「没拉完」，绝不能当成拉完
@@ -1320,7 +1321,10 @@ const fetchPagedList = async ({
       throw e;
     }
     const list = res?.[listKey] || [];
-    if (!list.length) break;
+    if (!list.length) {
+      last = true;
+      break;
+    }
     rows.push(...list);
     last = res?.last === true || rows.length >= maxRows;
   }
@@ -1329,7 +1333,7 @@ const fetchPagedList = async ({
   if (!cutByLimit && rows.length >= maxRows) {
     last = true;
   }
-  return { rows, last };
+  return { rows, last, complete: last && !cutByLimit, interrupted: cutByLimit };
 };
 
 /**
@@ -1438,7 +1442,7 @@ const fetchMatchesPage = async (grp) => {
   fetchingStages.add(grp.scheduleId);
   grp.loading = true;
   try {
-    const { rows, last } = await fetchPagedList({
+    const { rows, last, complete, interrupted } = await fetchPagedList({
       cmd: "apex_getguesslist",
       params: { scheduleId: grp.scheduleId },
       listKey: "apexGuessList",
@@ -1448,9 +1452,9 @@ const fetchMatchesPage = async (grp) => {
     });
     grp.matches.push(...rows.map(toMatchRow));
     // 服务端「还有下一页」信号：为 false 即不再续拉（与 exhausted 互补）
-    grp.hasMore = !last && rows.length > 0;
+    grp.hasMore = interrupted || !last;
     // 服务端可能在仍有数据时就返回 last=true，因此另用 exhausted 标记「确实拉不到新行」
-    if (!rows.length) grp.exhausted = true;
+    if (!rows.length && complete) grp.exhausted = true;
   } catch (e) {
     // 被限流：只是「这次没拉到」，保留翻页能力，交给下一次轮询 / 翻页重试。
     // 若在此处标记 exhausted，一次 200400 就会永久关闭该阶段分页。
@@ -1499,7 +1503,7 @@ const visibleBets = (grp) => {
 };
 
 /**
- * 确保某分组已加载到至少 need 条对阵；拉不到新数据时停止并记录 exhausted。
+ * 确保某分组已加载到至少 need 条对阵；限流或已有请求进行中时停止本轮，保留重试能力。
  * @param {object} grp 竞猜分组对象
  * @param {number} need 需要的条数
  * @returns {Promise<void>} 无返回值
@@ -1509,10 +1513,8 @@ const ensureBetRows = async (grp, need) => {
   while (grp.matches.length < need && !grp.exhausted && guard < MAX_PAGES) {
     const before = grp.matches.length;
     await fetchMatchesPage(grp);
-    if (grp.matches.length === before) {
-      grp.exhausted = true;
-      break;
-    }
+    // 是否已耗尽由成功的空页响应判定；没有新增行也可能是限流或请求仍在进行。
+    if (grp.matches.length === before) break;
     guard += 1;
   }
 };
@@ -1790,7 +1792,7 @@ const fetchVoteBoard = async () => {
   if (!round || season.value <= 0 || !tokenStore.selectedToken) return;
   const groupId = getSupportGroupId(roleInfo.value.group, voteScheduleId.value);
   try {
-    const { rows, last } = await fetchPagedList({
+    const { rows, complete } = await fetchPagedList({
       cmd: "apex_getvotelist",
       params: { groupId, round },
       listKey: "apexVoteList",
@@ -1799,7 +1801,8 @@ const fetchVoteBoard = async () => {
     });
     // last=true 表示列表确实拉完；未拉完（含被限流截断）时保留已有结果，
     // 下一次轮询会继续补齐，避免界面停在半截数据上。
-    voteBoardComplete.value = last;
+    voteBoardComplete.value = complete;
+    if (!complete) return;
     currentVoteBoard.value = rows.map((t, i) => ({
       rank: i + 1,
       teamId: t.teamId || "-",
