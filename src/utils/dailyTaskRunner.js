@@ -1,5 +1,3 @@
-import { useTokenStore } from "@/stores/tokenStore";
-
 // 辅助函数
 const pickArenaTargetId = (targets) => {
   if (!targets) return null;
@@ -48,7 +46,7 @@ export class DailyTaskRunner {
     this.tokenStore = tokenStore;
     this.delaySettings = delaySettings || {
       commandDelay: 500,
-      taskDelay: 500
+      taskDelay: 500,
     };
   }
 
@@ -77,14 +75,19 @@ export class DailyTaskRunner {
         params,
         timeout,
       );
-      await new Promise((resolve) => setTimeout(resolve, this.delaySettings.commandDelay));
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.delaySettings.commandDelay),
+      );
       if (description) this.log(`${description} - 成功`, "success");
       return result;
     } catch (error) {
       if (description) {
         const token = this.tokenStore.gameTokens.find((t) => t.id === tokenId);
         const tokenName = token?.name || tokenId;
-        this.log(`[${tokenName}] ${description} - 失败: ${error.message}`, "error");
+        this.log(
+          `[${tokenName}] ${description} - 失败: ${error.message}`,
+          "error",
+        );
       }
       throw error;
     }
@@ -541,8 +544,8 @@ export class DailyTaskRunner {
     });
 
     if (
-      settings.freeGachaEnable !== false
-      && isTodayAvailable(statisticsTime["gacha:free"])
+      settings.freeGachaEnable !== false &&
+      isTodayAvailable(statisticsTime["gacha:free"])
     ) {
       taskList.push({
         name: "免费扭蛋",
@@ -724,7 +727,9 @@ export class DailyTaskRunner {
         await task.execute();
         const progress = Math.floor(((i + 1) / totalTasks) * 100);
         if (this.callbacks?.onProgress) this.callbacks.onProgress(progress);
-        await new Promise((resolve) => setTimeout(resolve, this.delaySettings.taskDelay));
+        await new Promise((resolve) =>
+          setTimeout(resolve, this.delaySettings.taskDelay),
+        );
       } catch (error) {
         this.log(`任务执行失败: ${task.name} - ${error.message}`, "error");
       }
