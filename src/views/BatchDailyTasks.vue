@@ -5699,6 +5699,8 @@ const getStatusText = (tokenId) => {
   const status = tokenStatus.value[tokenId];
   if (status === "completed") return "已完成";
   if (status === "failed") return "失败";
+  if (status === "stopped") return "已停止";
+  if (status === "pending") return "待继续";
   if (status === "running") return "执行中";
   return "等待中";
 };
@@ -5957,7 +5959,13 @@ const connectionQueue = { active: 0 };
 
 const waitForConnectionSlot = async () => {
   while (connectionQueue.active >= batchSettings.maxActive) {
+    if (shouldStop.value) break;
     await new Promise((r) => setTimeout(r, 1000));
+  }
+  if (shouldStop.value) {
+    const error = new Error("批量任务已停止，取消等待连接槽位");
+    error.interrupted = true;
+    throw error;
   }
   connectionQueue.active++;
 };
@@ -5968,7 +5976,18 @@ const releaseConnectionSlot = () => {
   }
 };
 
-const ensureConnection = async (tokenId, maxRetries = 2) => {
+/**
+ * Establish a connection and report whether this caller owns a queue slot.
+ * @param {string} tokenId Account identity.
+ * @param {number} maxRetries Whether connection retry is allowed.
+ * @param {Function|null} onSlotChange Optional ownership notification.
+ * @returns {Promise<boolean>} True after connection initialization.
+ */
+const ensureConnection = async (
+  tokenId,
+  maxRetries = 2,
+  onSlotChange = null,
+) => {
   const latestToken = tokens.value.find((t) => t.id === tokenId);
   if (!latestToken) {
     throw new Error(`Token not found: ${tokenId}`);
@@ -5980,6 +5999,7 @@ const ensureConnection = async (tokenId, maxRetries = 2) => {
   if (!connected) {
     // 等待连接槽位，限制并发连接数
     await waitForConnectionSlot();
+    onSlotChange?.(true);
 
     addLog({
       time: new Date().toLocaleTimeString(),
@@ -6022,7 +6042,12 @@ const ensureConnection = async (tokenId, maxRetries = 2) => {
 
     if (!connected) {
       // 连接失败，释放槽位
-      releaseConnectionSlot();
+      try {
+        tokenStore.closeWebSocketConnection(tokenId);
+      } finally {
+        releaseConnectionSlot();
+        onSlotChange?.(false);
+      }
       throw new Error("连接失败 (重试后仍超时)");
     }
   }
@@ -6219,12 +6244,10 @@ const onFootballPickChange = async (val) => {
 };
 
 const startBatch = async () => {
-  if (selectedTokens.value.length === 0) return;
+  if (isRunning.value || selectedTokens.value.length === 0) return;
 
   isRunning.value = true;
   shouldStop.value = false;
-  // 不再重置logs数组，保留之前的日志
-  // logs.value = [];
 
   // Reset status
   selectedTokens.value.forEach((id) => {
@@ -6237,94 +6260,87 @@ const startBatch = async () => {
 
     tokenStatus.value[tokenId] = "running";
 
-    let retryCount = 0;
-    const MAX_RETRIES = 1;
-    let success = false;
-
-    while (retryCount <= MAX_RETRIES && !success) {
-      if (shouldStop.value) break;
-
-      const token = tokens.value.find((t) => t.id === tokenId);
-
-      try {
-        if (retryCount === 0) {
+    const token = tokens.value.find((t) => t.id === tokenId);
+    if (!token) {
+      tokenStatus.value[tokenId] = "failed";
+      addLog({
+        time: new Date().toLocaleTimeString(),
+        message: "账号已移除，跳过执行",
+        type: "error",
+      });
+      return;
+    }
+    let ownsSlot = false;
+    try {
+      addLog({
+        time: new Date().toLocaleTimeString(),
+        message: `=== 开始执行: ${token.name} ===`,
+        type: "info",
+      });
+      await ensureConnection(tokenId, 2, (owned) => {
+        ownsSlot = owned;
+      });
+      const runner = new DailyTaskRunner(tokenStore, {
+        commandDelay: batchSettings.commandDelay,
+        taskDelay: batchSettings.taskDelay,
+      });
+      const result = await runner.run(tokenId, {
+        shouldStop: () => shouldStop.value,
+        onLog: (log) =>
+          addLog({ ...log, message: `${token.name}: ${log.message}` }),
+        onProgress: (progress) =>
           addLog({
             time: new Date().toLocaleTimeString(),
-            message: `=== 开始执行: ${token.name} ===`,
+            message: `${token.name}: 服务器每日任务完成并领奖 ${progress}%`,
             type: "info",
-          });
-        } else {
-          addLog({
-            time: new Date().toLocaleTimeString(),
-            message: `=== 尝试重试: ${token.name} (第${retryCount}次) ===`,
-            type: "info",
-          });
+          }),
+      });
+      tokenStatus.value[tokenId] = result.incomplete ? "pending" : "completed";
+      addLog({
+        time: new Date().toLocaleTimeString(),
+        message: result.incomplete
+          ? `=== ${token.name} 本轮结束，${result.incomplete} 个步骤待继续 ===`
+          : `=== ${token.name} 执行完成 ===`,
+        type: result.incomplete ? "warning" : "success",
+      });
+    } catch (error) {
+      tokenStatus.value[tokenId] = error.interrupted ? "stopped" : "failed";
+      addLog({
+        time: new Date().toLocaleTimeString(),
+        message: `${token.name}: ${error.message}`,
+        type: error.interrupted ? "warning" : "error",
+      });
+    } finally {
+      if (ownsSlot) {
+        try {
+          tokenStore.closeWebSocketConnection(tokenId);
+        } finally {
+          releaseConnectionSlot();
         }
-
-        await ensureConnection(tokenId);
-
-        // Create runner with delay settings
-        const runner = new DailyTaskRunner(tokenStore, {
-          commandDelay: batchSettings.commandDelay,
-          taskDelay: batchSettings.taskDelay,
-        });
-
-        // Run tasks
-        await runner.run(tokenId, {
-          onLog: (log) => addLog(log),
-          onProgress: () => {
-            // 每个token维护自己的进度
-          },
-        });
-
-        success = true;
-        tokenStatus.value[tokenId] = "completed";
-        addLog({
-          time: new Date().toLocaleTimeString(),
-          message: `=== ${token.name} 执行完成 ===`,
-          type: "success",
-        });
-      } catch (error) {
-        console.error(error);
-        if (retryCount < MAX_RETRIES && !shouldStop.value) {
-          addLog({
-            time: new Date().toLocaleTimeString(),
-            message: `${token.name} 执行出错: ${error.message}，等待3秒后重试...`,
-            type: "warning",
-          });
-          // Wait for potential token refresh in store
-          await new Promise((r) => setTimeout(r, 3000));
-          retryCount++;
-        } else {
-          tokenStatus.value[tokenId] = "failed";
-          addLog({
-            time: new Date().toLocaleTimeString(),
-            message: `${token.name} 执行失败: ${error.message}`,
-            type: "error",
-          });
-        }
-      } finally {
-        // 完成后关闭连接并释放槽位
-        tokenStore.closeWebSocketConnection(tokenId);
-        releaseConnectionSlot();
-        addLog({
-          time: new Date().toLocaleTimeString(),
-          message: `${token.name} 连接已关闭  (队列: ${connectionQueue.active}/${batchSettings.maxActive})`,
-          type: "info",
-        });
       }
+      addLog({
+        time: new Date().toLocaleTimeString(),
+        message: `${token.name} 连接清理结束  (队列: ${connectionQueue.active}/${batchSettings.maxActive})`,
+        type: "info",
+      });
     }
   });
 
-  // 等待所有任务完成
-  await Promise.all(taskPromises);
-
-  // 等待所有任务完成后再继续
-  await new Promise((r) => setTimeout(r, 1000));
-
-  isRunning.value = false;
-  currentRunningTokenId.value = null;
-  message.success("批量任务执行结束");
+  try {
+    await Promise.all(taskPromises);
+  } finally {
+    isRunning.value = false;
+    currentRunningTokenId.value = null;
+  }
+  if (shouldStop.value)
+    message.info("批量任务已停止，再次开始将按服务器任务列表补差");
+  else if (
+    selectedTokens.value.some((id) =>
+      ["failed", "pending", "stopped"].includes(tokenStatus.value[id]),
+    )
+  )
+    message.warning("本轮结束，仍有未完成任务，可再次开始继续");
+  else message.success("批量任务执行结束");
 };
 
 const stopBatch = () => {

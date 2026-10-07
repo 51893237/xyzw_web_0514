@@ -130,7 +130,6 @@
         <div class="club-main">
           <div class="section-head">
             <span class="section-title">俱乐部资料</span>
-            <span class="section-sub">概览 · 成员 · 申请 · 怪异塔</span>
           </div>
           <n-tabs v-model:value="activeTab" type="line" animated>
             <n-tab-pane
@@ -1813,10 +1812,10 @@ const formatNumber = (num) => {
 
   /* 俱乐部信息（左） + 盐场岛屿积分榜（右），整卡占满宽度 */
   .club-layout {
-    display: flex;
-    /* toolbar 需独占一行，故允许换行 */
-    flex-wrap: wrap;
-    align-items: flex-start;
+    display: grid;
+    /* 左栏内容宽度不影响积分榜位置，工具栏独占首行。 */
+    grid-template-columns: minmax(0, 1fr) 380px;
+    align-items: start;
     gap: 16px;
     width: 100%;
   }
@@ -1858,13 +1857,11 @@ const formatNumber = (num) => {
   }
 
   .club-main {
-    flex: 1 1 auto;
     min-width: 0;
   }
 
   .club-side {
-    flex: 0 0 380px;
-    width: 380px;
+    min-width: 0;
     position: sticky;
     top: 0;
     display: flex;
@@ -1885,12 +1882,10 @@ const formatNumber = (num) => {
   /* 窄屏改为上下堆叠 */
   @media (max-width: 1280px) {
     .club-layout {
-      flex-direction: column;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .club-side {
-      flex: 1 1 auto;
-      width: 100%;
       position: static;
       /* 堆叠后不再限高，交给页面整体滚动 */
       max-height: none;
@@ -1899,19 +1894,13 @@ const formatNumber = (num) => {
     .club-side-body {
       overflow-y: visible;
     }
-
-    /* 主轴变纵向，flex-basis:100% 会被解释成高度，必须还原 */
-    .toolbar {
-      flex: initial;
-    }
   }
 
   .toolbar {
     display: flex;
     justify-content: flex-end;
     margin-bottom: var(--spacing-sm);
-    /* 作为 .club-layout 的 flex 子项时独占整行，避免与左右两栏抢宽度 */
-    flex: 0 0 100%;
+    grid-column: 1 / -1;
   }
 
   .overview {
